@@ -1,56 +1,21 @@
-DIASENUNES/
-├── public/
-│   ├── arrow-down.png
-│   ├── bell.png
-│   ├── close-up-da-estatua.jpg
-│   ├── down.png
-│   ├── info.png
-│   ├── logo-blue.png
-│   ├── logo-square-blue.png
-│   ├── logo-square-white.png
-│   ├── logo-white.png
-│   ├── man.png
-│   ├── pie-chart.png
-│   ├── plus.png
-│   ├── trash-bin.png
-│   ├── upload.png
-│   ├── user.png
-│   ├── woman (1).png
-│   ├── woman (2).png
-│   └── woman.png
+GESTAO-CORPORATIVA/
 └── src/
     ├── components/
-    │   ├── layout/
-    │   │   ├── Header.tsx
-    │   │   └── Sidebar.tsx
-    │   │   └── ProtectedRoute.tsx
-    │   └── ui/
-    │       └── PageContainer.tsx
-            └── DetailsPopup.tsx
+    │   └── layout/
     ├── context/
-    │   ├── AuthContext.tsx   
     ├── layouts/
-    │   ├── AuthLayout.tsx
-    │   ├── LoginLayout.tsx
-    │   └── MainLayout.tsx
     ├── pages/
     │   ├── auth/
-    │   │   ├── Cadastro.tsx
-    │   │   └── Login.tsx
-    │   ├── cadastros/
-    │   │   ├── CadastroAcoesLegais.tsx
-    │   │   └── CadastroCondominios.tsx
-    │   ├── AcoesLegais.tsx
-    │   ├── Condominios.tsx
-    │   ├── Dashboard.tsx
-    │   ├── Honorarios.tsx
-    │   ├── Notificacoes.tsx    
-    │   ├── Profile.tsx
-    │   └── Usuarios.tsx
+    │   │   ├── Login.jsx
+    │   │   └── Register.jsx
+    │   ├── home/
+    │   │   └── Home.jsx
+    │   └── password-recovery/
+    │       ├── RequestReset.jsx  
+    │       └── ResetPassword.jsx 
     ├── routes/
-    │   └── AppRoutes.tsx
+    │   └── index.jsx
     ├── services/
     ├── utils/
-    ├── App.tsx
-    ├── index.css
-    └── main.tsx
+    ├── App.jsx
+    ├── main.jsx
