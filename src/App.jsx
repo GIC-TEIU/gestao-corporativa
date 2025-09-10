@@ -12,6 +12,7 @@ import RequestReset from "./pages/password-recovery/RequestReset"
 import ResetPassword from "./pages/password-recovery/ResetPassword"
 import Password from "./pages/password-recovery/Password"
 import View from "./pages/view/view"
+import Funcionario from "./pages/Funcionario/Funcionario"
 
 ;
 
@@ -35,6 +36,8 @@ function App() {
 
         <Route path="/dashboard" element={<> <Header /> <Dashboard /> </> }/>
          <Route path="/view" element={<>  <Header /> <View /> </> }/> 
+         
+          <Route path="/funcionario" element={<>  <Header /> <Funcionario /> </> }/>
 
         {/* -> CRIE NOVAS ROTAS AQUI!!*/}
         {/* <Route path="*" element={<NotFound />} /> */}
