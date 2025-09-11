@@ -13,6 +13,9 @@ import ResetPassword from "./pages/password-recovery/ResetPassword"
 import Password from "./pages/password-recovery/Password"
 import View from "./pages/view/view"
 import Funcionario from "./pages/Funcionario/Funcionario"
+import Envelope from "./pages/Envelope/Envelope"
+import Profile from './pages/Profile/Profile'
+
 
 ;
 
@@ -38,6 +41,8 @@ function App() {
          <Route path="/view" element={<>  <Header /> <View /> </> }/> 
          
           <Route path="/funcionario" element={<>  <Header /> <Funcionario /> </> }/>
+          <Route path="/envelope" element={<>  <Header /> <Envelope /> </> }/>
+          <Route path="/profile" element={<>  <Header /> <Profile /> </> }/>
 
         {/* -> CRIE NOVAS ROTAS AQUI!!*/}
         {/* <Route path="*" element={<NotFound />} /> */}
