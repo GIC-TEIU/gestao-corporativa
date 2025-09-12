@@ -6,6 +6,9 @@ export default {
   ],
   theme: {
     extend: {
+       screens: {
+        'xl2': {'max': '1366px'}, 
+      },
       colors: {
         'brand-black': '#000000',
         'brand-gray-light': '#D9D9D9',
@@ -25,6 +28,14 @@ export default {
         'brand-blue-vivid': '#1A5BB1',
         'brand-gray-concrete': '#D8D6D6',
         'brand-gray-stone': '#7C7C7C',
+      },
+      
+      boxShadow: {
+        azulEscuro: '0 4px 15px rgba(42, 69, 78, 0.5)',  
+        azulCLaro: '0 4px 15px rgba(51, 119, 142, 0.5)', 
+      },
+      fontFamily: {
+        poppins: ['Poppins', 'sans-serif'],
       },
     },
   },

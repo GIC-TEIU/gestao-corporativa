@@ -37,7 +37,7 @@ function Register() {
           </div>
         </div>
 
-        <button className="  font-poppins font-extralight button-register hover:bg-[#29454E] text-white px-6 py-2 rounded-lg mt-16 bg-[#19282e] transition">
+        <button className="  font-poppins font-light button-register hover:bg-[#29454E] text-white px-6 py-2 rounded-lg mt-16 bg-[#19282e] transition">
           Cadastrar
         </button>
       </div>

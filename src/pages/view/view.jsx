@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import { FilePlus, Send, CheckCircle, FileEdit, Menu, X } from 'lucide-react';
+import back from "../../assets/ep_back.png";
+
+
 
 function EnvelopeViewer() {
   const [currentView, setCurrentView] = useState('list');
@@ -10,6 +13,13 @@ function EnvelopeViewer() {
   const mockEnvelopes = [
     { id: 1, nome: 'Adriana mármore', email: 'Adrianamármore@gmail.com', envelope: 'Atestado de férias', status: 'Pendente', data: '22/05/2004', matricula: '1202296354065', cargo: 'Coordenadora de RH', empresa: 'Teiú - Matriz' },
     { id: 2, nome: 'Adriana mármore', email: 'Adrianamármore@gmail.com', envelope: 'Atestado de férias', status: 'Pendente', data: '22/05/2004', matricula: '1202296354065', cargo: 'Coordenadora de RH', empresa: 'Teiú - Matriz' },
+        { id: 3, nome: 'Adriana mármore', email: 'Adrianamármore@gmail.com', envelope: 'Atestado de férias', status: 'Concluído', data: '22/05/2004', matricula: '1202296354065', cargo: 'Coordenadora de RH', empresa: 'Teiú - Matriz' },
+    { id: 3, nome: 'Adriana mármore', email: 'Adrianamármore@gmail.com', envelope: 'Atestado de férias', status: 'Concluído', data: '22/05/2004', matricula: '1202296354065', cargo: 'Coordenadora de RH', empresa: 'Teiú - Matriz' },
+    { id: 3, nome: 'Adriana mármore', email: 'Adrianamármore@gmail.com', envelope: 'Atestado de férias', status: 'Concluído', data: '22/05/2004', matricula: '1202296354065', cargo: 'Coordenadora de RH', empresa: 'Teiú - Matriz' },
+    { id: 3, nome: 'Adriana mármore', email: 'Adrianamármore@gmail.com', envelope: 'Atestado de férias', status: 'Concluído', data: '22/05/2004', matricula: '1202296354065', cargo: 'Coordenadora de RH', empresa: 'Teiú - Matriz' },
+    { id: 3, nome: 'Adriana mármore', email: 'Adrianamármore@gmail.com', envelope: 'Atestado de férias', status: 'Concluído', data: '22/05/2004', matricula: '1202296354065', cargo: 'Coordenadora de RH', empresa: 'Teiú - Matriz' },
+    { id: 3, nome: 'Adriana mármore', email: 'Adrianamármore@gmail.com', envelope: 'Atestado de férias', status: 'Concluído', data: '22/05/2004', matricula: '1202296354065', cargo: 'Coordenadora de RH', empresa: 'Teiú - Matriz' },
+
     { id: 3, nome: 'Adriana mármore', email: 'Adrianamármore@gmail.com', envelope: 'Atestado de férias', status: 'Concluído', data: '22/05/2004', matricula: '1202296354065', cargo: 'Coordenadora de RH', empresa: 'Teiú - Matriz' },
   ];
 
@@ -60,15 +70,22 @@ function EnvelopeViewer() {
       </div>
 
       <div className="flex flex-row justify-between">
-        <div></div>
+       
+        <button>
+          <img
+            src={back}
+            className="ml-24 mt-5 w-[25px] h-[24px] hover:w-[28px] hover:h-[28px]"
+            alt="voltar"
+          />
+        </button>
         <button onClick={toggleSidebar} className="flex flex-row gap-2 mr-40 mt-5 font-poppins bg-[#EEF1F1] rounded-xl border border-[#9CA3AF] w-24 h-8 items-center justify-center text-[#0F3B57] font-semibold text-sm hover:shadow-lg">
           Menu <Menu size={12} />
         </button>
       </div>
       
       <div className='flex justify-center items-center h-2/3 mt-2 mb-6'>
-        <div className="flex justify-center items-center mt-2 w-[1130px] h-[420px] xl2:h-96 md:mt-14 border border-[#D1D5DB] rounded-2xl mb-6 bg-[#EEF1F1]">
-          <div className="w-[1100px] max-h-[400px] overflow-y-auto lg:h-4/5 bg-[#EEF1F1]">
+        <div className="flex justify-center items-center mt-2 w-[1130px] h-[420px] xl2:w-[1100px] xl2:h-[360px]  xl2:mt-14 border border-[#D1D5DB] rounded-2xl mb-6 bg-[#EEF1F1]">
+          <div className="w-[1100px] max-h-[400px] overflow-y-auto xl2:h-[280px] bg-[#EEF1F1]">
             <table className="p-1 w-full text-sm font-poppins text-black border-separate border-spacing-x-0">
               <thead className="bg-[#EEF1F1]">
                 <tr className="text-[#6B7280]">
@@ -83,45 +100,51 @@ function EnvelopeViewer() {
                 {mockEnvelopes.map((item) => (
                   <tr key={item.id}>
                     <td colSpan={5} className="py-2">
-                      <div className="flex items-center gap-1 border border-[#9CA3AF] rounded-xl p-1">
+                      {/* Container com borda e arredondamento */}
+                      <div className="flex items-center gap-1 border border-brand-gray-dark rounded-xl p-1">
+                        
                         {/* Nome */}
                         <div className="flex-1">
-                          <div className="bg-[#E5E7EB] rounded-md px-3 py-2 text-xs text-center">
+                          <div className="bg-brand-gray-light rounded-md px-3 py-2 text-xs text-center text-black">
                             {item.nome}
                           </div>
                         </div>
+
                         {/* Email */}
                         <div className="flex-1">
-                          <div className="bg-[#E5E7EB] rounded-md px-3 py-2 text-xs text-center">
+                          <div className="bg-brand-gray-light rounded-md px-3 py-2 text-xs text-center text-black">
                             {item.email}
                           </div>
                         </div>
+
                         {/* Envelope */}
                         <div className="flex-1">
-                          <div className="bg-[#E5E7EB] rounded-md px-3 py-2 text-xs text-center">
+                          <div className="bg-brand-gray-light rounded-md px-3 py-2 text-xs text-center text-black">
                             {item.envelope}
                           </div>
                         </div>
+
                         {/* Status */}
                         <div className="w-32">
                           <div
                             className={
                               "rounded-md px-2 py-2 text-center text-xs font-medium " +
                               (item.status === "Pendente"
-                                ? "bg-[#e6cfbd] text-[#EA580C] border border-[#EA580C]"
+                                ? "bg-[#e6cfbd] text-laranjaWarn border border-brand-orange-dark"
                                 : item.status === "Concluído"
-                                ? "bg-[#2F7429]/30 text-[#16A34A] border border-[#16A34A]"
+                                ? "bg-[#2F7429]/30 text-verdeSim border border-brand-green-dark"
                                 : "")
                             }
                           >
                             {item.status}
                           </div>
                         </div>
+
                         {/* Botão */}
                         <div className="w-28">
-                          <button 
+                          <button
                             onClick={() => handleViewEnvelope(item)}
-                            className="w-full bg-[#16A34A] hover:bg-[#15803D] text-white rounded-md px-2 py-2 text-sm"
+                            className="w-full bg-brand-green hover:bg-brand-green-dark text-white rounded-md px-2 py-2 text-sm"
                           >
                             Visualizar
                           </button>
@@ -222,7 +245,6 @@ function EnvelopeViewer() {
 
   return (
     <div>
-      
       <Sidebar />
       <main>
         {currentView === 'list' && <EnvelopeList />}

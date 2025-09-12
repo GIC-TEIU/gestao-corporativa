@@ -13,7 +13,7 @@ function Header() {
             <img
                 src={Logo}
                 alt="Logo"
-                className="p-2 w-[150px] transition-all duration-200 hover:opacity-80 cursor-pointer"
+                className="p-2 w-[150px] transition-all  hover:opacity-80 cursor-pointer"
             />
             </Link>
             
@@ -35,7 +35,7 @@ function Header() {
                 {/* Sair */}
                 <div className="flex flex-row gap-2 items-center">
                     <img src={Out} alt="Logout" className="w-5 h-5" />
-                    <p className="text-white font-poppins">Sair</p>
+                    <button className="text-white font-poppins hover:font-semibold">Sair</button>
                 </div>
             </div>
         </div>
