@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useApp } from "../../context/Appcontext";
 import {
   Search,
   Filter,
@@ -7,40 +8,6 @@ import {
   Edit,
   ArrowLeft,
 } from "lucide-react";
-
-// -------------------------
-// Mock Inicial de Funcionários
-// -------------------------
-const funcionariosMock = [
-  {
-    id: 1,
-    nome: "Adriana Mármore",
-    email: "adrianamarmore@gmail.com",
-    cargo: "Designer",
-    celular: "77 3423-9423",
-    status: "ativo",
-    matricula: "569565.6",
-    centroCusto: "Recursos Humanos",
-    cpf: "123.456.789-00",
-    empresa: "Teiú - Matriz",
-    industria: "Tecnologia",
-    assinatura: "/assets/signature.png",
-  },
-  {
-    id: 2,
-    nome: "João Silva",
-    email: "joao.silva@gmail.com",
-    cargo: "Desenvolvedor",
-    celular: "77 9876-5432",
-    status: "ativo",
-    matricula: "123456.7",
-    centroCusto: "TI",
-    cpf: "987.654.321-00",
-    empresa: "Teiú - Filial",
-    industria: "Tecnologia",
-    assinatura: "/assets/signature.png",
-  },
-];
 
 // -------------------------
 // Modal de Assinatura
@@ -270,7 +237,7 @@ const ModalFiltros = ({ filters, onApply, onClose }) => {
 // Componente principal
 // -------------------------
 const Funcionarios = () => {
-  const [funcionarios, setFuncionarios] = useState(funcionariosMock);
+  const { funcionarios, addFuncionario, updateFuncionario } = useApp();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedFuncionario, setSelectedFuncionario] = useState(null);
   const [editingFuncionario, setEditingFuncionario] = useState(null);
@@ -301,13 +268,13 @@ const Funcionarios = () => {
   });
 
   const handleSaveFuncionario = (updatedFuncionario) => {
-    setFuncionarios((prev) =>
-      prev.map((f) => (f.id === updatedFuncionario.id ? updatedFuncionario : f))
-    );
+    updateFuncionario(updatedFuncionario);
+    setEditingFuncionario(null);
   };
 
   const handleAddFuncionario = (novo) => {
-    setFuncionarios((prev) => [...prev, novo]);
+    addFuncionario(novo);
+    setAddingFuncionario(false);
   };
 
   const handleApplyFilters = (newFilters) => {
