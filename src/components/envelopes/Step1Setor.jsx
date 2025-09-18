@@ -1,7 +1,13 @@
-// src/components/envelopes/Step1Setor.jsx
+
 import { Search } from "lucide-react";
 
-const Step1Setor = ({ setorEnvelope, setSetorEnvelope, handleContinue }) => (
+const Step1Setor = ({ 
+  setorEnvelope, 
+  setSetorEnvelope, 
+  handleContinue, 
+  updateFormValues, 
+  formValues 
+}) => (
   <form
     onSubmit={handleContinue}
     className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 rounded-md"
@@ -14,7 +20,9 @@ const Step1Setor = ({ setorEnvelope, setSetorEnvelope, handleContinue }) => (
       <div className="relative">
         <input
           type="text"
-          defaultValue="Adriana mármore"
+          name="requisitante"
+          value={formValues.step1.requisitante}
+          onChange={(e) => updateFormValues("step1", "requisitante", e.target.value)}
           className="w-full border rounded-2xl px-4 py-2 pr-10 focus:outline-none focus:border-brand-cyan"
         />
         <Search className="absolute right-3 top-2.5 text-gray-400 w-5 h-5" />
@@ -24,7 +32,12 @@ const Step1Setor = ({ setorEnvelope, setSetorEnvelope, handleContinue }) => (
     {/* Cargo */}
     <div>
       <label className="block text-gray-700 mb-1">Cargo</label>
-      <select className="w-full border rounded-2xl px-4 py-2 focus:outline-none focus:border-brand-cyan">
+      <select 
+        name="cargo"
+        value={formValues.step1.cargo}
+        onChange={(e) => updateFormValues("step1", "cargo", e.target.value)}
+        className="w-full border rounded-2xl px-4 py-2 focus:outline-none focus:border-brand-cyan"
+      >
         <option>Líder de RH</option>
         <option>Gerente</option>
         <option>Analista</option>
@@ -32,10 +45,15 @@ const Step1Setor = ({ setorEnvelope, setSetorEnvelope, handleContinue }) => (
       </select>
     </div>
 
-    {/* Diretor */}
+    {/* Gerente */}
     <div>
       <label className="block text-gray-700 mb-1">Gerente</label>
-      <select className="w-full border rounded-2xl px-4 py-2 focus:outline-none focus:border-brand-cyan">
+      <select 
+        name="gerente"
+        value={formValues.step1.gerente}
+        onChange={(e) => updateFormValues("step1", "gerente", e.target.value)}
+        className="w-full border rounded-2xl px-4 py-2 focus:outline-none focus:border-brand-cyan"
+      >
         <option value="">Selecione</option>
         <option>Joabe Andrade</option>
         <option>Lazaro</option>
@@ -48,8 +66,12 @@ const Step1Setor = ({ setorEnvelope, setSetorEnvelope, handleContinue }) => (
     <div>
       <label className="block text-gray-700 mb-1">Setor do envelope</label>
       <select
+        name="setor"
         value={setorEnvelope}
-        onChange={(e) => setSetorEnvelope(e.target.value)}
+        onChange={(e) => {
+          setSetorEnvelope(e.target.value);
+          updateFormValues("step1", "setor", e.target.value);
+        }}
         className="w-full border rounded-2xl px-4 py-2 focus:outline-none focus:border-brand-cyan"
       >
         <option value="">Selecione</option>
@@ -62,7 +84,12 @@ const Step1Setor = ({ setorEnvelope, setSetorEnvelope, handleContinue }) => (
     {/* Unidade */}
     <div>
       <label className="block text-gray-700 mb-1">Unidade</label>
-      <select className="w-full border rounded-2xl px-4 py-2 focus:outline-none focus:border-brand-cyan">
+      <select 
+        name="unidade"
+        value={formValues.step1.unidade}
+        onChange={(e) => updateFormValues("step1", "unidade", e.target.value)}
+        className="w-full border rounded-2xl px-4 py-2 focus:outline-none focus:border-brand-cyan"
+      >
         <option>Teiú - Matriz</option>
         <option>Teiú Filial - Feira de Santana</option>
         <option>Teiú - Cosméticos</option>

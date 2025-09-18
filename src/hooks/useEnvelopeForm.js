@@ -9,16 +9,43 @@ export const useEnvelopeForm = () => {
   const [enviado, setEnviado] = useState(false);
   const [enviando, setEnviando] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
+  
+  // Estado para armazenar dados dos formulários em tempo real
+  const [formValues, setFormValues] = useState({
+    step1: {
+      requisitante: "Adriana mármore",
+      cargo: "Líder de RH",
+      gerente: "",
+      unidade: "Teiú - Matriz",
+      setor: ""
+    },
+    step2: {
+      tipo: ""
+    },
+    step3: {}
+  });
+
   const [formData, setFormData] = useState({
-    requisitante: "",
-    cargo: "",
+    requisitante: "Adriana mármore",
+    cargo: "Líder de RH",
     gerente: "",
-    unidade: "",
+    unidade: "Teiú - Matriz",
     setor: "",
     tipo: "",
     subtipo: "",
     dados: {}
   });
+
+  // Função para atualizar valores dos formulários em tempo real
+  const updateFormValues = (stepName, field, value) => {
+    setFormValues(prev => ({
+      ...prev,
+      [stepName]: {
+        ...prev[stepName],
+        [field]: value
+      }
+    }));
+  };
 
   const handleContinue = (e) => {
     e.preventDefault();
@@ -29,9 +56,18 @@ export const useEnvelopeForm = () => {
         setorEnvelope === "dp" ? "DP" : 
         "DOC DIRETO";
       
-      setFormData(prev => ({...prev, setor: setorEnvelope, tipo}));
+      setFormData(prev => ({
+        ...prev, 
+        setor: setorEnvelope, 
+        tipo,
+        requisitante: formValues.step1.requisitante,
+        cargo: formValues.step1.cargo,
+        gerente: formValues.step1.gerente,
+        unidade: formValues.step1.unidade
+      }));
       setStep(2);
     } else if (step === 2 && tipoEnvelope && setorEnvelope !== "rh") {
+      setFormData(prev => ({...prev, tipo: tipoEnvelope}));
       setStep(3);
     } else if (step === 2.5 && tipoEnvelope) {
       setFormData(prev => ({...prev, tipo: "MOV", subtipo: tipoEnvelope}));
@@ -39,18 +75,24 @@ export const useEnvelopeForm = () => {
     } else if (step === 3) {
       const form = e.target;
       const formElements = form.elements;
-      const formValues = {};
+      const currentFormValues = {};
       
       for (let i = 0; i < formElements.length; i++) {
         const element = formElements[i];
         if (element.name && element.value) {
-          formValues[element.name] = element.value;
+          currentFormValues[element.name] = element.value;
         }
       }
       
+      // Atualizar tanto formValues quanto formData
+      setFormValues(prev => ({
+        ...prev,
+        step3: currentFormValues
+      }));
+      
       setFormData(prev => ({
         ...prev,
-        dados: {...prev.dados, [tipoEnvelope]: formValues}
+        dados: {...prev.dados, [tipoEnvelope]: currentFormValues}
       }));
       
       setShowConfirmation(true);
@@ -80,6 +122,7 @@ export const useEnvelopeForm = () => {
     setShowConfirmation(false);
     setEnviando(true);
     
+    // Simular envio para backend
     await new Promise(resolve => setTimeout(resolve, 2000));
     
     setEnviando(false);
@@ -99,9 +142,11 @@ export const useEnvelopeForm = () => {
     enviando,
     showConfirmation,
     formData,
+    formValues,
     setSetorEnvelope,
     setTipoEnvelope,
     setShowConfirmation,
+    updateFormValues,
     handleContinue,
     handleRhSelection,
     handleBack,

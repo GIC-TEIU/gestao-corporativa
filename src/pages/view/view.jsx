@@ -1,6 +1,11 @@
 import { useState } from 'react';
-import { FilePlus, Send, CheckCircle, FileEdit, Menu, X } from 'lucide-react';
+import { FileText, ChevronLeft, ChevronRight, FilePlus, Send, CheckCircle, FileEdit, Menu, X } from 'lucide-react';
+import { Document, Page, pdfjs } from "react-pdf";
+import { Timeline } from "flowbite-react";
 import back from "../../assets/ep_back.png";
+
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+
 
 
 
@@ -161,50 +166,146 @@ function EnvelopeViewer() {
     </div>
   );
 
-  const EnvelopeDetail = () => (
-    <div style={{ height: 'calc(100vh - 82.22px)' }} className="bg-[#DFE9ED] flex-1 overflow-y-auto pt-8">
-      <div>
-        <h1 className="font-poppins ml-20 font-bold text-4xl text-[#0F3B57]">
-          Visualizar envelopes
-        </h1>
+  const EnvelopeDetail = () => {
+  const [selectedDocs, setSelectedDocs] = useState([]);
+  const [numPages, setNumPages] = useState(null);
+  const [pageNumber, setPageNumber] = useState(1);
+
+  // Documentos mockados (você pode puxar isso da API depois)
+  const documentos = [
+    { id: 1, nome: "Políticas-Teiú.pdf", tipo: "PDF", url: "/docs/politicas-teiu.pdf" },
+    { id: 2, nome: "Documento-GIC.pdf", tipo: "PDF", url: "/docs/documento-gic.pdf" },
+  ];
+
+  // Documento selecionado para visualização
+  const [currentDoc, setCurrentDoc] = useState(documentos[0]);
+
+  const toggleSelect = (id) => {
+    setSelectedDocs((prev) =>
+      prev.includes(id) ? prev.filter((doc) => doc !== id) : [...prev, id]
+    );
+  };
+
+  const onDocumentLoadSuccess = ({ numPages }) => {
+    setNumPages(numPages);
+    setPageNumber(1);
+  };
+
+  return (
+    <div style={{ height: "calc(100vh - 82.22px)" }} className="bg-[#DFE9ED] flex-1 overflow-y-auto pt-8">
+      {/* Header */}
+      <h1 className="font-poppins ml-20 font-bold text-4xl text-[#0F3B57]">
+        Visualizar Envelope
+      </h1>
+
+      {/* Layout grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mx-20 mt-6">
+        {/* Prévia do Documento */}
+        <div className="bg-white rounded-xl shadow p-4 flex flex-col items-center lg:col-span-2">
+          <h3 className="font-semibold mb-4 text-lg">Prévia do Documento</h3>
+          <div className="bg-gray-100 w-full h-[600px] flex items-center justify-center rounded-lg overflow-y-auto">
+            {currentDoc ? (
+              <Document
+                file={currentDoc.url}
+                onLoadSuccess={onDocumentLoadSuccess}
+                className="flex justify-center"
+              >
+                <Page pageNumber={pageNumber} width={500} />
+              </Document>
+            ) : (
+              <span>Selecione um documento</span>
+            )}
+          </div>
+          {numPages && (
+            <div className="flex justify-center items-center gap-6 mt-4">
+              <button
+                disabled={pageNumber <= 1}
+                onClick={() => setPageNumber(pageNumber - 1)}
+                className="p-2 rounded bg-[#EEF1F1] hover:bg-[#DFE9ED] disabled:opacity-40"
+              >
+                <ChevronLeft />
+              </button>
+              <span>
+                Página {pageNumber} de {numPages}
+              </span>
+              <button
+                disabled={pageNumber >= numPages}
+                onClick={() => setPageNumber(pageNumber + 1)}
+                className="p-2 rounded bg-[#EEF1F1] hover:bg-[#DFE9ED] disabled:opacity-40"
+              >
+                <ChevronRight />
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Coluna lateral direita */}
+        <div className="flex flex-col gap-6">
+          {/* Status */}
+          <div className="bg-white rounded-xl shadow p-6">
+            <h3 className="font-semibold text-center mb-6">Status do Documento</h3>
+            <ul className="space-y-4 text-sm">
+              <li>✈️ Criado por <b>Adriana Mármore</b></li>
+              <li>👁️ Visualizado por <b>Joabe Andrade</b></li>
+              <li>📝 Parecer dado por <b>Joabe Andrade</b></li>
+              <li>✔️ Assinado por <b>Helder Mendes</b></li>
+            </ul>
+            <div className="mt-4 text-center text-green-600 font-semibold">Concluído</div>
+          </div>
+
+          {/* Informações */}
+          <div className="bg-white rounded-xl shadow p-6">
+            <h3 className="font-semibold text-center mb-6">Informações do Envio</h3>
+            <p><b>Enviado por:</b> Adriana Mármore</p>
+            <p><b>Data:</b> 14/06/2025</p>
+            <p><b>Destinatários:</b> Joabe Andrade, Helder Mendes</p>
+            <p><b>Protocolo:</b> Nº 51548415</p>
+            <p><b>Observações:</b> lorem ipsum do envio...</p>
+          </div>
+        </div>
       </div>
 
-      <div className="flex flex-row justify-between">
-        <button onClick={handleBackToList} className="ml-24 mt-5 text-3xl">←</button>
-        <button onClick={toggleSidebar} className="flex flex-row gap-2 mr-40 mt-5 font-poppins bg-[#EEF1F1] rounded-xl border border-[#9CA3AF] w-24 h-8 items-center justify-center text-[#0F3B57] font-semibold text-sm hover:shadow-lg">
-          Menu <Menu size={12} />
-        </button>
+      {/* Selecionar Documentos */}
+      <div className="mx-20 mt-8 bg-white rounded-xl shadow p-6">
+        <h3 className="font-semibold mb-4">Selecionar Documentos para Assinar</h3>
+        <div className="flex flex-col gap-3">
+          {documentos.map((doc) => (
+            <div
+              key={doc.id}
+              onClick={() => setCurrentDoc(doc)}
+              className={`flex items-center justify-between p-4 border rounded-xl cursor-pointer transition 
+                ${currentDoc?.id === doc.id ? "border-[#16A34A] bg-[#F0FDF4]" : "border-gray-300 bg-gray-50"}`}
+            >
+              <div className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  checked={selectedDocs.includes(doc.id)}
+                  onChange={() => toggleSelect(doc.id)}
+                  className="w-5 h-5 accent-[#16A34A]"
+                />
+                <FileText className="text-[#0F3B57] w-6 h-6" />
+                <div>
+                  <p className="font-medium">{doc.nome}</p>
+                  <p className="text-sm text-gray-500">{doc.tipo}</p>
+                </div>
+              </div>
+              {currentDoc?.id === doc.id && (
+                <span className="text-xs font-semibold text-green-600">Visualizando</span>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
-      
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mx-20 mt-6">
-        {/* Autor */}
-        <div className="bg-white rounded-xl p-6 shadow">
-          <h3 className="font-semibold mb-4">Autor do envelope</h3>
-          <p><b>Nome:</b> {selectedEnvelope.nome}</p>
-          <p><b>Data:</b> {selectedEnvelope.data}</p>
-          <p><b>Matrícula:</b> {selectedEnvelope.matricula}</p>
-          <p><b>Cargo:</b> {selectedEnvelope.cargo}</p>
-          <p><b>Empresa:</b> {selectedEnvelope.empresa}</p>
-        </div>
-        {/* Documento */}
-        <div className="bg-white rounded-xl p-6 shadow lg:col-span-2">
-          <div className="bg-gray-100 h-[600px] flex items-center justify-center">📄 Documento simulado</div>
-          <div className="text-center mt-2 text-gray-500">1-1</div>
-        </div>
-        {/* Status */}
-        <div className="bg-white rounded-xl p-6 shadow">
-          <h3 className="font-semibold text-center mb-6">Status de verificação</h3>
-          <ul className="space-y-4">
-            <li>Adriana mármore enviou um envelope <button className="text-blue-500 underline text-xs">visualizar</button></li>
-            <li>Helder Oliveira aprovou o envelope <button className="text-blue-500 underline text-xs">visualizar</button></li>
-            <li>Joabe entregou um parecer</li>
-            <li>Envelope recebido pelo DP</li>
-          </ul>
-          <button onClick={() => setShowModal(true)} className="w-full bg-[#16A34A] hover:bg-[#15803D] text-white py-2 rounded mt-6">atualizar status</button>
-        </div>
+
+      {/* Botão */}
+      <div className="mx-20 mt-6 mb-10">
+        <button className="w-full bg-[#16A34A] hover:bg-[#15803D] text-white py-3 rounded-lg font-semibold">
+          Assinar Selecionados
+        </button>
       </div>
     </div>
   );
+};
 
   const Modal = () => (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">

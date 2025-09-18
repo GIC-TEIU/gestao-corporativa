@@ -21,9 +21,11 @@ export default function EnvelopeWizard() {
     enviando,
     showConfirmation,
     formData,
+    formValues,
     setSetorEnvelope,
     setTipoEnvelope,
     setShowConfirmation,
+    updateFormValues,
     handleContinue,
     handleRhSelection,
     handleBack,
@@ -47,6 +49,8 @@ export default function EnvelopeWizard() {
             setorEnvelope={setorEnvelope}
             setSetorEnvelope={setSetorEnvelope}
             handleContinue={handleContinue}
+            updateFormValues={updateFormValues}
+            formValues={formValues}
           />
         );
       case 2:
@@ -57,6 +61,7 @@ export default function EnvelopeWizard() {
             setTipoEnvelope={setTipoEnvelope}
             handleContinue={handleContinue}
             handleRhSelection={handleRhSelection}
+            updateFormValues={updateFormValues}
           />
         );
       case 2.5:
@@ -65,6 +70,7 @@ export default function EnvelopeWizard() {
             tipoEnvelope={tipoEnvelope}
             setTipoEnvelope={setTipoEnvelope}
             handleContinue={handleContinue}
+            updateFormValues={updateFormValues}
           />
         );
       case 3:
@@ -72,6 +78,8 @@ export default function EnvelopeWizard() {
           <Step3Form
             tipoEnvelope={tipoEnvelope}
             handleContinue={handleContinue}
+            updateFormValues={updateFormValues}
+            formValues={formValues}
           />
         );
       default:
@@ -93,6 +101,7 @@ export default function EnvelopeWizard() {
             <ConfirmationModal
               show={showConfirmation}
               formData={formData}
+              formValues={formValues}
               onEdit={handleEdit}
               onConfirm={handleConfirm}
             />

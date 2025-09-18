@@ -25,8 +25,8 @@ export function AppProvider({ children }) {
     },
     {
       id: 2,
-      nome: "João Silva",
-      email: "joao.silva@gmail.com",
+      nome: "Igor Damasceno",
+      email: "igor.silva@gmail.com",
       cargo: "Desenvolvedor",
       celular: "77 9876-5432",
       status: "ativo",
@@ -37,6 +37,67 @@ export function AppProvider({ children }) {
       industria: "Tecnologia",
       assinatura: "/assets/signature.png",
     },
+
+     {
+      id: 3,
+      nome: "Ana",
+      email: "Dev.ana@gmail.com",
+      cargo: "Desenvolvedora",
+      celular: "77 9876-5432",
+      status: "ativo",
+      matricula: "123456.7",
+      centroCusto: "TI",
+      cpf: "987.654.321-00",
+      empresa: "Teiú - Filial",
+      industria: "Tecnologia",
+      assinatura: "/assets/signature.png",
+    },
+
+     {
+      id: 4,
+      nome: "Stéfani Freire",
+      email: "techLead@gmail.com",
+      cargo: "Techlead",
+      celular: "77 9876-5432",
+      status: "ativo",
+      matricula: "123456.7",
+      centroCusto: "TI",
+      cpf: "987.654.321-00",
+      empresa: "Teiú - Filial",
+      industria: "Tecnologia",
+      assinatura: "/assets/signature.png",
+    },
+
+     {
+      id: 3,
+      nome: "Andersen",
+      email: "eletri.andersen@gmail.com",
+      cargo: "Tec de eletronica",
+      celular: "77 9876-5432",
+      status: "ativo",
+      matricula: "123456.7",
+      centroCusto: "TI",
+      cpf: "987.654.321-00",
+      empresa: "Teiú - Filial",
+      industria: "Tecnologia",
+      assinatura: "/assets/signature.png",
+    },
+
+     {
+      id: 3,
+      nome: "Ikaro",
+      email: "web.igor@gmail.com",
+      cargo: "Desenvolvedor web",
+      celular: "77 9876-5432",
+      status: "ativo",
+      matricula: "123456.7",
+      centroCusto: "TI",
+      cpf: "987.654.321-00",
+      empresa: "Teiú - Filial",
+      industria: "Tecnologia",
+      assinatura: "/assets/signature.png",
+    },
+
   ]);
 
   // Estado para envelopes

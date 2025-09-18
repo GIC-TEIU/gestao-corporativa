@@ -249,22 +249,57 @@ const Funcionarios = () => {
     centroCusto: "",
   });
 
+  // FUNÇÃO CORRIGIDA - Filtros aplicados corretamente
   const applyFilters = (funcionario) => {
-    if (filters.status && funcionario.status !== filters.status) return false;
-    if (filters.cargo && !funcionario.cargo.toLowerCase().includes(filters.cargo.toLowerCase())) return false;
-    if (filters.centroCusto && !funcionario.centroCusto.toLowerCase().includes(filters.centroCusto.toLowerCase())) return false;
+    // Se não há filtros aplicados, retorna true
+    if (!filters.status && !filters.cargo && !filters.centroCusto) {
+      return true;
+    }
+
+    // Verifica filtro de status
+    if (filters.status && funcionario.status !== filters.status) {
+      return false;
+    }
+
+    // Verifica filtro de cargo (case insensitive e trata valores undefined)
+    if (filters.cargo) {
+      const funcionarioCargo = funcionario.cargo || '';
+      if (!funcionarioCargo.toLowerCase().includes(filters.cargo.toLowerCase())) {
+        return false;
+      }
+    }
+
+    // Verifica filtro de centro de custo (case insensitive e trata valores undefined)
+    if (filters.centroCusto) {
+      const funcionarioCentroCusto = funcionario.centroCusto || '';
+      if (!funcionarioCentroCusto.toLowerCase().includes(filters.centroCusto.toLowerCase())) {
+        return false;
+      }
+    }
+
     return true;
   };
 
+  // FUNÇÃO CORRIGIDA - Pesquisa mais robusta
   const filteredFuncionarios = funcionarios.filter((funcionario) => {
-    const matchesSearch =
-      funcionario.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      funcionario.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      funcionario.cargo.toLowerCase().includes(searchTerm.toLowerCase());
-
+    // Aplica os filtros primeiro
     const matchesFilters = applyFilters(funcionario);
+    if (!matchesFilters) return false;
 
-    return matchesSearch && matchesFilters;
+    // Se não há termo de pesquisa, retorna todos que passaram nos filtros
+    if (!searchTerm.trim()) return true;
+
+    // Pesquisa case-insensitive em múltiplos campos
+    const searchLower = searchTerm.toLowerCase();
+    
+    return (
+      (funcionario.nome || '').toLowerCase().includes(searchLower) ||
+      (funcionario.email || '').toLowerCase().includes(searchLower) ||
+      (funcionario.cargo || '').toLowerCase().includes(searchLower) ||
+      (funcionario.celular || '').toLowerCase().includes(searchLower) ||
+      (funcionario.matricula || '').toLowerCase().includes(searchLower) ||
+      (funcionario.centroCusto || '').toLowerCase().includes(searchLower)
+    );
   });
 
   const handleSaveFuncionario = (updatedFuncionario) => {
@@ -281,6 +316,16 @@ const Funcionarios = () => {
     setFilters(newFilters);
   };
 
+  // Função para limpar todos os filtros
+  const handleClearFilters = () => {
+    setFilters({
+      status: "",
+      cargo: "",
+      centroCusto: "",
+    });
+    setSearchTerm("");
+  };
+
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="p-6">
@@ -291,13 +336,21 @@ const Funcionarios = () => {
               <ArrowLeft className="w-6 h-6" />
             </button>
             <h1 className="text-3xl font-bold text-gray-800">Funcionários</h1>
+            {Object.values(filters).some(filter => filter) && (
+              <button
+                onClick={handleClearFilters}
+                className="text-sm text-red-600 hover:text-red-800 ml-4"
+              >
+                Limpar filtros
+              </button>
+            )}
           </div>
 
           <div className="flex items-center space-x-3">
             <div className="relative">
               <input
                 type="text"
-                placeholder="Pesquisar..."
+                placeholder="Pesquisar por nome, email, cargo..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 w-80"
@@ -322,6 +375,18 @@ const Funcionarios = () => {
           </div>
         </div>
 
+        {/* Indicador de filtros ativos */}
+        {(filters.status || filters.cargo || filters.centroCusto) && (
+          <div className="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+            <p className="text-sm text-blue-800">
+              Filtros ativos: 
+              {filters.status && ` Status: ${filters.status}`}
+              {filters.cargo && ` Cargo: ${filters.cargo}`}
+              {filters.centroCusto && ` Centro de Custo: ${filters.centroCusto}`}
+            </p>
+          </div>
+        )}
+
         {/* Lista */}
         <div className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-300">
           <div className="grid grid-cols-12 gap-4 px-6 py-4 bg-gray-50 border-b border-gray-200 font-semibold text-gray-700">
@@ -333,57 +398,63 @@ const Funcionarios = () => {
           </div>
 
           <div className="divide-y divide-gray-200">
-            {filteredFuncionarios.map((funcionario) => (
-              <div
-                key={funcionario.id}
-                className="grid grid-cols-12 gap-4 px-6 py-4 hover:bg-gray-50 transition-colors"
-              >
-                <div className="col-span-3 flex items-center space-x-3">
-                  <div
-                    className={`w-1 h-12 rounded ${
-                      funcionario.status === "ativo" ? "bg-green-500" : "bg-red-500"
-                    }`}
-                  />
-                  <span className="text-gray-800 font-medium">
-                    {funcionario.nome}
-                  </span>
-                </div>
+            {filteredFuncionarios.length > 0 ? (
+              filteredFuncionarios.map((funcionario) => (
+                <div
+                  key={funcionario.id}
+                  className="grid grid-cols-12 gap-4 px-6 py-4 hover:bg-gray-50 transition-colors"
+                >
+                  <div className="col-span-3 flex items-center space-x-3">
+                    <div
+                      className={`w-1 h-12 rounded ${
+                        funcionario.status === "ativo" ? "bg-green-500" : "bg-red-500"
+                      }`}
+                    />
+                    <span className="text-gray-800 font-medium">
+                      {funcionario.nome}
+                    </span>
+                  </div>
 
-                <div className="col-span-3 flex items-center">
-                  <span className="text-gray-600 bg-gray-100 px-3 py-2 rounded-lg w-full text-sm">
-                    {funcionario.email}
-                  </span>
-                </div>
+                  <div className="col-span-3 flex items-center">
+                    <span className="text-gray-600 bg-gray-100 px-3 py-2 rounded-lg w-full text-sm">
+                      {funcionario.email}
+                    </span>
+                  </div>
 
-                <div className="col-span-2 flex items-center">
-                  <span className="text-gray-600 bg-gray-100 px-3 py-2 rounded-lg w-full text-sm">
-                    {funcionario.cargo}
-                  </span>
-                </div>
+                  <div className="col-span-2 flex items-center">
+                    <span className="text-gray-600 bg-gray-100 px-3 py-2 rounded-lg w-full text-sm">
+                      {funcionario.cargo}
+                    </span>
+                  </div>
 
-                <div className="col-span-2 flex items-center">
-                  <span className="text-gray-600 bg-gray-100 px-3 py-2 rounded-lg w-full text-sm">
-                    {funcionario.celular}
-                  </span>
-                </div>
+                  <div className="col-span-2 flex items-center">
+                    <span className="text-gray-600 bg-gray-100 px-3 py-2 rounded-lg w-full text-sm">
+                      {funcionario.celular}
+                    </span>
+                  </div>
 
-                <div className="col-span-2 flex items-center space-x-2">
-                  <button
-                    onClick={() => setSelectedFuncionario(funcionario)}
-                    className="bg-green-100 text-green-700 p-2 rounded-lg hover:bg-green-200 transition-colors"
-                  >
-                    <FileText className="w-4 h-4" />
-                  </button>
+                  <div className="col-span-2 flex items-center space-x-2">
+                    <button
+                      onClick={() => setSelectedFuncionario(funcionario)}
+                      className="bg-green-100 text-green-700 p-2 rounded-lg hover:bg-green-200 transition-colors"
+                    >
+                      <FileText className="w-4 h-4" />
+                    </button>
 
-                  <button
-                    onClick={() => setEditingFuncionario(funcionario)}
-                    className="bg-yellow-100 text-yellow-700 p-2 rounded-lg hover:bg-yellow-200 transition-colors"
-                  >
-                    <Edit className="w-4 h-4" />
-                  </button>
+                    <button
+                      onClick={() => setEditingFuncionario(funcionario)}
+                      className="bg-yellow-100 text-yellow-700 p-2 rounded-lg hover:bg-yellow-200 transition-colors"
+                    >
+                      <Edit className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
+              ))
+            ) : (
+              <div className="px-6 py-8 text-center text-gray-500">
+                Nenhum funcionário encontrado com os filtros aplicados.
               </div>
-            ))}
+            )}
           </div>
         </div>
       </div>
