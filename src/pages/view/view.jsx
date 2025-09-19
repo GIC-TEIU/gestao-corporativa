@@ -1,13 +1,10 @@
 import { useState } from 'react';
-import { FileText, ChevronLeft, ChevronRight, FilePlus, Send, CheckCircle, FileEdit, Menu, X } from 'lucide-react';
+import { FileText, ChevronLeft, ChevronRight, FilePlus, Send, CheckCircle, FileEdit, Menu, X, Eye, EyeOff, XCircle } from 'lucide-react';
 import { Document, Page, pdfjs } from "react-pdf";
 import { Timeline } from "flowbite-react";
 import back from "../../assets/ep_back.png";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
-
-
-
 
 function EnvelopeViewer() {
   const [currentView, setCurrentView] = useState('list');
@@ -18,14 +15,13 @@ function EnvelopeViewer() {
   const mockEnvelopes = [
     { id: 1, nome: 'Adriana mármore', email: 'Adrianamármore@gmail.com', envelope: 'Atestado de férias', status: 'Pendente', data: '22/05/2004', matricula: '1202296354065', cargo: 'Coordenadora de RH', empresa: 'Teiú - Matriz' },
     { id: 2, nome: 'Adriana mármore', email: 'Adrianamármore@gmail.com', envelope: 'Atestado de férias', status: 'Pendente', data: '22/05/2004', matricula: '1202296354065', cargo: 'Coordenadora de RH', empresa: 'Teiú - Matriz' },
-        { id: 3, nome: 'Adriana mármore', email: 'Adrianamármore@gmail.com', envelope: 'Atestado de férias', status: 'Concluído', data: '22/05/2004', matricula: '1202296354065', cargo: 'Coordenadora de RH', empresa: 'Teiú - Matriz' },
     { id: 3, nome: 'Adriana mármore', email: 'Adrianamármore@gmail.com', envelope: 'Atestado de férias', status: 'Concluído', data: '22/05/2004', matricula: '1202296354065', cargo: 'Coordenadora de RH', empresa: 'Teiú - Matriz' },
-    { id: 3, nome: 'Adriana mármore', email: 'Adrianamármore@gmail.com', envelope: 'Atestado de férias', status: 'Concluído', data: '22/05/2004', matricula: '1202296354065', cargo: 'Coordenadora de RH', empresa: 'Teiú - Matriz' },
-    { id: 3, nome: 'Adriana mármore', email: 'Adrianamármore@gmail.com', envelope: 'Atestado de férias', status: 'Concluído', data: '22/05/2004', matricula: '1202296354065', cargo: 'Coordenadora de RH', empresa: 'Teiú - Matriz' },
-    { id: 3, nome: 'Adriana mármore', email: 'Adrianamármore@gmail.com', envelope: 'Atestado de férias', status: 'Concluído', data: '22/05/2004', matricula: '1202296354065', cargo: 'Coordenadora de RH', empresa: 'Teiú - Matriz' },
-    { id: 3, nome: 'Adriana mármore', email: 'Adrianamármore@gmail.com', envelope: 'Atestado de férias', status: 'Concluído', data: '22/05/2004', matricula: '1202296354065', cargo: 'Coordenadora de RH', empresa: 'Teiú - Matriz' },
-
-    { id: 3, nome: 'Adriana mármore', email: 'Adrianamármore@gmail.com', envelope: 'Atestado de férias', status: 'Concluído', data: '22/05/2004', matricula: '1202296354065', cargo: 'Coordenadora de RH', empresa: 'Teiú - Matriz' },
+    { id: 4, nome: 'Adriana mármore', email: 'Adrianamármore@gmail.com', envelope: 'Atestado de férias', status: 'Concluído', data: '22/05/2004', matricula: '1202296354065', cargo: 'Coordenadora de RH', empresa: 'Teiú - Matriz' },
+    { id: 5, nome: 'Adriana mármore', email: 'Adrianamármore@gmail.com', envelope: 'Atestado de férias', status: 'Concluído', data: '22/05/2004', matricula: '1202296354065', cargo: 'Coordenadora de RH', empresa: 'Teiú - Matriz' },
+    { id: 6, nome: 'Adriana mármore', email: 'Adrianamármore@gmail.com', envelope: 'Atestado de férias', status: 'Concluído', data: '22/05/2004', matricula: '1202296354065', cargo: 'Coordenadora de RH', empresa: 'Teiú - Matriz' },
+    { id: 7, nome: 'Adriana mármore', email: 'Adrianamármore@gmail.com', envelope: 'Atestado de férias', status: 'Concluído', data: '22/05/2004', matricula: '1202296354065', cargo: 'Coordenadora de RH', empresa: 'Teiú - Matriz' },
+    { id: 8, nome: 'Adriana mármore', email: 'Adrianamármore@gmail.com', envelope: 'Atestado de férias', status: 'Concluído', data: '22/05/2004', matricula: '1202296354065', cargo: 'Coordenadora de RH', empresa: 'Teiú - Matriz' },
+    { id: 9, nome: 'Adriana mármore', email: 'Adrianamármore@gmail.com', envelope: 'Atestado de férias', status: 'Concluído', data: '22/05/2004', matricula: '1202296354065', cargo: 'Coordenadora de RH', empresa: 'Teiú - Matriz' },
   ];
 
   const handleViewEnvelope = (envelope) => {
@@ -40,6 +36,99 @@ function EnvelopeViewer() {
   };
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
+
+  // Componente StatusTimeline integrado
+  const StatusTimeline = () => {
+    const steps = [
+      {
+          key: "Iniciado",
+          title: "Envelope iniciado",
+          description: "Fluxo do envelope iniciado por (usuário)",
+          icon: <FilePlus className="w-4 h-4 text-green-800 dark:text-green-300" />,
+          color: "bg-green-200 dark:bg-green-700",
+      },
+      {
+          key: "GerenteView",
+          title: "Gerente visualizou",
+          description: "(Gerente) vizualizou e está analizando",
+          icon: <Eye className="w-4 h-4 text-blue-800 dark:text-blue-300" />,
+          color: "bg-yellow-200 dark:bg-yellow-700",
+      },
+      {
+          key: "Encaminhado",
+          title:"Encaminhado para o diretor",
+          description: "(Gerente) encaminhou para o diretor",
+          icon: <Send className="w-4 h-4 text-blue-800 dark:text-blue-300" />,
+          color: "bg-yellow-200 dark:bg-yellow-700", 
+      },
+      {
+          key: "DiretorView",
+          title:"Visualizado pelo (Diretor)",
+          description: "(Diretor) vizualizou e está analizando",
+          icon: <Eye className="w-4 h-4 text-yellow-800 dark:text-yellow-300" />,
+          color: "bg-blue-200 dark:bg-blue-700", 
+      },
+      {
+          key: "Aprovado",
+          title:"Aprovado pelo (Diretor)",
+          description: "(Diretor) Aprovou envelope",
+          icon: <CheckCircle className="w-4 h-4 text-green-800 dark:text-green-300" />,
+          color: "bg-green-200 dark:bg-green-700", 
+      },
+    ];
+
+    const ReprovadoStep = {
+       key: "reprovado",
+       title: "Envelope reprovado",
+       description: "O envelope foi reprovado e o fluxo encerrado.",
+       icon: <XCircle className="w-4 h-4 text-red-800 dark:text-red-300" />,
+       color: "bg-red-100 dark:bg-red-600",
+    };
+
+    // Para demonstração, vamos simular que o envelope está no passo 3 (DiretorView)
+    const statusIndex = 3;
+    const isRejected = false;
+
+    return (
+      <div className="max-w-md mx-auto">
+        <ol className="relative border-s border-gray-200 dark:border-gray-700">
+          {/* Mostrar todos os passos aprovados até o status atual */}
+          {steps.slice(0, statusIndex + 1).map((step) => (
+            <li key={step.key} className="mb-10 ms-6">
+              <span
+                className={`absolute flex items-center justify-center w-6 h-6 rounded-full -start-3 ring-8 ring-white dark:ring-gray-900 ${step.color}`}
+              >
+                {step.icon}
+              </span>
+              <h3 className="font-medium leading-tight text-gray-800 dark:text-white">
+                {step.title}
+              </h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                {step.description}
+              </p>
+            </li>
+          ))}
+
+          {/* Se rejeitado, mostra o passo reprovação após o último aprovado */}
+          {isRejected && statusIndex >= 0 && (
+            <li key={ReprovadoStep.key} className="mb-10 ms-6">
+              <span
+                className={`absolute flex items-center justify-center w-6 h-6 rounded-full -start-3 ring-8 ring-white dark:ring-gray-900 ${ReprovadoStep.color}`}
+              >
+                {ReprovadoStep.icon}
+              </span>
+              <h3 className="font-medium leading-tight text-gray-800 dark:text-white">
+                {ReprovadoStep.title}
+              </h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                {ReprovadoStep.description}
+              </p>
+            </li>
+          )}
+        </ol>
+      </div>
+    );
+  };
 
   const Sidebar = () => (
     <>
@@ -75,7 +164,6 @@ function EnvelopeViewer() {
       </div>
 
       <div className="flex flex-row justify-between">
-       
         <button>
           <img
             src={back}
@@ -105,31 +193,25 @@ function EnvelopeViewer() {
                 {mockEnvelopes.map((item) => (
                   <tr key={item.id}>
                     <td colSpan={5} className="py-2">
-                      {/* Container com borda e arredondamento */}
                       <div className="flex items-center gap-1 border border-brand-gray-dark rounded-xl p-1">
-                        
-                        {/* Nome */}
                         <div className="flex-1">
                           <div className="bg-brand-gray-light rounded-md px-3 py-2 text-xs text-center text-black">
                             {item.nome}
                           </div>
                         </div>
 
-                        {/* Email */}
                         <div className="flex-1">
                           <div className="bg-brand-gray-light rounded-md px-3 py-2 text-xs text-center text-black">
                             {item.email}
                           </div>
                         </div>
 
-                        {/* Envelope */}
                         <div className="flex-1">
                           <div className="bg-brand-gray-light rounded-md px-3 py-2 text-xs text-center text-black">
                             {item.envelope}
                           </div>
                         </div>
 
-                        {/* Status */}
                         <div className="w-32">
                           <div
                             className={
@@ -145,7 +227,6 @@ function EnvelopeViewer() {
                           </div>
                         </div>
 
-                        {/* Botão */}
                         <div className="w-28">
                           <button
                             onClick={() => handleViewEnvelope(item)}
@@ -167,145 +248,130 @@ function EnvelopeViewer() {
   );
 
   const EnvelopeDetail = () => {
-  const [selectedDocs, setSelectedDocs] = useState([]);
-  const [numPages, setNumPages] = useState(null);
-  const [pageNumber, setPageNumber] = useState(1);
+    const [selectedDocs, setSelectedDocs] = useState([]);
+    const [numPages, setNumPages] = useState(null);
+    const [pageNumber, setPageNumber] = useState(1);
 
-  // Documentos mockados (você pode puxar isso da API depois)
-  const documentos = [
-    { id: 1, nome: "Políticas-Teiú.pdf", tipo: "PDF", url: "/docs/politicas-teiu.pdf" },
-    { id: 2, nome: "Documento-GIC.pdf", tipo: "PDF", url: "/docs/documento-gic.pdf" },
-  ];
+    const documentos = [
+      { id: 1, nome: "Políticas-Teiú.pdf", tipo: "PDF", url: "/docs/politicas-teiu.pdf" },
+      { id: 2, nome: "Documento-GIC.pdf", tipo: "PDF", url: "/docs/documento-gic.pdf" },
+    ];
 
-  // Documento selecionado para visualização
-  const [currentDoc, setCurrentDoc] = useState(documentos[0]);
+    const [currentDoc, setCurrentDoc] = useState(documentos[0]);
 
-  const toggleSelect = (id) => {
-    setSelectedDocs((prev) =>
-      prev.includes(id) ? prev.filter((doc) => doc !== id) : [...prev, id]
-    );
-  };
+    const toggleSelect = (id) => {
+      setSelectedDocs((prev) =>
+        prev.includes(id) ? prev.filter((doc) => doc !== id) : [...prev, id]
+      );
+    };
 
-  const onDocumentLoadSuccess = ({ numPages }) => {
-    setNumPages(numPages);
-    setPageNumber(1);
-  };
+    const onDocumentLoadSuccess = ({ numPages }) => {
+      setNumPages(numPages);
+      setPageNumber(1);
+    };
 
-  return (
-    <div style={{ height: "calc(100vh - 82.22px)" }} className="bg-[#DFE9ED] flex-1 overflow-y-auto pt-8">
-      {/* Header */}
-      <h1 className="font-poppins ml-20 font-bold text-4xl text-[#0F3B57]">
-        Visualizar Envelope
-      </h1>
+    return (
+      <div style={{ height: "calc(100vh - 82.22px)" }} className="bg-[#DFE9ED] flex-1 overflow-y-auto pt-8">
+        <h1 className="font-poppins ml-20 font-bold text-4xl text-[#0F3B57]">
+          Visualizar Envelope
+        </h1>
 
-      {/* Layout grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mx-20 mt-6">
-        {/* Prévia do Documento */}
-        <div className="bg-white rounded-xl shadow p-4 flex flex-col items-center lg:col-span-2">
-          <h3 className="font-semibold mb-4 text-lg">Prévia do Documento</h3>
-          <div className="bg-gray-100 w-full h-[600px] flex items-center justify-center rounded-lg overflow-y-auto">
-            {currentDoc ? (
-              <Document
-                file={currentDoc.url}
-                onLoadSuccess={onDocumentLoadSuccess}
-                className="flex justify-center"
-              >
-                <Page pageNumber={pageNumber} width={500} />
-              </Document>
-            ) : (
-              <span>Selecione um documento</span>
-            )}
-          </div>
-          {numPages && (
-            <div className="flex justify-center items-center gap-6 mt-4">
-              <button
-                disabled={pageNumber <= 1}
-                onClick={() => setPageNumber(pageNumber - 1)}
-                className="p-2 rounded bg-[#EEF1F1] hover:bg-[#DFE9ED] disabled:opacity-40"
-              >
-                <ChevronLeft />
-              </button>
-              <span>
-                Página {pageNumber} de {numPages}
-              </span>
-              <button
-                disabled={pageNumber >= numPages}
-                onClick={() => setPageNumber(pageNumber + 1)}
-                className="p-2 rounded bg-[#EEF1F1] hover:bg-[#DFE9ED] disabled:opacity-40"
-              >
-                <ChevronRight />
-              </button>
-            </div>
-          )}
-        </div>
-
-        {/* Coluna lateral direita */}
-        <div className="flex flex-col gap-6">
-          {/* Status */}
-          <div className="bg-white rounded-xl shadow p-6">
-            <h3 className="font-semibold text-center mb-6">Status do Documento</h3>
-            <ul className="space-y-4 text-sm">
-              <li>✈️ Criado por <b>Adriana Mármore</b></li>
-              <li>👁️ Visualizado por <b>Joabe Andrade</b></li>
-              <li>📝 Parecer dado por <b>Joabe Andrade</b></li>
-              <li>✔️ Assinado por <b>Helder Mendes</b></li>
-            </ul>
-            <div className="mt-4 text-center text-green-600 font-semibold">Concluído</div>
-          </div>
-
-          {/* Informações */}
-          <div className="bg-white rounded-xl shadow p-6">
-            <h3 className="font-semibold text-center mb-6">Informações do Envio</h3>
-            <p><b>Enviado por:</b> Adriana Mármore</p>
-            <p><b>Data:</b> 14/06/2025</p>
-            <p><b>Destinatários:</b> Joabe Andrade, Helder Mendes</p>
-            <p><b>Protocolo:</b> Nº 51548415</p>
-            <p><b>Observações:</b> lorem ipsum do envio...</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Selecionar Documentos */}
-      <div className="mx-20 mt-8 bg-white rounded-xl shadow p-6">
-        <h3 className="font-semibold mb-4">Selecionar Documentos para Assinar</h3>
-        <div className="flex flex-col gap-3">
-          {documentos.map((doc) => (
-            <div
-              key={doc.id}
-              onClick={() => setCurrentDoc(doc)}
-              className={`flex items-center justify-between p-4 border rounded-xl cursor-pointer transition 
-                ${currentDoc?.id === doc.id ? "border-[#16A34A] bg-[#F0FDF4]" : "border-gray-300 bg-gray-50"}`}
-            >
-              <div className="flex items-center gap-3">
-                <input
-                  type="checkbox"
-                  checked={selectedDocs.includes(doc.id)}
-                  onChange={() => toggleSelect(doc.id)}
-                  className="w-5 h-5 accent-[#16A34A]"
-                />
-                <FileText className="text-[#0F3B57] w-6 h-6" />
-                <div>
-                  <p className="font-medium">{doc.nome}</p>
-                  <p className="text-sm text-gray-500">{doc.tipo}</p>
-                </div>
-              </div>
-              {currentDoc?.id === doc.id && (
-                <span className="text-xs font-semibold text-green-600">Visualizando</span>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mx-20 mt-6">
+          <div className="bg-white rounded-xl shadow p-4 flex flex-col items-center lg:col-span-2">
+            <h3 className="font-semibold mb-4 text-lg">Prévia do Documento</h3>
+            <div className="bg-gray-100 w-full h-[600px] flex items-center justify-center rounded-lg overflow-y-auto">
+              {currentDoc ? (
+                <Document
+                  file={currentDoc.url}
+                  onLoadSuccess={onDocumentLoadSuccess}
+                  className="flex justify-center"
+                >
+                  <Page pageNumber={pageNumber} width={500} />
+                </Document>
+              ) : (
+                <span>Selecione um documento</span>
               )}
             </div>
-          ))}
+            {numPages && (
+              <div className="flex justify-center items-center gap-6 mt-4">
+                <button
+                  disabled={pageNumber <= 1}
+                  onClick={() => setPageNumber(pageNumber - 1)}
+                  className="p-2 rounded bg-[#EEF1F1] hover:bg-[#DFE9ED] disabled:opacity-40"
+                >
+                  <ChevronLeft />
+                </button>
+                <span>
+                  Página {pageNumber} de {numPages}
+                </span>
+                <button
+                  disabled={pageNumber >= numPages}
+                  onClick={() => setPageNumber(pageNumber + 1)}
+                  className="p-2 rounded bg-[#EEF1F1] hover:bg-[#DFE9ED] disabled:opacity-40"
+                >
+                  <ChevronRight />
+                </button>
+              </div>
+            )}
+          </div>
+
+          <div className="flex flex-col gap-6">
+           
+            <div className="bg-white rounded-xl shadow p-6">
+              <h3 className="font-semibold text-center mb-6">Status do Documento</h3>
+              <StatusTimeline />
+            </div>
+
+            <div className="bg-white rounded-xl shadow p-6">
+              <h3 className="font-semibold text-center mb-6">Informações do Envio</h3>
+              <p><b>Enviado por:</b> Adriana Mármore</p>
+              <p><b>Data:</b> 14/06/2025</p>
+              <p><b>Destinatários:</b> Joabe Andrade, Helder Mendes</p>
+              <p><b>Protocolo:</b> Nº 51548415</p>
+              <p><b>Observações:</b> lorem ipsum do envio...</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="mx-20 mt-8 bg-white rounded-xl shadow p-6">
+          <h3 className="font-semibold mb-4">Selecionar Documentos para Assinar</h3>
+          <div className="flex flex-col gap-3">
+            {documentos.map((doc) => (
+              <div
+                key={doc.id}
+                onClick={() => setCurrentDoc(doc)}
+                className={`flex items-center justify-between p-4 border rounded-xl cursor-pointer transition 
+                  ${currentDoc?.id === doc.id ? "border-[#16A34A] bg-[#F0FDF4]" : "border-gray-300 bg-gray-50"}`}
+              >
+                <div className="flex items-center gap-3">
+                  <input
+                    type="checkbox"
+                    checked={selectedDocs.includes(doc.id)}
+                    onChange={() => toggleSelect(doc.id)}
+                    className="w-5 h-5 accent-[#16A34A]"
+                  />
+                  <FileText className="text-[#0F3B57] w-6 h-6" />
+                  <div>
+                    <p className="font-medium">{doc.nome}</p>
+                    <p className="text-sm text-gray-500">{doc.tipo}</p>
+                  </div>
+                </div>
+                {currentDoc?.id === doc.id && (
+                  <span className="text-xs font-semibold text-green-600">Visualizando</span>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="mx-20 mt-6 mb-10">
+          <button className="w-full bg-[#16A34A] hover:bg-[#15803D] text-white py-3 rounded-lg font-semibold">
+            Assinar Selecionados
+          </button>
         </div>
       </div>
-
-      {/* Botão */}
-      <div className="mx-20 mt-6 mb-10">
-        <button className="w-full bg-[#16A34A] hover:bg-[#15803D] text-white py-3 rounded-lg font-semibold">
-          Assinar Selecionados
-        </button>
-      </div>
-    </div>
-  );
-};
+    );
+  };
 
   const Modal = () => (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
@@ -335,7 +401,7 @@ function EnvelopeViewer() {
             <input type="checkbox" className="mt-1" />
             <span className="text-sm text-slate-700">
               Encaminho o parecer com ciência, aprovação e finalização do documento.  
-              Declaro minha anuência com o conteúdo apresentado.
+              Declaro minha anuência con o conteúdo apresentado.
             </span>
           </label>
         </div>

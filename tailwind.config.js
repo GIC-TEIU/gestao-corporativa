@@ -3,11 +3,12 @@ export default {
   content: [
     './index.html',
     './src/**/*.{js,ts,jsx,tsx}',
+    './node_modules/flowbite-react/**/*.js', // Inclui os componentes do Flowbite React
   ],
   theme: {
     extend: {
-       screens: {
-        'xl2': {'max': '1366px'}, 
+      screens: {
+        'xl2': { 'max': '1366px' }, // Breakpoint personalizado
       },
       colors: {
         'brand-black': '#000000',
@@ -29,10 +30,9 @@ export default {
         'brand-gray-concrete': '#D8D6D6',
         'brand-gray-stone': '#7C7C7C',
       },
-      
       boxShadow: {
-        azulEscuro: '0 4px 15px rgba(42, 69, 78, 0.5)',  
-        azulCLaro: '0 4px 15px rgba(51, 119, 142, 0.5)', 
+        azulEscuro: '0 4px 15px rgba(42, 69, 78, 0.5)',
+        azulCLaro: '0 4px 15px rgba(51, 119, 142, 0.5)',
       },
       fontFamily: {
         poppins: ['Poppins', 'sans-serif'],
@@ -41,5 +41,6 @@ export default {
   },
   plugins: [
     require('@tailwindcss/forms'),
+    require('flowbite/plugin'),
   ],
 };

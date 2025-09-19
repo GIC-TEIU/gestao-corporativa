@@ -103,9 +103,6 @@ const ModalEditar = ({ funcionario, onClose, onSave }) => {
   );
 };
 
-// -------------------------
-// Modal de Adição
-// -------------------------
 const ModalAdicionar = ({ onAdd, onClose }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -159,9 +156,7 @@ const ModalAdicionar = ({ onAdd, onClose }) => {
   );
 };
 
-// -------------------------
-// Modal de Filtros
-// -------------------------
+
 const ModalFiltros = ({ filters, onApply, onClose }) => {
   const [localFilters, setLocalFilters] = useState(filters);
 
@@ -233,9 +228,7 @@ const ModalFiltros = ({ filters, onApply, onClose }) => {
   );
 };
 
-// -------------------------
-// Componente principal
-// -------------------------
+
 const Funcionarios = () => {
   const { funcionarios, addFuncionario, updateFuncionario } = useApp();
   const [searchTerm, setSearchTerm] = useState("");
@@ -249,19 +242,19 @@ const Funcionarios = () => {
     centroCusto: "",
   });
 
-  // FUNÇÃO CORRIGIDA - Filtros aplicados corretamente
+  
   const applyFilters = (funcionario) => {
-    // Se não há filtros aplicados, retorna true
+    
     if (!filters.status && !filters.cargo && !filters.centroCusto) {
       return true;
     }
 
-    // Verifica filtro de status
+   
     if (filters.status && funcionario.status !== filters.status) {
       return false;
     }
 
-    // Verifica filtro de cargo (case insensitive e trata valores undefined)
+   
     if (filters.cargo) {
       const funcionarioCargo = funcionario.cargo || '';
       if (!funcionarioCargo.toLowerCase().includes(filters.cargo.toLowerCase())) {
@@ -269,7 +262,7 @@ const Funcionarios = () => {
       }
     }
 
-    // Verifica filtro de centro de custo (case insensitive e trata valores undefined)
+    
     if (filters.centroCusto) {
       const funcionarioCentroCusto = funcionario.centroCusto || '';
       if (!funcionarioCentroCusto.toLowerCase().includes(filters.centroCusto.toLowerCase())) {
@@ -280,17 +273,16 @@ const Funcionarios = () => {
     return true;
   };
 
-  // FUNÇÃO CORRIGIDA - Pesquisa mais robusta
+ 
   const filteredFuncionarios = funcionarios.filter((funcionario) => {
-    // Aplica os filtros primeiro
+   
     const matchesFilters = applyFilters(funcionario);
     if (!matchesFilters) return false;
 
-    // Se não há termo de pesquisa, retorna todos que passaram nos filtros
+    
     if (!searchTerm.trim()) return true;
 
-    // Pesquisa case-insensitive em múltiplos campos
-    const searchLower = searchTerm.toLowerCase();
+  
     
     return (
       (funcionario.nome || '').toLowerCase().includes(searchLower) ||
@@ -316,7 +308,7 @@ const Funcionarios = () => {
     setFilters(newFilters);
   };
 
-  // Função para limpar todos os filtros
+  
   const handleClearFilters = () => {
     setFilters({
       status: "",

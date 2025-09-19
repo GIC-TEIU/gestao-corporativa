@@ -16,6 +16,8 @@ import View from "./pages/view/view";
 import Funcionario from "./pages/Funcionario/Funcionario";
 import Envelope from "./pages/Envelope/Envelope";
 import Profile from './pages/Profile/Profile';
+import Teste from "./pages/view/testeStatus";
+import PdfViewer from "./components/PdfViewer";
 
 function App() {
   const { currentUser } = useAuth();
@@ -68,6 +70,13 @@ function App() {
           <ProtectedRoute>
             <Header />
             <Profile />
+          </ProtectedRoute>
+        }/>
+
+        <Route path="/teste" element={
+          <ProtectedRoute>
+            <Header />
+            <Teste />
           </ProtectedRoute>
         }/>
       </Routes>
