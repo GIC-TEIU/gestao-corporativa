@@ -50,7 +50,7 @@ export const useEnvelopeForm = () => {
   const handleContinue = (e) => {
     e.preventDefault();
 
-    if (step === 1 && setorEnvelope) {
+    if (step === 1 && formValues.step1.setor) {
       const tipo = 
         setorEnvelope === "rh" ? (formData.tipo || "RAP/MOV") : 
         setorEnvelope === "dp" ? "DP" : 
@@ -58,7 +58,7 @@ export const useEnvelopeForm = () => {
       
       setFormData(prev => ({
         ...prev, 
-        setor: setorEnvelope, 
+        setor: formValues.step1.setor,
         tipo,
         requisitante: formValues.step1.requisitante,
         cargo: formValues.step1.cargo,

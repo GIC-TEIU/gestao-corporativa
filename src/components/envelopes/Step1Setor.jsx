@@ -1,116 +1,139 @@
+import React from "react";
+import Button from "../ui/Button";
 
-import { Search } from "lucide-react";
+// O componente recebe o estado e as funções via props
+const Step1Setor = ({ formValues, updateFormValues, handleContinue, setSetorEnvelope }) => {
+  return (
+    <form onSubmit={handleContinue} className="p-6">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div className="p-6">
+          <h2 className="text-xl font-bold text-brand-teal-dark mb-1">
+            Novo Envelope
+          </h2>
+          <p className="text-sm text-gray-600 mb-4">
+            Preencha as informações necessárias para criar um novo envelope de assinatura
+          </p>
+        </div>
 
-const Step1Setor = ({ 
-  setorEnvelope, 
-  setSetorEnvelope, 
-  handleContinue, 
-  updateFormValues, 
-  formValues 
-}) => (
-  <form
-    onSubmit={handleContinue}
-    className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 rounded-md"
-  >
-    {/* Nome do requisitante */}
-    <div>
-      <label className="block text-gray-700 mb-1">
-        Nome do requisitante
-      </label>
-      <div className="relative">
-        <input
-          type="text"
-          name="requisitante"
-          value={formValues.step1.requisitante}
-          onChange={(e) => updateFormValues("step1", "requisitante", e.target.value)}
-          className="w-full border rounded-2xl px-4 py-2 pr-10 focus:outline-none focus:border-brand-cyan"
-        />
-        <Search className="absolute right-3 top-2.5 text-gray-400 w-5 h-5" />
+        <div className="grid grid-cols-1 md:grid-cols-2 p-6 pt-0">
+          {/* Seção da esquerda: Rótulos e Campos */}
+          <div className="space-y-4 border-4 border-brand-ice-blue p-4 space-y-4 rounded-tl-3xl rounded-bl-2xl">
+            {/* Nome do requisitante */}
+            <div>
+              <label className="block text-brand-teal-dark font-semibold mb-1">
+                Nome do requisitante
+              </label>
+              <input
+                type="text"
+                name="requisitante"
+                value={formValues.requisitante}
+                onChange={(e) => updateFormValues("step1", "requisitante", e.target.value)}
+                className="w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan"
+              />
+            </div>
+
+            {/* Cargo */}
+            <div>
+              <label className="block text-brand-teal-dark font-semibold mb-1">
+                Cargo
+              </label>
+              <select
+                name="cargo"
+                value={formValues.cargo}
+                onChange={(e) => updateFormValues("step1", "cargo", e.target.value)}
+                className="w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan"
+              >
+                <option value="">Selecione</option>
+                <option>Líder de RH</option>
+                <option>Gerente</option>
+                <option>Analista</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-brand-teal-dark font-semibold mb-1">
+                Unidade
+              </label>
+              <select
+                name="unidade"
+                value={formValues.unidade}
+                onChange={(e) => updateFormValues("step1", "unidade", e.target.value)}
+                className="w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan"
+              >
+                <option value="">Selecione</option>
+                <option>Teiú - Matriz</option>
+                <option>Teiú Filial - Feira de Santana</option>
+                <option>Teiú - Cosméticos</option>
+                <option>Holding</option>
+                <option>Votre</option>
+                <option>Kaioka</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Seção da direita: Fundo azul claro e Campos */}
+          <div className="bg-brand-ice-blue rounded-tr-3xl rounded-br-2xl p-4 space-y-4">
+            <div>
+              <label className="block text-brand-teal-dark font-semibold mb-1">
+                Setor do Envelope
+              </label>
+              <select
+                name="setor"
+                value={formValues.setor}
+                 onChange={(e) => {
+                  updateFormValues("step1", "setor", e.target.value);
+                  setSetorEnvelope(e.target.value);
+                }}
+                className="w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan"
+              >
+                <option value="">Selecione</option>
+                <option>RH</option>
+                <option>Financeiro</option>
+                <option>Marketing</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-brand-teal-dark font-semibold mb-1">
+                Diretor
+              </label>
+              <select
+                name="diretor"
+                value={formValues.diretor}
+                onChange={(e) => updateFormValues("step1", "diretor", e.target.value)}
+                className="w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan"
+              >
+                <option value="">Selecione</option>
+                <option>Helder</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-brand-teal-dark font-semibold mb-1">
+                Observações
+              </label>
+              <textarea
+                name="observacoes"
+                rows="4"
+                value={formValues.observacoes}
+                onChange={(e) => updateFormValues("step1", "observacoes", e.target.value)}
+                className="w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan"
+              />
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
 
-    {/* Cargo */}
-    <div>
-      <label className="block text-gray-700 mb-1">Cargo</label>
-      <select 
-        name="cargo"
-        value={formValues.step1.cargo}
-        onChange={(e) => updateFormValues("step1", "cargo", e.target.value)}
-        className="w-full border rounded-2xl px-4 py-2 focus:outline-none focus:border-brand-cyan"
-      >
-        <option>Líder de RH</option>
-        <option>Gerente</option>
-        <option>Analista</option>
-        <option>Outros</option>
-      </select>
-    </div>
-
-    {/* Gerente */}
-    <div>
-      <label className="block text-gray-700 mb-1">Gerente</label>
-      <select 
-        name="gerente"
-        value={formValues.step1.gerente}
-        onChange={(e) => updateFormValues("step1", "gerente", e.target.value)}
-        className="w-full border rounded-2xl px-4 py-2 focus:outline-none focus:border-brand-cyan"
-      >
-        <option value="">Selecione</option>
-        <option>Joabe Andrade</option>
-        <option>Lazaro</option>
-        <option>José Roberto</option>
-        <option>Outros</option>
-      </select>
-    </div>
-
-    {/* Setor do envelope */}
-    <div>
-      <label className="block text-gray-700 mb-1">Setor do envelope</label>
-      <select
-        name="setor"
-        value={setorEnvelope}
-        onChange={(e) => {
-          setSetorEnvelope(e.target.value);
-          updateFormValues("step1", "setor", e.target.value);
-        }}
-        className="w-full border rounded-2xl px-4 py-2 focus:outline-none focus:border-brand-cyan"
-      >
-        <option value="">Selecione</option>
-        <option value="rh">Setor RH</option>
-        <option value="dp">Setor Departamento Pessoal</option>
-        <option value="documentos">Envio de documentos direto</option>
-      </select>
-    </div>
-
-    {/* Unidade */}
-    <div>
-      <label className="block text-gray-700 mb-1">Unidade</label>
-      <select 
-        name="unidade"
-        value={formValues.step1.unidade}
-        onChange={(e) => updateFormValues("step1", "unidade", e.target.value)}
-        className="w-full border rounded-2xl px-4 py-2 focus:outline-none focus:border-brand-cyan"
-      >
-        <option>Teiú - Matriz</option>
-        <option>Teiú Filial - Feira de Santana</option>
-        <option>Teiú - Cosméticos</option>
-        <option>Holding</option>
-        <option>Votre</option>
-        <option>Kaioka</option>
-        <option>Outras</option>
-      </select>
-    </div>
-
-    {/* Botão continuar */}
-    <div className="md:col-span-2 flex justify-end">
-      <button
-        type="submit"
-        className="bg-green-700 text-white px-6 py-2 rounded-2xl hover:bg-green-800"
-        disabled={!setorEnvelope}
-      >
-        Continuar
-      </button>
-    </div>
-  </form>
-);
+      <div className="flex justify-center mt-6">
+        <Button
+          type="submit"
+          disabled={!formValues.setor || formValues.setor === ""}
+        >
+          Continuar
+        </Button>
+      </div>
+    </form>
+  );
+};
 
 export default Step1Setor;

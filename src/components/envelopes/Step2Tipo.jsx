@@ -1,4 +1,7 @@
 // src/components/envelopes/Step2Tipo.jsx
+import React from "react";
+import Button from "../ui/Button";
+
 const Step2Tipo = ({ 
   setorEnvelope, 
   tipoEnvelope, 
@@ -7,91 +10,119 @@ const Step2Tipo = ({
   handleRhSelection,
   updateFormValues
 }) => {
-  if (setorEnvelope === "rh") {
+  if (setorEnvelope === "RH") {
     return (
-      <div className="space-y-4 bg-white p-6 rounded-md shadow">
-        <h2 className="text-2xl font-semibold mb-6 font-poppins">
-          Tipo de solicitação de RH
-        </h2>
+      <form className="p-6">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+          <div className="p-6">
+            <h2 className="text-xl font-bold text-brand-teal-dark mb-1">
+              Novo Envelope
+            </h2>
+            <p className="text-sm text-gray-600 mb-6">
+              Selecione o tipo de solicitação de RH
+            </p>
+          </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <button
-            type="button"
-            onClick={() => handleRhSelection("admissao")}
-            className="p-6 border-2 border-gray-200 rounded-lg hover:border-green-600 hover:bg-green-50 transition-colors"
-          >
-            <h3 className="text-lg font-semibold mb-2">Admissão (RAP)</h3>
-            <p className="text-sm text-gray-600">Solicitação de admissão de novo colaborador</p>
-          </button>
+          <div className="p-6 pt-0">
+            <div className="bg-brand-ice-blue rounded-2xl p-6 space-y-6">
+              {/* Botão Admissão */}
+              <button
+                type="button"
+                onClick={() => handleRhSelection("admissao")}
+                className="w-full p-6 bg-white border-2 border-gray-200 rounded-lg hover:border-green-600 hover:bg-green-50 transition-colors text-left"
+              >
+                <h3 className="text-lg font-semibold mb-2 text-brand-teal-dark">Admissão (RAP)</h3>
+                <p className="text-sm text-gray-600">Solicitação de admissão de novo colaborador</p>
+              </button>
 
-          <button
-            type="button"
-            onClick={() => handleRhSelection("movimentacao")}
-            className="p-6 border-2 border-gray-200 rounded-lg hover:border-green-600 hover:bg-green-50 transition-colors"
-          >
-            <h3 className="text-lg font-semibold mb-2">Movimentação (MOV)</h3>
-            <p className="text-sm text-gray-600">Outros tipos de movimentação de colaboradores</p>
-          </button>
+              {/* Botão Movimentação */}
+              <button
+                type="button"
+                onClick={() => handleRhSelection("movimentacao")}
+                className="w-full p-6 bg-white border-2 border-gray-200 rounded-lg hover:border-green-600 hover:bg-green-50 transition-colors text-left"
+              >
+                <h3 className="text-lg font-semibold mb-2 text-brand-teal-dark">Movimentação (MOV)</h3>
+                <p className="text-sm text-gray-600">Outros tipos de movimentação de colaboradores</p>
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
+      </form>
     );
   }
 
   return (
-    <form
-      onSubmit={handleContinue}
-      className="space-y-4 bg-white p-6 rounded-md shadow"
-    >
-      <h2 className="text-2xl font-semibold mb-6 font-poppins">
-        {setorEnvelope === "rh" && "Envelopes de RH"}
-        {setorEnvelope === "dp" && "Envelopes de Departamento Pessoal"}
-        {setorEnvelope === "documentos" && "Envio de Documentos"}
-      </h2>
+    <form onSubmit={handleContinue} className="p-6">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div className="p-6">
+          <h2 className="text-xl font-bold text-brand-teal-dark mb-1">
+            Novo Envelope
+          </h2>
+          <p className="text-sm text-gray-600 mb-6">
+            Selecione o tipo de envelope para {setorEnvelope}
+          </p>
+        </div>
 
-      <div>
-        <label className="block text-gray-700 mb-1">Tipo de envelope</label>
-        <select
-          value={tipoEnvelope}
-          onChange={(e) => {
-            setTipoEnvelope(e.target.value);
-            updateFormValues("step2", "tipo", e.target.value);
-          }}
-          className="w-full border rounded-2xl px-4 py-2 focus:outline-none focus:border-brand-cyan"
-        >
-          <option value="">Selecione</option>
-          
-          {setorEnvelope === "rh" && (
-            <>
-              <option value="admissao">Admissão</option>
-              <option value="desligamento">Desligamento</option>
-              <option value="salario">Alteração salarial</option>
-              <option value="insalubridade">Insalubridade</option>
-              <option value="periculosidade">Periculosidade</option>
-              <option value="experiencia">Término de experiência</option>
-              <option value="promocao/cargo">Mudança de cargo/Promoção salarial</option>
-            </>
-          )}
-          
-          {setorEnvelope === "dp" && (
-            <>
-              <option value="documentos_dp">Documentos DP</option>
-            </>
-          )}
-          
-          {setorEnvelope === "documentos" && (
-            <option value="documentos_direto">Envio de documentos</option>
-          )}
-        </select>
-      </div>
+        <div className="p-6 pt-0">
+          <div className="bg-brand-ice-blue rounded-2xl p-6 space-y-6">
+            <div>
+              <label className="block text-brand-teal-dark font-semibold mb-2">
+                Tipo de Envelope
+              </label>
+              <select
+                value={tipoEnvelope}
+                onChange={(e) => {
+                  setTipoEnvelope(e.target.value);
+                  updateFormValues("step2", "tipo", e.target.value);
+                }}
+                className="w-full bg-white border border-gray-300 rounded-md py-3 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan"
+              >
+                <option value="">Selecione o tipo</option>
+                
+                {setorEnvelope === "dp" && (
+                  <>
+                    <option value="documentos_dp">Documentos DP</option>
+                    <option value="folha_pagamento">Folha de Pagamento</option>
+                    <option value="beneficios">Benefícios</option>
+                  </>
+                )}
+                
+                {setorEnvelope === "documentos" && (
+                  <>
+                    <option value="documentos_direto">Envio de documentos</option>
+                    <option value="contratos">Contratos</option>
+                    <option value="fiscal">Documentos Fiscais</option>
+                  </>
+                )}
 
-      <div className="flex justify-end">
-        <button
-          type="submit"
-          className="bg-green-700 text-white px-6 py-2 rounded-2xl hover:bg-green-800"
-          disabled={!tipoEnvelope}
-        >
-          Continuar
-        </button>
+                {setorEnvelope === "financeiro" && (
+                  <>
+                    <option value="pagamento">Solicitação de Pagamento</option>
+                    <option value="reembolso">Reembolso</option>
+                    <option value="relatorio">Relatório Financeiro</option>
+                  </>
+                )}
+
+                {setorEnvelope === "marketing" && (
+                  <>
+                    <option value="campanha">Campanha Marketing</option>
+                    <option value="material">Material Promocional</option>
+                    <option value="evento">Evento</option>
+                  </>
+                )}
+              </select>
+            </div>
+
+            <div className="flex justify-center pt-4">
+              <Button
+                type="submit"
+                disabled={!tipoEnvelope}
+              >
+                Continuar
+              </Button>
+            </div>
+          </div>
+        </div>
       </div>
     </form>
   );

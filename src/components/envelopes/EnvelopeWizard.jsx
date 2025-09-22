@@ -50,7 +50,7 @@ export default function EnvelopeWizard() {
             setSetorEnvelope={setSetorEnvelope}
             handleContinue={handleContinue}
             updateFormValues={updateFormValues}
-            formValues={formValues}
+            formValues={formValues.step1}
           />
         );
       case 2:

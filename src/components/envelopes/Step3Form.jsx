@@ -44,30 +44,68 @@ const Step3Form = ({
       case "admissao":
         return (
           <>
-            <h2 className="text-xl font-semibold mb-4">Admissão</h2>
-
-            <label>Nome do colaborador</label>
+            <h2 className="text-xl font-bold text-brand-teal-dark">Admissão</h2>
+             <p className="text-sm text-gray-600 mb-4">
+            Preencha as informações necessárias para criar um novo envelope de admissão
+          </p>
+            <label className="block text-brand-teal-dark font-semibold mb-1">Cargo</label>
             <input
-              name="nome_colaborador"
+              name="Cargo"
               value={formValues.step3.nome_colaborador || ""}
               onChange={(e) => handleInputChange("nome_colaborador", e.target.value)}
-              className="w-full border rounded-2xl px-3 py-2 focus:outline-none focus:border-brand-cyan"
+              className="w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan"
             />
+
+            <label className="block text-brand-teal-dark font-semibold mb-1">Categoria</label>
+            <select 
+              name="categoria"
+              value={formValues.step3.unidade_colaborador || ""}
+              onChange={(e) => handleInputChange("unidade_colaborador", e.target.value)}
+              className="w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan"
+            >
+              <option value="">Selecione</option>
+              <option>Celetista</option>
+              <option>Estagiário</option>
+              <option>Jovem Aprendiz</option>
+              
+            </select>
+
+            <label className="block text-brand-teal-dark font-semibold mb-1">Horário de trabalho</label>
+            <select 
+              name="horario_trabalho"
+              value={formValues.step3.unidade_colaborador || ""}
+              onChange={(e) => handleInputChange("unidade_colaborador", e.target.value)}
+              className="w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan"
+            >
+              <option value="">Selecione</option>
+              <option>8h às 18h</option>
+               <option>8h às 14h</option>
+              <option>12h às 18h</option>
+              
+            </select>
             
-            <label>Cargo</label>
+            <label className="block text-brand-teal-dark font-semibold mb-1">Cargo</label>
             <input
               name="cargo_colaborador"
               value={formValues.step3.cargo_colaborador || ""}
               onChange={(e) => handleInputChange("cargo_colaborador", e.target.value)}
-              className="w-full border rounded-2xl px-3 py-2 focus:outline-none focus:border-brand-cyan"
+              className="w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan"
+            />
+
+            <label className="block text-brand-teal-dark font-semibold mb-1">Motivo da Requisição</label>
+            <input
+              name="cargo_colaborador"
+              value={formValues.step3.cargo_colaborador || ""}
+              onChange={(e) => handleInputChange("cargo_colaborador", e.target.value)}
+              className="w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan"
             />
             
-            <label className="block text-gray-700 mb-1">Unidade</label>
+            <label className="block text-brand-teal-dark font-semibold mb-1">Unidade</label>
             <select 
               name="unidade_colaborador"
               value={formValues.step3.unidade_colaborador || ""}
               onChange={(e) => handleInputChange("unidade_colaborador", e.target.value)}
-              className="w-full border rounded-2xl px-4 py-2 focus:outline-none focus:border-brand-cyan"
+              className="w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan"
             >
               <option value="">Selecione</option>
               <option>Teiú - Matriz</option>
