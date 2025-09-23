@@ -18,6 +18,7 @@ import Envelope from "./pages/Envelope/Envelope";
 import Profile from './pages/Profile/Profile';
 import Teste from "./pages/view/testeStatus";
 import PdfViewer from "./components/PdfViewer";
+import Destinatario from "./pages/Envelope/Destinatario"; // <-- Importação adicionada
 
 function App() {
   const { currentUser } = useAuth();
@@ -51,7 +52,7 @@ function App() {
             <View />
           </ProtectedRoute>
         }/> 
-         
+          
         <Route path="/funcionario" element={
           <ProtectedRoute>
             <Header />
@@ -63,6 +64,13 @@ function App() {
           <ProtectedRoute>
             <Header />
             <Envelope />
+          </ProtectedRoute>
+        }/>
+
+        <Route path="/envelope/destinatario" element={
+          <ProtectedRoute>
+            <Header />
+            <Destinatario />
           </ProtectedRoute>
         }/>
         
