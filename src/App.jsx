@@ -1,4 +1,3 @@
-// src/App.jsx
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -12,13 +11,14 @@ import Dashboard from "./pages/dashboard/Dashboard";
 import RequestReset from "./pages/password-recovery/RequestReset";
 import ResetPassword from "./pages/password-recovery/ResetPassword";
 import Password from "./pages/password-recovery/Password";
-import View from "./pages/view/view";
+import View from "./pages/view/view"; // ✅ Este é o arquivo principal que criamos
 import Funcionario from "./pages/Funcionario/Funcionario";
 import Envelope from "./pages/Envelope/Envelope";
 import Profile from './pages/Profile/Profile';
 import Teste from "./pages/view/testeStatus";
-import PdfViewer from "./components/PdfViewer";
-import Destinatario from "./pages/Envelope/Destinatario"; // <-- Importação adicionada
+
+// Importando o Provider do envelope (NOVO)
+import { EnvelopeProvider } from './context/EnvelopeContext';
 
 function App() {
   const { currentUser } = useAuth();
@@ -46,13 +46,16 @@ function App() {
           </ProtectedRoute>
         }/>
         
+        {/* Rota da View com EnvelopeProvider (NOVO) */}
         <Route path="/view" element={
           <ProtectedRoute>
             <Header />
-            <View />
+            <EnvelopeProvider> {/* ✅ Envolvendo com o provider */}
+              <View />
+            </EnvelopeProvider>
           </ProtectedRoute>
         }/> 
-          
+         
         <Route path="/funcionario" element={
           <ProtectedRoute>
             <Header />
@@ -64,13 +67,6 @@ function App() {
           <ProtectedRoute>
             <Header />
             <Envelope />
-          </ProtectedRoute>
-        }/>
-
-        <Route path="/envelope/destinatario" element={
-          <ProtectedRoute>
-            <Header />
-            <Destinatario />
           </ProtectedRoute>
         }/>
         
