@@ -1,63 +1,46 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";  
+import Card from "/src/components/ui/Card.jsx";
 
-import New from '../../assets/add_notes_37dp_2A454E_FILL0_wght200_GRAD0_opsz40 1.png';
-import View from '../../assets/folder_eye_37dp_2A454E_FILL0_wght200_GRAD0_opsz40 1 (1).png';
-import Func from '../../assets/engineering_37dp_2A454E_FILL0_wght200_GRAD0_opsz40 2 (3).png';
 
 function Dashboard() {
   return (
-    <div style={{ height: 'calc(100vh - 82.22px)' }} className="bg-[#DFE9ED] flex-1 h-screen overflow-hidden">
-      <div>
-        <h1 className='font-poppins mt-10 ml-20 font-bold text-4xl text-brand-blue-dark'>
-          Gestão corporativa
-        </h1>
+    <div className="flex flex-col items-center overflow-hidden">
+      <h1 className="text-3xl text-brand-blue-dark font-bold mb-2 mt-4">
+        Gestão corporativa
+      </h1>
+      <p className="text-gray-600 mb-8 text-center max-w-lg">
+        Gerencie documentos e assinaturas de forma segura e eficiente
+      </p>
 
-        <div className='flex justify-center items-center flex-wrap mt-20'>
+      {/* Grid de cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <Card 
+          imgSrc="src/assets/novo-email.png"
+          title="Novo envelope" 
+          description="Criar um novo envelope para assinatura digital de documentos" 
+          link="/Envelope" 
+        />
 
-          <Link to="/envelope">
-            <button className='
-              m-5 font-poppins font-medium 
-              bg-[#F3F3F3] w-52 h-40 border border-brand-blue-dark
-              rounded-xl flex justify-center items-center flex-col  
-              text-brand-blue-dark
-              transition-all duration-75 ease-in-out 
-              hover:scale-105 hover:border-2 hover:shadow-lg hover:bg-[#cedce4] cursor-pointer
-            '>
-              <img src={New} alt="Novo Envelope" className="mb-2" />
-              Novo Envelope
-            </button>
-          </Link>
+        <Card 
+          imgSrc="src/assets/carta.png"
+          title="Visualizar envelope" 
+          description="Acompanhar envelopes já criados e suas assinaturas digitais" 
+          link="/view" 
+        />
 
-          <Link to="/view">
-            <button className='
-              m-5 font-poppins font-medium 
-              bg-[#F3F3F3] w-52 h-40 border border-brand-blue-dark
-              rounded-xl flex justify-center items-center flex-col  
-              text-brand-blue-dark
-              transition-all duration-75 ease-in-out 
-              hover:scale-105 hover:border-2 hover:shadow-lg hover:bg-[#cedce4] cursor-pointer
-            '>
-              <img src={Func} alt="Visualizar Envelopes" className="mb-2" />
-              Visualizar Envelopes
-            </button>
-          </Link>
+        <Card 
+          imgSrc="src/assets/recursos-humanos(1).png"
+          title="Painel RH" 
+          description="Acompanhar e gerenciar processos de RH e documentos relacionados" 
+          link="/Envelope" 
+        />
 
-          <Link to="/funcionario">
-            <button className='
-              m-5 font-poppins font-medium 
-              bg-[#F3F3F3] w-52 h-40 border border-brand-blue-dark 
-              rounded-xl flex justify-center items-center flex-col  
-              text-brand-blue-dark
-              transition-all duration-75 ease-in-out 
-              hover:scale-105 hover:border-2 hover:shadow-lg hover:bg-[#cedce4] cursor-pointer
-            '>
-              <img src={View} alt="Funcionários" className="mb-2" />
-              Funcionários
-            </button>
-          </Link>
-
-        </div>
+        <Card 
+          imgSrc="src/assets/funcionario(1).png"  
+          title="Funcionários"
+          description="Gerenciar funcionários cadastrados e suas assinaturas digitais" 
+          link="/Funcionario" 
+        />
       </div>
     </div>
   );

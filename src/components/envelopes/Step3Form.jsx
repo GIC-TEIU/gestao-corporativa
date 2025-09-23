@@ -1,127 +1,267 @@
 // src/components/envelopes/Step3Form.jsx
-const Step3Form = ({ 
-  tipoEnvelope, 
+import { AlertTriangle } from "lucide-react";
+
+const Step3Form = ({
+  tipoEnvelope,
   handleContinue,
   updateFormValues,
-  formValues 
+  formValues,
 }) => {
   const handleInputChange = (field, value) => {
     updateFormValues("step3", field, value);
   };
 
+  const inputClass =
+    "w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan";
+  const labelClass = "block text-brand-teal-dark font-semibold mb-1";
+
   const renderForm = () => {
     switch (tipoEnvelope) {
-      case "documentos_direto":
-        return (
-          <>
-            <h2 className="text-2xl font-semibold mb-6 font-poppins">
-              Envio de documentos
-            </h2>
-
-            <label className="font-poppins font-light text-sm">
-              Escolha o documento que deseja enviar:
-            </label>
-            <input
-              name="documento"
-              type="file"
-              onChange={(e) => handleInputChange("documento", e.target.value)}
-              className="w-full mt-2 mb-6 border border-brand-gray-light rounded-2xl px-3 py-2 focus:outline-none focus:border-brand-cyan"
-            />
-
-            <label className="font-poppins font-light text-sm">
-              Descreva qual é o tipo de documento e o motivo da solicitação de aprovação:
-            </label>
-            <input
-              name="descricao"
-              type="text"
-              value={formValues.step3.descricao || ""}
-              onChange={(e) => handleInputChange("descricao", e.target.value)}
-              className="w-full mt-2 mb-6 border border-brand-gray-light rounded-2xl px-3 py-2 focus:outline-none focus:border-brand-cyan"
-            />
-          </>
-        );
-
       case "admissao":
         return (
           <>
-            <h2 className="text-xl font-bold text-brand-teal-dark">Admissão</h2>
-             <p className="text-sm text-gray-600 mb-4">
-            Preencha as informações necessárias para criar um novo envelope de admissão
-          </p>
-            <label className="block text-brand-teal-dark font-semibold mb-1">Cargo</label>
-            <input
-              name="Cargo"
-              value={formValues.step3.nome_colaborador || ""}
-              onChange={(e) => handleInputChange("nome_colaborador", e.target.value)}
-              className="w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan"
-            />
+            <h2 className="text-xl font-bold text-brand-teal-dark">
+              Formulário de Admissão
+            </h2>
+            <p className="text-sm text-gray-600 mb-4">
+              Requisição para Admissão de Pessoal (RAP)
+            </p>
 
-            <label className="block text-brand-teal-dark font-semibold mb-1">Categoria</label>
-            <select 
-              name="categoria"
-              value={formValues.step3.unidade_colaborador || ""}
-              onChange={(e) => handleInputChange("unidade_colaborador", e.target.value)}
-              className="w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan"
-            >
-              <option value="">Selecione</option>
-              <option>Celetista</option>
-              <option>Estagiário</option>
-              <option>Jovem Aprendiz</option>
-              
-            </select>
+            {/* GRID PRINCIPAL */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* -------- COLUNA ESQUERDA -------- */}
+              <div className="space-y-4 bg-brand-ice-blue p-6 rounded-tl-3xl rounded-bl-3xl">
+                {/* Cargo */}
+                <div>
+                  <label className={labelClass}>Cargo *</label>
+                  <input
+                    type="text"
+                    name="cargo"
+                    value={formValues.step3.cargo || ""}
+                    onChange={(e) => handleInputChange("cargo", e.target.value)}
+                    className={inputClass}
+                  />
+                </div>
 
-            <label className="block text-brand-teal-dark font-semibold mb-1">Horário de trabalho</label>
-            <select 
-              name="horario_trabalho"
-              value={formValues.step3.unidade_colaborador || ""}
-              onChange={(e) => handleInputChange("unidade_colaborador", e.target.value)}
-              className="w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan"
-            >
-              <option value="">Selecione</option>
-              <option>8h às 18h</option>
-               <option>8h às 14h</option>
-              <option>12h às 18h</option>
-              
-            </select>
-            
-            <label className="block text-brand-teal-dark font-semibold mb-1">Cargo</label>
-            <input
-              name="cargo_colaborador"
-              value={formValues.step3.cargo_colaborador || ""}
-              onChange={(e) => handleInputChange("cargo_colaborador", e.target.value)}
-              className="w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan"
-            />
+                {/* Categoria */}
+                <div>
+                  <label className={labelClass}>Categoria *</label>
+                  <select
+                    name="categoria"
+                    value={formValues.step3.categoria || ""}
+                    onChange={(e) =>
+                      handleInputChange("categoria", e.target.value)
+                    }
+                    className={inputClass}
+                  >
+                    <option value="">Selecione</option>
+                    <option>Celetista</option>
+                    <option>Estagiário</option>
+                    <option>Jovem Aprendiz</option>
+                    <option>Temporário</option>
+                  </select>
+                </div>
 
-            <label className="block text-brand-teal-dark font-semibold mb-1">Motivo da Requisição</label>
-            <input
-              name="cargo_colaborador"
-              value={formValues.step3.cargo_colaborador || ""}
-              onChange={(e) => handleInputChange("cargo_colaborador", e.target.value)}
-              className="w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan"
-            />
-            
-            <label className="block text-brand-teal-dark font-semibold mb-1">Unidade</label>
-            <select 
-              name="unidade_colaborador"
-              value={formValues.step3.unidade_colaborador || ""}
-              onChange={(e) => handleInputChange("unidade_colaborador", e.target.value)}
-              className="w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan"
-            >
-              <option value="">Selecione</option>
-              <option>Teiú - Matriz</option>
-              <option>Teiú Filial - Feira de Santana</option>
-              <option>Teiú - Cosméticos</option>
-              <option>Holding</option>
-              <option>Votre</option>
-              <option>Kaioka</option>
-            </select>
+                {/* Horário de trabalho */}
+                <div>
+                  <label className={labelClass}>Horário de trabalho *</label>
+                  <select
+                    name="horario_trabalho"
+                    value={formValues.step3.horario_trabalho || ""}
+                    onChange={(e) =>
+                      handleInputChange("horario_trabalho", e.target.value)
+                    }
+                    className={inputClass}
+                  >
+                    <option value="">Selecione</option>
+                    <option>08h às 18h</option>
+                    <option>08h às 14h</option>
+                    <option>12h às 18h</option>
+                    <option>Escala 12x36</option>
+                  </select>
+                </div>
 
-            {/* Continue com todos os outros campos do formulário de admissão */}
-            {/* ... (repetir o padrão para todos os campos) ... */}
+                {/* Setor */}
+                <div>
+                  <label className={labelClass}>Setor *</label>
+                  <select
+                    name="setor"
+                    value={formValues.step3.setor || ""}
+                    onChange={(e) => handleInputChange("setor", e.target.value)}
+                    className={inputClass}
+                  >
+                    <option value="">Selecione</option>
+                    <option>Recursos Humanos</option>
+                    <option>Financeiro</option>
+                    <option>Comercial</option>
+                    <option>Produção</option>
+                    <option>Logística</option>
+                    <option>Marketing</option>
+                    <option>TI</option>
+                  </select>
+                </div>
+
+                {/* Motivo e Sexo (lado a lado) */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className={labelClass}>Motivo da Requisição *</label>
+                    <select
+                      name="motivo"
+                      value={formValues.step3.motivo || ""}
+                      onChange={(e) =>
+                        handleInputChange("motivo", e.target.value)
+                      }
+                      className={inputClass}
+                    >
+                      <option value="">Selecione</option>
+                      <option>Reposição</option>
+                      <option>Nova posição</option>
+                      <option>Ampliação de equipe</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className={labelClass}>Sexo *</label>
+                    <select
+                      name="sexo"
+                      value={formValues.step3.sexo || ""}
+                      onChange={(e) =>
+                        handleInputChange("sexo", e.target.value)
+                      }
+                      className={inputClass}
+                    >
+                      <option value="">Selecione</option>
+                      <option>Feminino</option>
+                      <option>Masculino</option>
+                      <option>Ambos</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Salário Inicial */}
+                <div>
+                  <label className={labelClass}>Salário Inicial *</label>
+                  <input
+                    type="number"
+                    name="salario"
+                    value={formValues.step3.salario || ""}
+                    onChange={(e) =>
+                      handleInputChange("salario", e.target.value)
+                    }
+                    placeholder="Digite o valor em R$"
+                    className={inputClass}
+                  />
+                </div>
+
+                {/* Tipo de Seleção e Unidade (lado a lado) */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className={labelClass}>Tipo de Seleção *</label>
+                    <select
+                      name="tipo_selecao"
+                      value={formValues.step3.tipo_selecao || ""}
+                      onChange={(e) =>
+                        handleInputChange("tipo_selecao", e.target.value)
+                      }
+                      className={inputClass}
+                    >
+                      <option value="">Selecione</option>
+                      <option>Processo Interno</option>
+                      <option>Processo Externo</option>
+                      <option>Indicação</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className={labelClass}>Unidade</label>
+                    <select
+                      name="unidade"
+                      value={formValues.step3.unidade || ""}
+                      onChange={(e) =>
+                        handleInputChange("unidade", e.target.value)
+                      }
+                      className={inputClass}
+                    >
+                      <option value="">Selecione</option>
+                      <option>Teiú - Matriz</option>
+                      <option>Teiú Filial - Feira de Santana</option>
+                      <option>Teiú - Cosméticos</option>
+                      <option>Holding</option>
+                      <option>Votre</option>
+                      <option>Kaioka</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              {/* -------- COLUNA DIREITA -------- */}
+              <div className="space-y-4 border border-brand-ice-blue p-6 rounded-tr-3xl rounded-br-3xl">
+                <div>
+                  <label className={labelClass}>
+                    Justificativa para Contratação *
+                  </label>
+                  <textarea
+                    name="justificativa"
+                    value={formValues.step3.justificativa || ""}
+                    onChange={(e) =>
+                      handleInputChange("justificativa", e.target.value)
+                    }
+                    className={inputClass}
+                    rows={2}
+                  />
+                </div>
+
+                <div>
+                  <label className={labelClass}>
+                    Descrição das Atividades *
+                  </label>
+                  <textarea
+                    name="descricao_atividades"
+                    value={formValues.step3.descricao_atividades || ""}
+                    onChange={(e) =>
+                      handleInputChange("descricao_atividades", e.target.value)
+                    }
+                    className={inputClass}
+                    rows={3}
+                  />
+                </div>
+
+                <div>
+                  <label className={labelClass}>Observações</label>
+                  <textarea
+                    name="observacoes"
+                    value={formValues.step3.observacoes || ""}
+                    onChange={(e) =>
+                      handleInputChange("observacoes", e.target.value)
+                    }
+                    className={inputClass}
+                    rows={2}
+                  />
+                </div>
+
+                {/* Alerta */}
+                <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-3 rounded-md text-sm">
+                  {" "}
+                  {/* borda ao lado */}
+                  <div className="flex items-center">
+                    <AlertTriangle className="w-5 h-5 mr-2 text-yellow-700" />
+                    <span>
+                      Importante: Revise as informações antes de enviar
+                    </span>
+                  </div>
+                </div>
+
+                {/* Botão */}
+                <div className="flex justify-end">
+                  <button
+                    type="submit"
+                    className="bg-brand-blue-dark text-white px-6 py-2 rounded-md hover:bg-brand-blue-dark/90"
+                  >
+                    Enviar
+                  </button>
+                </div>
+              </div>
+            </div>
           </>
         );
-
-      // Adicione os outros casos seguindo o mesmo padrão
 
       default:
         return <div>Formulário não encontrado para: {tipoEnvelope}</div>;
@@ -134,16 +274,6 @@ const Step3Form = ({
       className="space-y-4 bg-white p-6 rounded-md shadow"
     >
       {renderForm()}
-
-      {/* Botão enviar */}
-      <div className="flex justify-end">
-        <button
-          type="submit"
-          className="bg-green-700 text-white px-6 py-2 rounded-2xl hover:bg-green-800"
-        >
-          Enviar
-        </button>
-      </div>
     </form>
   );
 };
