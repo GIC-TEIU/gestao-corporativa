@@ -4,13 +4,14 @@ import PdfViewer from "../PdfViewer";
 import { StatusTimeline } from "./StatusTimeline";
 import { useEnvelope } from "../../context/EnvelopeContext";
 
-
 const InfoEnvio = ({ info }) => {
   return (
     <div className="bg-white rounded-xl shadow p-6">
       <div className="flex items-center gap-2 mb-6">
         <Mail className="w-5 h-5 text-[#0F3B57]" />
-        <h3 className="font-semibold text-lg text-[#0F3B57]">Informações do Envio</h3>
+        <h3 className="font-semibold text-lg text-[#0F3B57]">
+          Informações do Envio
+        </h3>
       </div>
 
       <div className="grid grid-cols-2 gap-y-4 text-sm">
@@ -21,7 +22,9 @@ const InfoEnvio = ({ info }) => {
         <span className="text-[#0F3B57] font-semibold">{info.dataEnvio}</span>
 
         <span className="text-gray-600 font-medium">Destinatários</span>
-        <span className="text-[#0F3B57] font-semibold">{info.destinatarios.join(", ")}</span>
+        <span className="text-[#0F3B57] font-semibold">
+          {info.destinatarios.join(", ")}
+        </span>
 
         <span className="text-gray-600 font-medium">Protocolo</span>
         <span className="text-[#0F3B57] font-semibold">{info.protocolo}</span>
@@ -35,7 +38,6 @@ const InfoEnvio = ({ info }) => {
 
 export const EnvelopeDetail = () => {
   const {
-    selectedEnvelope,
     documents,
     selectedDocs,
     previewDoc,
@@ -61,7 +63,7 @@ export const EnvelopeDetail = () => {
       className="bg-[#DFE9ED] flex-1 overflow-y-auto pt-8"
     >
       {/* Header */}
-      <div className="flex justify-between items-center mx-20">
+      <div className="flex justify-between items-center px-8">
         <h1 className="font-poppins font-bold text-4xl text-[#0F3B57]">
           Visualizar Envelope
         </h1>
@@ -75,17 +77,19 @@ export const EnvelopeDetail = () => {
       </div>
 
       {/* Conteúdo */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mx-20 mt-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 px-8 mt-6">
         {/* Prévia Documento */}
-        <div className="bg-white rounded-xl shadow p-4 flex flex-col items-center lg:col-span-2">
-          <h3 className="font-semibold mb-4 text-lg">Prévia do Documento</h3>
-          <div className="bg-gray-100 w-full h-[600px] flex items-center justify-center rounded-lg overflow-hidden">
+        <div className="bg-white rounded-xl shadow p-6 flex flex-col lg:col-span-2">
+          <h3 className="font-semibold mb-4 text-lg text-[#0F3B57]">
+            Prévia do Documento
+          </h3>
+          <div className="flex-1 w-full rounded-lg border bg-gray-50 overflow-y-auto">
             {previewDoc ? (
               <PdfViewer file={previewDoc} />
             ) : (
-              <p className="text-gray-500">
+              <div className="flex items-center justify-center h-full text-gray-500">
                 Selecione um documento para visualizar
-              </p>
+              </div>
             )}
           </div>
         </div>
@@ -93,7 +97,7 @@ export const EnvelopeDetail = () => {
         {/* Lateral: Status + Info Envio */}
         <div className="flex flex-col gap-6">
           <div className="bg-white rounded-xl shadow p-6">
-            <h3 className="font-semibold text-center mb-6">
+            <h3 className="font-semibold text-[#0F3B57] mb-6 text-center">
               Status do Documento
             </h3>
             <StatusTimeline />
@@ -104,8 +108,10 @@ export const EnvelopeDetail = () => {
       </div>
 
       {/* Documentos para Assinar */}
-      <div className="mx-20 mt-8 bg-white rounded-xl shadow p-6">
-        <h3 className="font-semibold mb-4">Selecionar Documentos para Assinar</h3>
+      <div className="px-8 mt-8 bg-white rounded-xl shadow p-6">
+        <h3 className="font-semibold mb-4 text-[#0F3B57]">
+          Selecionar Documentos para Assinar
+        </h3>
         {signatureError && (
           <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
             {signatureError}
