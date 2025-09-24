@@ -2,7 +2,8 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import background from '../../assets/7b892eabda57ce324d951f68fea02a7d 1 (1).png';
+
+// 1. A linha de import da imagem foi REMOVIDA daqui.
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -42,7 +43,8 @@ function Register() {
   return (
     <div className="w-screen h-screen flex items-center justify-center bg-gradient-to-b from-[#0C495E] to-[#737373] relative">
       <img
-        src={background}
+        // 2. O caminho da imagem foi colocado DIRETAMENTE AQUI como uma string.
+        src="/imgs/background.png" 
         alt="Fundo"
         className="object-cover w-full h-full absolute top-0 left-0 z-0 opacity-50"
       />
