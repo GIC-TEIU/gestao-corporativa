@@ -12,7 +12,7 @@ export default function ProfilePage() {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Preencher o formulário com os dados do usuário quando carregar
+  
   useEffect(() => {
     if (currentUser) {
       setFormData({
@@ -60,12 +60,12 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      {/* Conteúdo */}
+      
       <main className="max-w-3xl mx-auto p-8">
         <h1 className="text-2xl font-bold text-slate-800 mb-6">Meu Perfil</h1>
 
         <div className="bg-white shadow rounded-2xl p-6 space-y-6">
-          {/* Mensagem de feedback */}
+          
           {message && (
             <div className={`p-3 rounded-lg ${
               message.includes('Erro') 
@@ -76,7 +76,7 @@ export default function ProfilePage() {
             </div>
           )}
 
-          {/* Foto de perfil */}
+         
           <div className="flex items-center gap-6">
             <img
               src="/profile-stefani.jpg"
@@ -89,7 +89,7 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          {/* Informações */}
+          
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
               <label className="block text-sm font-medium text-slate-600">Nome completo</label>
@@ -101,6 +101,7 @@ export default function ProfilePage() {
                 className="w-full mt-1 px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-slate-400"
               />
             </div>
+            
 
             <div>
               <label className="block text-sm font-medium text-slate-600">Nome de usuário</label>

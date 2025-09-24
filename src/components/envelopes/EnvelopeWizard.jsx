@@ -1,10 +1,10 @@
 // src/components/envelopes/EnvelopeWizard.jsx
 import { useNavigate } from "react-router-dom";
 import { useEnvelopeForm } from "../../hooks/useEnvelopeForm";
-import Step1Setor from "./";
-import Step2Tipo from "./ChooseForm";
-import Step2_5Movimentacao from "./MovementForm";
-import Step3Form from "./AdmissionForm";
+import FormHeader from "./FormHeader";
+import ChooseForm from "./ChooseForm";
+import MovementForm from "./MovementForm";
+import AdmissionForm from "./AdmissionForm";
 import ConfirmationModal from "./ConfirmationModal";
 import LoadingState from "./LoadingState";
 import SuccessState from "./SuccessState";
@@ -45,7 +45,7 @@ export default function EnvelopeWizard() {
     switch (step) {
       case 1:
         return (
-          <Step1Setor
+          <FormHeader
             setorEnvelope={setorEnvelope}
             setSetorEnvelope={setSetorEnvelope}
             handleContinue={handleContinue}
@@ -55,7 +55,7 @@ export default function EnvelopeWizard() {
         );
       case 2:
         return (
-          <Step2Tipo
+          <ChooseForm
             setorEnvelope={setorEnvelope}
             tipoEnvelope={tipoEnvelope}
             setTipoEnvelope={setTipoEnvelope}
@@ -66,7 +66,7 @@ export default function EnvelopeWizard() {
         );
       case 2.5:
         return (
-          <Step2_5Movimentacao
+          <MovementForm
             tipoEnvelope={tipoEnvelope}
             setTipoEnvelope={setTipoEnvelope}
             handleContinue={handleContinue}
@@ -75,7 +75,7 @@ export default function EnvelopeWizard() {
         );
       case 3:
         return (
-          <Step3Form
+          <AdmissionForm
             tipoEnvelope={tipoEnvelope}
             handleContinue={handleContinue}
             updateFormValues={updateFormValues}

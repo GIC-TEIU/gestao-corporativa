@@ -1,8 +1,7 @@
 import { useState } from "react";
 import PdfViewer from "../../components/PdfViewer";
-import { saveAs } from "file-saver";
-import JSZip from "jszip";
 
+// Importação dos documentos PDF
 import doc1 from "../../assets/doc1.pdf";
 import doc2 from "../../assets/doc2.pdf";
 import doc3 from "../../assets/doc3.pdf";
@@ -21,23 +20,6 @@ function Teste() {
     setSelectedDocs((prev) =>
       prev.includes(id) ? prev.filter((d) => d !== id) : [...prev, id]
     );
-  };
-
-  const handleDownload = async () => {
-    if (selectedDocs.length === 0) return;
-
-    if (selectedDocs.length === 1) {
-      const doc = documents.find((d) => d.id === selectedDocs[0]);
-      saveAs(doc.file, doc.name);
-    } else {
-      const zip = new JSZip();
-      selectedDocs.forEach((id) => {
-        const doc = documents.find((d) => d.id === id);
-        zip.file(doc.name, fetch(doc.file).then((res) => res.blob()));
-      });
-      const content = await zip.generateAsync({ type: "blob" });
-      saveAs(content, "documentos.zip");
-    }
   };
 
   return (
@@ -63,14 +45,6 @@ function Teste() {
             </span>
           </label>
         ))}
-
-        <button
-          onClick={handleDownload}
-          className="mt-4 py-2 px-4 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-400"
-          disabled={selectedDocs.length === 0}
-        >
-          Baixar Selecionados
-        </button>
       </div>
 
       {/* Preview */}
