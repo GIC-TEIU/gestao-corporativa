@@ -1,5 +1,4 @@
-import { FileText, Mail } from "lucide-react";
-import back from "../../assets/ep_back.png";
+import { FileText, Mail, ArrowLeft } from "lucide-react";
 import PdfViewer from "../PdfViewer";
 import { StatusTimeline } from "./StatusTimeline";
 import { useEnvelope } from "../../context/EnvelopeContext";
@@ -42,13 +41,12 @@ export const EnvelopeDetail = () => {
     selectedDocs,
     previewDoc,
     signatureError,
-    envelopeInfo, // Nova propriedade do contexto
+    envelopeInfo,
     handleBackToList,
     setPreviewDoc,
     toggleSelect,
   } = useEnvelope();
 
-  // Fallback caso envelopeInfo não esteja disponível
   const info = envelopeInfo || {
     enviadoPor: "Adriana Mármore",
     dataEnvio: "14/06/2025",
@@ -69,9 +67,9 @@ export const EnvelopeDetail = () => {
         </h1>
         <button
           onClick={handleBackToList}
-          className="flex items-center gap-2 text-[#0F3B57] hover:text-[#0a2a3f]"
+          className="flex items-center gap-2 text-[#0F3B57] hover:text-[#0a2a3f] font-medium"
         >
-          <img src={back} className="w-6 h-6" alt="voltar" />
+          <ArrowLeft className="w-5 h-5" />
           Voltar para lista
         </button>
       </div>
@@ -108,7 +106,7 @@ export const EnvelopeDetail = () => {
       </div>
 
       {/* Documentos para Assinar */}
-      <div className="px-8 mt-8 bg-white rounded-xl shadow p-6">
+      <div className="px-8 my-8 bg-white rounded-xl shadow p-6">
         <h3 className="font-semibold mb-4 text-[#0F3B57]">
           Selecionar Documentos para Assinar
         </h3>
@@ -125,7 +123,7 @@ export const EnvelopeDetail = () => {
                 ${
                   previewDoc === doc.file
                     ? "border-[#16A34A] bg-[#F0FDF4]"
-                    : "border-gray-300 bg-gray-50"
+                    : "border-gray-300 bg-gray-50 hover:bg-gray-100"
                 }`}
               onClick={() => setPreviewDoc(doc.file)}
             >

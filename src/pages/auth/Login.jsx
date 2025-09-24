@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import logo from "../../assets/logo.png";
-import bgTexture from "../../assets/bg.png";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -36,12 +34,12 @@ function Login() {
       {/* Imagem de background transparente */}
       <div
         className="absolute inset-0 bg-cover bg-center opacity-60 z-10"
-        style={{ backgroundImage: `url(${bgTexture})` }}
+        style={{ backgroundImage: "url('/imgs/background.png')" }}
       ></div>
 
       {/* Conteúdo principal */}
       <div className="relative flex w-full z-20">
-        {/* Lado esquerdo - restaurado como no primeiro código */}
+        {/* Lado esquerdo */}
         <div className="hidden lg:flex lg:w-1/2 flex-col justify-between items-center text-left bg-white/60 p-12">
           <div className="w-full flex flex-col justify-center items-left flex-1">
             <p className="text-lg text-gray-600 w-72 text-center mb-2">Bem-vindo ,</p>
@@ -51,7 +49,7 @@ function Login() {
           </div>
 
           <img
-            src={logo}
+            src="/imgs/logo-marinho-white.png" // Assumindo que este logo também está em public/imgs
             alt="Logo Marinho de Andrade Holding"
             className="w-32 lg:w-40 mb-6"
           />
@@ -63,7 +61,7 @@ function Login() {
             
             {/* Logo mobile */}
             <div className="lg:hidden flex justify-center mb-8">
-              <img src={logo} alt="Logo Marinho de Andrade Holding" className="w-32" />
+              <img src="/imgs/logo-marinho-white.png" alt="Logo Marinho de Andrade Holding" className="w-32" />
             </div>
 
             <h2 className="text-white text-4xl font-light mb-6 md:mb-8 text-center">Login</h2>
@@ -92,7 +90,7 @@ function Login() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="border-none w-72 px-4 py-3 md:py-2 rounded-xl bg-brand-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-cyan"
+                    className="border-none w-72 px-4 py-3 md:py-2 rounded-xl bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#0C495E]"
                   />
                 </div>
               </div>
@@ -112,7 +110,7 @@ function Login() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    className="border-none w-72 px-4 py-3 md:py-2 rounded-xl bg-brand-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-cyan"
+                    className="border-none w-72 px-4 py-3 md:py-2 rounded-xl bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#0C495E]"
                   />
                 </div>
               </div>
@@ -121,7 +119,7 @@ function Login() {
               <div className="text-right mb-6 w-72">
                 <Link
                   to="/forgot-password"
-                  className="text-xs text-brand-ice-blue hover:underline font-poppins"
+                  className="text-xs text-blue-100 hover:underline font-poppins"
                 >
                   Esqueci a senha
                 </Link>
@@ -131,7 +129,7 @@ function Login() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-60 font-poppins font-light bg-brand-blue-dark hover:bg-brand-cyan text-white py-3 md:py-2 rounded-xl shadow-xl transition disabled:opacity-50"
+                className="w-60 font-poppins font-light bg-[#19282e] hover:bg-[#29454E] text-white py-3 md:py-2 rounded-xl shadow-xl transition disabled:opacity-50"
               >
                 {loading ? "Entrando..." : "Entrar"}
               </button>
@@ -141,7 +139,7 @@ function Login() {
             <div className="text-center mt-4">
               <Link
                 to="/register"
-                className="text-sm text-brand-ice-blue hover:underline font-poppins"
+                className="text-sm text-blue-100 hover:underline font-poppins"
               >
                 Não tenho cadastro
               </Link>

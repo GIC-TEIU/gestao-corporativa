@@ -5,17 +5,16 @@ import ProtectedRoute from './components/ProtectedRoute';
 // Importando as páginas
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
-import Header from "./components/layout/header";
+import Header from "./components/ui/header";
 import Home from './pages/home/Home';
 import Dashboard from "./pages/dashboard/Dashboard";
 import RequestReset from "./pages/password-recovery/RequestReset";
 import ResetPassword from "./pages/password-recovery/ResetPassword";
 import Password from "./pages/password-recovery/Password";
-import View from "./pages/view/view"; 
+import View from "./pages/view/View"; 
 import Funcionario from "./pages/Funcionario/Funcionario";
 import Envelope from "./pages/Envelope/Envelope";
 import Profile from './pages/Profile/Profile';
-import Teste from "./pages/view/testeStatus";
 import PdfViewer from "./components/PdfViewer";
 import Destinatario from "./pages/Envelope/Destinatario"; 
 import { EnvelopeProvider } from './context/EnvelopeContext';
@@ -74,13 +73,6 @@ function App() {
           <ProtectedRoute>
             <Header />
             <Profile />
-          </ProtectedRoute>
-        }/>
-
-        <Route path="/teste" element={
-          <ProtectedRoute>
-            <Header />
-            <Teste />
           </ProtectedRoute>
         }/>
       </Routes>

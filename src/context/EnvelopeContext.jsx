@@ -1,7 +1,4 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import doc1 from "../assets/doc1.pdf";
-import doc2 from "../assets/TwilioAPI.pdf";
-import doc3 from "../assets/doc3.pdf";
 
 const EnvelopeContext = createContext();
 
@@ -50,9 +47,9 @@ export const EnvelopeProvider = ({ children }) => {
   ];
 
   const documents = [
-    { id: 1, name: "Documento-1.pdf", file: doc1 },
-    { id: 2, name: "Documento-2.pdf", file: doc2 },
-    { id: 3, name: "Documento-3.pdf", file: doc3 },
+    { id: 1, name: "Documento-1.pdf", file: "/docs/doc1.pdf" },
+    { id: 2, name: "Documento-2.pdf", file: "/docs/doc2.pdf" },
+    { id: 3, name: "Documento-3.pdf", file: "/docs/doc4.pdf" },
   ];
 
   // Carregar status salvo quando um envelope é selecionado

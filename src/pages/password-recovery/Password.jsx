@@ -1,5 +1,4 @@
 import React from 'react';
-import background from '../../assets/7b892eabda57ce324d951f68fea02a7d 1 (1).png';
 
 
 function Password () {
@@ -7,7 +6,7 @@ return(
     <div className="w-screen h-screen flex items-center justify-center bg-gradient-to-b from-[#0C495E] to-[#737373] relative">
     
           <img
-            src={background}
+            src="/imgs/background.png"
             alt="Fundo"
             className="object-cover w-full h-full absolute top-0 left-0 z-0 opacity-50"
           />

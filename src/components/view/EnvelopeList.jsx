@@ -1,5 +1,4 @@
-import { Menu } from 'lucide-react';
-import back from "../../assets/ep_back.png";
+import { Menu, ArrowLeft } from 'lucide-react';
 import { useEnvelope } from '../../context/EnvelopeContext';
 
 export const EnvelopeList = () => {
@@ -18,12 +17,11 @@ export const EnvelopeList = () => {
       </div>
 
       <div className="flex flex-row justify-between">
-        <button>
-          <img
-            src={back}
-            className="ml-24 mt-5 w-[25px] h-[24px] hover:w-[28px] hover:h-[28px]"
-            alt="voltar"
-          />
+        <button 
+          className="flex items-center gap-2 text-[#0F3B57] hover:text-[#0a2a3f] font-medium"
+        >
+          <ArrowLeft className="w-5 h-5" />
+          Voltar
         </button>
         <button onClick={toggleSidebar} className="flex flex-row gap-2 mr-40 mt-5 font-poppins bg-[#EEF1F1] rounded-xl border border-[#9CA3AF] w-24 h-8 items-center justify-center text-[#0F3B57] font-semibold text-sm hover:shadow-lg">
           Menu <Menu size={12} />

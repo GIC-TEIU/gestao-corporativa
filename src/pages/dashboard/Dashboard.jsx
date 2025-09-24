@@ -15,28 +15,28 @@ function Dashboard() {
       {/* Grid de cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Card 
-          imgSrc="src/assets/novo-email.png"
+          imgSrc="/imgs/novo-envelope.png"
           title="Novo envelope" 
           description="Criar um novo envelope para assinatura digital de documentos" 
           link="/Envelope" 
         />
 
         <Card 
-          imgSrc="src/assets/carta.png"
+          imgSrc="/imgs/carta.png"
           title="Visualizar envelope" 
           description="Acompanhar envelopes já criados e suas assinaturas digitais" 
           link="/view" 
         />
 
         <Card 
-          imgSrc="src/assets/recursos-humanos(1).png"
+          imgSrc="/imgs/recursos-humanos.png"
           title="Painel RH" 
           description="Acompanhar e gerenciar processos de RH e documentos relacionados" 
           link="/Envelope" 
         />
 
         <Card 
-          imgSrc="src/assets/funcionario(1).png"  
+          imgSrc="/imgs/funcionarios.png"  
           title="Funcionários"
           description="Gerenciar funcionários cadastrados e suas assinaturas digitais" 
           link="/Funcionario" 

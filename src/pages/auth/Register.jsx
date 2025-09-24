@@ -3,8 +3,6 @@ import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
-// 1. A linha de import da imagem foi REMOVIDA daqui.
-
 function Register() {
   const [formData, setFormData] = useState({
     nome: '',
@@ -40,80 +38,104 @@ function Register() {
     }
   };
 
+  // --- ALTERAÇÕES PRINCIPAIS ABAIXO ---
+
   return (
-    <div className="w-screen h-screen flex items-center justify-center bg-gradient-to-b from-[#0C495E] to-[#737373] relative">
+    // Container principal que centraliza o conteúdo
+    <div className="w-screen min-h-screen flex items-center justify-center bg-gradient-to-b from-[#0C495E] to-[#737373] relative p-4">
+      {/* Imagem de fundo */}
       <img
-        // 2. O caminho da imagem foi colocado DIRETAMENTE AQUI como uma string.
         src="/imgs/background.png" 
         alt="Fundo"
-        className="object-cover w-full h-full absolute top-0 left-0 z-0 opacity-50"
+        className="object-cover w-full h-full absolute top-0 left-0 z-0 opacity-30"
       />
 
-      <div className="relative z-10 flex flex-col items-center justify-center w-full max-w-md">
-        <h1 className="text-white font-poppins text-4xl font-thin mb-10">Cadastro</h1>
+      {/* Card do formulário */}
+      <div className="relative z-10 flex flex-col items-center justify-center w-full max-w-3xl">
+        <h1 className="text-white font-poppins text-4xl font-thin mb-8 text-center">Cadastro</h1>
 
         {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 w-full max-w-md">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="w-[800px] flex flex-row flex-wrap mt-8 items-center justify-center">
-          <div className="conteiner-name-register m-4 flex flex-col">
-            <label className="name-register text-white text-1xl font-extralight">Nome:</label>
+        {/* FORMULÁRIO: 
+          - Mobile (padrão): uma coluna com 'grid-cols-1'.
+          - Desktop (md:): duas colunas com 'md:grid-cols-2'.
+          - 'gap-6' cria um espaçamento consistente entre os campos.
+        */}
+        <form onSubmit={handleSubmit} className="w-full grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5 mt-4">
+          
+          {/* Campo Nome */}
+          <div className="flex flex-col">
+            <label className="text-white text-sm font-light mb-1">Nome:</label>
             <input
               name="nome"
               value={formData.nome}
               onChange={handleChange}
               required
-              className="input-cpf rounded-lg px-4 py-2 h-8 w-64 m-2 focus:outline-none focus:shadow focus:shadow-[#000000]"
+              placeholder="Digite seu nome completo"
+              className="rounded-lg px-4 py-2 bg-white/90 text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#737373]"
               type="text"
             />
           </div>
 
-          <div className="conteiner-cpf-register m-4 flex flex-col">
-            <label className="name-register text-white text-1xl font-extralight">CPF:</label>
+          {/* Campo CPF */}
+          <div className="flex flex-col">
+            <label className="text-white text-sm font-light mb-1">CPF:</label>
             <input
               name="cpf"
               value={formData.cpf}
               onChange={handleChange}
               required
-              className="input-cpf rounded-lg px-4 py-2 h-8 w-64 m-2 focus:outline-none focus:shadow focus:shadow-[#000000]"
+              placeholder="000.000.000-00"
+              className="rounded-lg px-4 py-2 bg-white/90 text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#737373]"
               type="text"
             />
           </div>
 
-          <div className="conteiner-email-register m-4 flex flex-col">
-            <label className="name-register text-white text-1xl font-extralight">E-mail:</label>
+          {/* Campo E-mail */}
+          <div className="flex flex-col">
+            <label className="text-white text-sm font-light mb-1">E-mail:</label>
             <input
               name="email"
               value={formData.email}
               onChange={handleChange}
               required
-              className="input-email rounded-lg px-4 py-2 h-8 w-64 m-2 focus:outline-none focus:shadow focus:shadow-[#000000]"
+              placeholder="seu.email@exemplo.com"
+              className="rounded-lg px-4 py-2 bg-white/90 text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#737373]"
               type="email"
             />
           </div>
 
-          <div className="conteiner-pass-register m-4 flex flex-col">
-            <label className="name-register text-white text-1xl font-extralight">Senha:</label>
+          {/* Campo Senha */}
+          <div className="flex flex-col">
+            <label className="text-white text-sm font-light mb-1">Senha:</label>
             <input
               name="password"
               value={formData.password}
               onChange={handleChange}
               required
-              className="input-pass rounded-lg px-4 py-2 h-8 w-64 m-2 focus:outline-none focus:shadow focus:shadow-[#000000]"
+              placeholder="Crie uma senha forte"
+              className="rounded-lg px-4 py-2 bg-white/90 text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#737373]"
               type="password"
             />
           </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="font-poppins font-extralight button-register hover:bg-[#29454E] text-white px-6 py-2 rounded-lg mt-16 bg-[#19282e] transition disabled:opacity-50"
-          >
-            {loading ? 'Cadastrando...' : 'Cadastrar'}
-          </button>
+          {/* BOTÃO DE CADASTRO:
+            - 'md:col-span-2' faz o container do botão ocupar as duas colunas no desktop.
+            - 'flex justify-center' centraliza o botão dentro desse container.
+          */}
+          <div className="md:col-span-2 flex justify-center mt-6">
+            <button
+              type="submit"
+              disabled={loading}
+              className="font-poppins font-light w-full md:w-auto hover:bg-[#29454E] text-white px-8 py-3 rounded-lg bg-[#19282e] transition disabled:opacity-50"
+            >
+              {loading ? 'Cadastrando...' : 'Finalizar Cadastro'}
+            </button>
+          </div>
         </form>
       </div>
     </div>
