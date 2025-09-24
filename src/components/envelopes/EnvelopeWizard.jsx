@@ -1,10 +1,10 @@
 // src/components/envelopes/EnvelopeWizard.jsx
 import { useNavigate } from "react-router-dom";
 import { useEnvelopeForm } from "../../hooks/useEnvelopeForm";
-import Step1Setor from "./Step1Setor";
-import Step2Tipo from "./Step2Tipo";
-import Step2_5Movimentacao from "./Step2_5Movimentacao";
-import Step3Form from "./Step3Form";
+import Step1Setor from "./";
+import Step2Tipo from "./ChooseForm";
+import Step2_5Movimentacao from "./MovementForm";
+import Step3Form from "./AdmissionForm";
 import ConfirmationModal from "./ConfirmationModal";
 import LoadingState from "./LoadingState";
 import SuccessState from "./SuccessState";

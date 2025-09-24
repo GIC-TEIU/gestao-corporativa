@@ -18,7 +18,7 @@ import Envelope from "./pages/Envelope/Envelope";
 import Profile from './pages/Profile/Profile';
 import Teste from "./pages/view/testeStatus";
 import PdfViewer from "./components/PdfViewer";
-import Destinatario from "./pages/Envelope/Destinatario"; // <-- Importação adicionada
+import Destinatario from "./pages/Envelope/Destinatario"; 
 
 function App() {
   const { currentUser } = useAuth();
