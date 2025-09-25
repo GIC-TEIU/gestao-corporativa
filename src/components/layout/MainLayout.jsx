@@ -5,7 +5,7 @@ import PageHeader from '../ui/PageHeader';
 
 function MainLayout({ children, title, subtitle, showBackButton }) {
   return (
-    <div className="flex flex-col min-h-screen bg-[#DFE9ED]">
+    <div className="flex flex-col min-h-screen bg-white font-poppins">
       <Header />
       <main className="flex-1 w-full max-w-7xl mx-auto p-8">
         <PageHeader 
@@ -13,9 +13,7 @@ function MainLayout({ children, title, subtitle, showBackButton }) {
           subtitle={subtitle} 
           showBackButton={showBackButton} 
         />
-        <div className="bg-white rounded-2xl shadow-sm p-6">
-          {children}
-        </div>
+        {children}
       </main>
       <Footer />
     </div>
@@ -23,3 +21,4 @@ function MainLayout({ children, title, subtitle, showBackButton }) {
 }
 
 export default MainLayout;
+

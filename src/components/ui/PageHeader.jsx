@@ -10,23 +10,27 @@ function PageHeader({ title, subtitle, showBackButton = true }) {
   };
 
   return (
-    <div className="mb-6">
+    <div className="mb-8">
       {showBackButton && (
-        <button
-          onClick={handleBack}
-          className="flex items-center gap-2 text-[#0F3B57] hover:opacity-80 transition mb-4"
-        >
-          <ArrowLeft size={20} />
-          <span className="font-medium">Voltar</span>
-        </button>
+        <div className="mb-4 -ml-20"> 
+          <button
+            onClick={handleBack}
+            className="flex items-center gap-2 text-[#0F3B57] hover:opacity-80 transition"
+          >
+            <ArrowLeft size={20} />
+            <span className="font-medium">Voltar</span>
+          </button>
+        </div>
       )}
-      <h1 className="font-poppins font-bold text-4xl text-[#0F3B57]">{title}</h1>
-      {subtitle && (
-        <p className="text-gray-500 mt-1">{subtitle}</p>
-      )}
+
+      <div>
+        <h1 className="font-poppins font-bold text-4xl text-[#0F3B57]">{title}</h1>
+        {subtitle && (
+          <p className="text-gray-500 mt-1">{subtitle}</p>
+        )}
+      </div>
     </div>
   );
 }
 
 export default PageHeader;
-
