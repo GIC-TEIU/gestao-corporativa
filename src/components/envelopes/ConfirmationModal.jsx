@@ -4,14 +4,14 @@ import { ClipboardList, Edit, CheckCircle } from 'lucide-react';
 const ConfirmationModal = ({ show, formData, onEdit, onConfirm, formValues }) => {
   if (!show) return null;
 
-  // Função para formatar chaves para exibição
+ 
   const formatKey = (key) => {
     return key
       .replace(/_/g, ' ')
       .replace(/\b\w/g, l => l.toUpperCase());
   };
 
-  // Função para renderizar dados específicos do formulário
+
   const renderFormSpecificData = () => {
     if (!formData.dados) return null;
 

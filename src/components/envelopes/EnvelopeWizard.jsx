@@ -8,14 +8,11 @@ import AdmissionForm from "./AdmissionForm";
 import ConfirmationModal from "./ConfirmationModal";
 import LoadingState from "./LoadingState";
 import SuccessState from "./SuccessState";
-// O import do BackButton foi removido, pois usaremos o botão do MainLayout
-// import BackButton from "../ui/BackButton";
 
-// Objeto para gerenciar os títulos e subtítulos de cada etapa
 const stepInfo = {
   1: { title: "Novo Envelope", subtitle: "Preencha as informações do remetente e setor" },
   2: { title: "Novo Envelope", subtitle: "Selecione o tipo de solicitação" },
-  2.5: { title: "Movimentação de Pessoas", subtitle: "Preencha os detalhes do formulário de movimentação" },
+  2.5: { title: "Formulário de Movimentação de Pessoal", subtitle: "Requisição para Movimentação de Pessoal (MRP)" },
   3: { title: "Admissão de Colaborador", subtitle: "Preencha os detalhes do formulário de admissão" },
 };
 

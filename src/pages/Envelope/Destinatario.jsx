@@ -116,8 +116,8 @@ const Destinatario = () => {
 
 
   return (
-  
-    <MainLayout title="Envelopes" subtitle="Adicionar Destinatários">
+  <MainLayout title="Envelopes" subtitle="Adicionar Destinatários">
+    
       <div className="flex">
 
         <div className="w-auto flex flex-col items-center mr-8">

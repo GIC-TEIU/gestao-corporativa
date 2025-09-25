@@ -56,15 +56,10 @@ export const EnvelopeDetail = () => {
   };
 
   return (
-    <div
-      style={{ height: "calc(100vh - 82.22px)" }}
-      className="bg-[#DFE9ED] flex-1 overflow-y-auto pt-8"
-    >
+    <div className="flex-1 flex flex-col p-8 bg-[#DFE9ED] rounded-xl overflow-y-auto">
       {/* Header */}
-      <div className="flex justify-between items-center px-8">
-        <h1 className="font-poppins font-bold text-4xl text-[#0F3B57]">
-          Visualizar Envelope
-        </h1>
+      <div className="flex justify-between items-center mb-6">
+        
         <button
           onClick={handleBackToList}
           className="flex items-center gap-2 text-[#0F3B57] hover:text-[#0a2a3f] font-medium"
@@ -75,7 +70,7 @@ export const EnvelopeDetail = () => {
       </div>
 
       {/* Conteúdo */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 px-8 mt-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Prévia Documento */}
         <div className="bg-white rounded-xl shadow p-6 flex flex-col lg:col-span-2">
           <h3 className="font-semibold mb-4 text-lg text-[#0F3B57]">
@@ -106,7 +101,7 @@ export const EnvelopeDetail = () => {
       </div>
 
       {/* Documentos para Assinar */}
-      <div className="px-8 my-8 bg-white rounded-xl shadow p-6">
+      <div className="my-8 bg-white rounded-xl shadow p-6">
         <h3 className="font-semibold mb-4 text-[#0F3B57]">
           Selecionar Documentos para Assinar
         </h3>

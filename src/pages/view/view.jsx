@@ -4,6 +4,7 @@ import { EnvelopeList } from '../../components/view/EnvelopeList';
 import { EnvelopeDetail } from '../../components/view/EnvelopeDetail';
 import { SignatureModal } from '../../components/view/SignatureModal';
 import { RejectModal } from '../../components/view/RejectModal';
+import MainLayout from '../../components/layout/MainLayout';
 
 function EnvelopeViewerContent() {
   const { 
@@ -15,7 +16,7 @@ function EnvelopeViewerContent() {
   } = useEnvelope();
 
   return (
-    <div>
+    <MainLayout title="Visualizar Envelope" subtitle="Acompanhe envelopes já criados e suas assinaturas digitais">
       <Sidebar sidebarOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
       <main>
         {currentView === 'list' && <EnvelopeList />}
@@ -23,7 +24,7 @@ function EnvelopeViewerContent() {
       </main>
       {showSignatureModal && <SignatureModal />}
       {showRejectModal && <RejectModal />}
-    </div>
+    </MainLayout>
   );
 }
 

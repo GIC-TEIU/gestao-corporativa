@@ -11,17 +11,15 @@ export const EnvelopeList = () => {
   return (
     <div style={{ height: 'calc(100vh - 82.22px)' }} className="bg-[#DFE9ED] flex-1 overflow-y-auto pt-8">
       <div>
-        <h1 className="font-poppins ml-20 font-bold text-4xl text-[#0F3B57]">
-          Visualizar envelopes
-        </h1>
+       
       </div>
 
       <div className="flex flex-row justify-between">
         <button 
           className="flex items-center gap-2 text-[#0F3B57] hover:text-[#0a2a3f] font-medium"
         >
-          <ArrowLeft className="w-5 h-5" />
-          Voltar
+          
+         
         </button>
         <button onClick={toggleSidebar} className="flex flex-row gap-2 mr-40 mt-5 font-poppins bg-[#EEF1F1] rounded-xl border border-[#9CA3AF] w-24 h-8 items-center justify-center text-[#0F3B57] font-semibold text-sm hover:shadow-lg">
           Menu <Menu size={12} />
