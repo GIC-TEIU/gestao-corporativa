@@ -1,4 +1,3 @@
-// components/ui/BackButton.jsx
 import { ArrowLeft } from "lucide-react";
 
 const BackButton = ({ step, handleBack }) => (

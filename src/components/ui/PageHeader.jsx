@@ -2,12 +2,11 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 
-// Recebe title, subtitle e se deve ou não mostrar o botão de voltar
 function PageHeader({ title, subtitle, showBackButton = true }) {
   const navigate = useNavigate();
 
   const handleBack = () => {
-    navigate(-1); // Função para voltar para a página anterior
+    navigate(-1);
   };
 
   return (
@@ -29,6 +28,5 @@ function PageHeader({ title, subtitle, showBackButton = true }) {
   );
 }
 
-// A linha abaixo garante que o componente seja exportado corretamente.
 export default PageHeader;
 

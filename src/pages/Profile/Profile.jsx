@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import MainLayout from '../../components/layout/MainLayout'; // 1. Importando o layout
+import MainLayout from '../../components/layout/MainLayout';
 
 export default function ProfilePage() {
   const { currentUser, updateProfile } = useAuth();
@@ -59,13 +59,11 @@ export default function ProfilePage() {
     );
   }
 
-  // 2. Página agora utiliza o MainLayout
   return (
     <MainLayout 
       title="Meu Perfil" 
       subtitle="Gerencie suas informações e configurações"
     >
-      {/* 3. O conteúdo específico da página fica aqui dentro */}
       <div className="space-y-6">
         
         {message && (
@@ -80,7 +78,7 @@ export default function ProfilePage() {
 
         <div className="flex items-center gap-6">
           <img
-            src="/imgs/profile-stefani.jpg" // Ajustado para a pasta public
+            src="/imgs/profile-stefani.jpg" 
             alt="Foto de perfil"
             className="w-24 h-24 rounded-full object-cover border-2 border-slate-300 shadow"
             onError={(e) => { e.target.onerror = null; e.target.src='https://placehold.co/100x100/EFEFEF/333333?text=User'; }}

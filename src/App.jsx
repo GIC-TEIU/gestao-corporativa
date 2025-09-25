@@ -1,8 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
-
-// Importando as páginas
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import Home from './pages/home/Home';
@@ -34,8 +32,6 @@ function App() {
         <Route path="/forgot-password" element={<RequestReset />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/password" element={<Password />} />
-
-        {/* --- Rotas Protegidas Simplificadas --- */}
 
         <Route path="/dashboard" element={
           <ProtectedRoute>
