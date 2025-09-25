@@ -5,7 +5,6 @@ import ProtectedRoute from './components/ProtectedRoute';
 // Importando as páginas
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
-import Header from "./components/ui/header";
 import Home from './pages/home/Home';
 import Dashboard from "./pages/dashboard/Dashboard";
 import RequestReset from "./pages/password-recovery/RequestReset";
@@ -15,9 +14,8 @@ import View from "./pages/view/View";
 import Funcionario from "./pages/Funcionario/Funcionario";
 import Envelope from "./pages/Envelope/Envelope";
 import Profile from './pages/Profile/Profile';
-import PdfViewer from "./components/PdfViewer";
-import Destinatario from "./pages/Envelope/Destinatario"; 
 import { EnvelopeProvider } from './context/EnvelopeContext';
+import Destinatario from './pages/Envelope/Destinatario';
 
 function App() {
   const { currentUser } = useAuth();
@@ -37,41 +35,43 @@ function App() {
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/password" element={<Password />} />
 
-        {/* Rotas Protegidas */}
+        {/* --- Rotas Protegidas Simplificadas --- */}
+
         <Route path="/dashboard" element={
           <ProtectedRoute>
-            <Header />
             <Dashboard />
           </ProtectedRoute>
         }/>
         
-        {/* Rota da View com EnvelopeProvider (NOVO) */}
         <Route path="/view" element={
           <ProtectedRoute>
-            <Header />
-            <EnvelopeProvider> {/* ✅ Envolvendo com o provider */}
+            <EnvelopeProvider>
               <View />
             </EnvelopeProvider>
           </ProtectedRoute>
         }/> 
-         
+          
         <Route path="/funcionario" element={
           <ProtectedRoute>
-            <Header />
             <Funcionario />
           </ProtectedRoute>
         }/>
         
         <Route path="/envelope" element={
           <ProtectedRoute>
-            <Header />
             <Envelope />
+          </ProtectedRoute>
+        }/>
+        <Route path="/envelope/destinatario" element={
+          <ProtectedRoute>
+            <EnvelopeProvider>
+              <Destinatario />
+            </EnvelopeProvider>
           </ProtectedRoute>
         }/>
         
         <Route path="/profile" element={
           <ProtectedRoute>
-            <Header />
             <Profile />
           </ProtectedRoute>
         }/>
@@ -81,3 +81,4 @@ function App() {
 }
 
 export default App;
+
