@@ -49,7 +49,7 @@ function Login() {
           </div>
 
           <img
-            src="/imgs/logo-marinho-white.png" // Assumindo que este logo também está em public/imgs
+            src="/imgs/logo-marinho-blue.png"
             alt="Logo Marinho de Andrade Holding"
             className="w-32 lg:w-40 mb-6"
           />
