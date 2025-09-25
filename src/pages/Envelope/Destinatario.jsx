@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
     Send, 
     User, 
@@ -25,6 +26,7 @@ const isEmail = (email) => {
 };
 
 const Destinatario = () => {
+  const navigate = useNavigate();
   const [destinatarios, setDestinatarios] = useState([
     { id: 1, value: '', action: 'Aprovar' }
   ]);
@@ -114,10 +116,15 @@ const Destinatario = () => {
     setDestinatarios(_destinatarios);
   };
 
+  const handleSend = () => {
+  
+    navigate('/envelope/sucesso');
+  };
+
 
   return (
-  <MainLayout title="Envelopes" subtitle="Adicionar Destinatários">
-    
+  
+    <MainLayout title="Envelopes" subtitle="Adicionar Destinatários">
       <div className="flex">
 
         <div className="w-auto flex flex-col items-center mr-8">
@@ -176,7 +183,7 @@ const Destinatario = () => {
                                                     </li>
                                                 ))}
                                             </ul>
-                                        ) : isEmail(dest.value) ? (
+                                          ) : isEmail(dest.value) ? (
                                             <div onClick={() => handleInviteClick(dest.id, dest.value)} className="px-4 py-2 text-green-700 cursor-pointer hover:bg-green-50">
                                               ✓ Convidar <strong>{dest.value}</strong> por e-mail
                                             </div>
@@ -189,7 +196,7 @@ const Destinatario = () => {
                                 )}
                             </div>
                             
-                    
+                        
                             <div className="flex-grow">
                                 <label className="block text-sm font-medium text-brand-blue-dark mb-1">Ação</label>
                                 <div className="relative">
@@ -227,7 +234,8 @@ const Destinatario = () => {
         </div>
       </div>
       <div className="flex justify-end mt-12">
-          <Button>
+          {/* 4. Botão agora chama a função handleSend */}
+          <Button onClick={handleSend}>
               Enviar
               <ArrowRight size={20} />
           </Button>
@@ -237,3 +245,4 @@ const Destinatario = () => {
 };
 
 export default Destinatario;
+

@@ -14,6 +14,7 @@ import Envelope from "./pages/Envelope/Envelope";
 import Profile from './pages/Profile/Profile';
 import { EnvelopeProvider } from './context/EnvelopeContext';
 import Destinatario from './pages/Envelope/Destinatario';
+import RecipientSuccess from './components/envelopes/RecipientSuccess';
 
 function App() {
   const { currentUser } = useAuth();
@@ -21,56 +22,38 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Rota da Homepage */}
         <Route path="/" element={<Home />} />
-
-        {/* Rotas de Autenticação */}
         <Route path="/login" element={!currentUser ? <Login /> : <Dashboard />} />
         <Route path="/register" element={!currentUser ? <Register /> : <Dashboard />} />
-
-        {/* Rotas de Recuperação de Senha */}
         <Route path="/forgot-password" element={<RequestReset />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/password" element={<Password />} />
 
-        <Route path="/dashboard" element={
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
-        }/>
+        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
         
         <Route path="/view" element={
           <ProtectedRoute>
-            <EnvelopeProvider>
-              <View />
-            </EnvelopeProvider>
+            <EnvelopeProvider><View /></EnvelopeProvider>
           </ProtectedRoute>
         }/> 
           
-        <Route path="/funcionario" element={
-          <ProtectedRoute>
-            <Funcionario />
-          </ProtectedRoute>
-        }/>
+        <Route path="/funcionario" element={<ProtectedRoute><Funcionario /></ProtectedRoute>} />
         
-        <Route path="/envelope" element={
-          <ProtectedRoute>
-            <Envelope />
-          </ProtectedRoute>
-        }/>
+        <Route path="/envelope" element={<ProtectedRoute><Envelope /></ProtectedRoute>} />
+
         <Route path="/envelope/destinatario" element={
           <ProtectedRoute>
-            <EnvelopeProvider>
-              <Destinatario />
-            </EnvelopeProvider>
+            <EnvelopeProvider><Destinatario /></EnvelopeProvider>
           </ProtectedRoute>
         }/>
         
-        <Route path="/profile" element={
+        <Route path="/envelope/sucesso" element={
           <ProtectedRoute>
-            <Profile />
+            <RecipientSuccess />
           </ProtectedRoute>
         }/>
+        
+        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
       </Routes>
     </BrowserRouter>
   );

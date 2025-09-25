@@ -2,7 +2,7 @@ import React from 'react';
 import SuccessDisplay from '../ui/SuccessDisplay';
 import { Eye, Home } from 'lucide-react';
 
-function ExemploDeUso() {
+function EnvelopeFormSuccess() {
   const handleVerEnvelope = () => {
     console.log("Navegando para a página do envelope...");
   };
@@ -26,4 +26,4 @@ function ExemploDeUso() {
   );
 }
 
-export default ExemploDeUso;
+export default EnvelopeFormSuccess;
