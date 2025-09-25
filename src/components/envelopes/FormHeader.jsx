@@ -1,24 +1,13 @@
 import React from "react";
 import Button from "../ui/Button";
 
-// O componente recebe o estado e as funções via props
 const Step1Setor = ({ formValues, updateFormValues, handleContinue, setSetorEnvelope }) => {
   return (
     <form onSubmit={handleContinue} className="p-6">
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-        <div className="p-6">
-          <h2 className="text-xl font-bold text-brand-teal-dark mb-1">
-            Novo Envelope
-          </h2>
-          <p className="text-sm text-gray-600 mb-4">
-            Preencha as informações necessárias para criar um novo envelope de assinatura
-          </p>
-        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 p-6 pt-0">
-          {/* Seção da esquerda: Rótulos e Campos */}
           <div className="space-y-4 border-4 border-brand-ice-blue p-4 space-y-4 rounded-tl-3xl rounded-bl-2xl">
-            {/* Nome do requisitante */}
+
             <div>
               <label className="block text-brand-teal-dark font-semibold mb-1">
                 Nome do requisitante
@@ -32,7 +21,7 @@ const Step1Setor = ({ formValues, updateFormValues, handleContinue, setSetorEnve
               />
             </div>
 
-            {/* Cargo */}
+
             <div>
               <label className="block text-brand-teal-dark font-semibold mb-1">
                 Cargo
@@ -71,7 +60,6 @@ const Step1Setor = ({ formValues, updateFormValues, handleContinue, setSetorEnve
             </div>
           </div>
 
-          {/* Seção da direita: Fundo azul claro e Campos */}
           <div className="bg-brand-ice-blue rounded-tr-3xl rounded-br-2xl p-4 space-y-4">
             <div>
               <label className="block text-brand-teal-dark font-semibold mb-1">
@@ -122,7 +110,6 @@ const Step1Setor = ({ formValues, updateFormValues, handleContinue, setSetorEnve
             </div>
           </div>
         </div>
-      </div>
 
       <div className="flex justify-center mt-6">
         <Button

@@ -1,6 +1,6 @@
-// src/components/envelopes/EnvelopeWizard.jsx
 import { useNavigate } from "react-router-dom";
 import { useEnvelopeForm } from "../../hooks/useEnvelopeForm";
+import MainLayout from "../layout/MainLayout";
 import FormHeader from "./FormHeader";
 import ChooseForm from "./ChooseForm";
 import MovementForm from "./MovementForm";
@@ -8,111 +8,92 @@ import AdmissionForm from "./AdmissionForm";
 import ConfirmationModal from "./ConfirmationModal";
 import LoadingState from "./LoadingState";
 import SuccessState from "./SuccessState";
-import BackButton from "../ui/BackButton";
+// O import do BackButton foi removido, pois usaremos o botão do MainLayout
+// import BackButton from "../ui/BackButton";
+
+// Objeto para gerenciar os títulos e subtítulos de cada etapa
+const stepInfo = {
+  1: { title: "Novo Envelope", subtitle: "Preencha as informações do remetente e setor" },
+  2: { title: "Novo Envelope", subtitle: "Selecione o tipo de solicitação" },
+  2.5: { title: "Movimentação de Pessoas", subtitle: "Preencha os detalhes do formulário de movimentação" },
+  3: { title: "Admissão de Colaborador", subtitle: "Preencha os detalhes do formulário de admissão" },
+};
+
 
 export default function EnvelopeWizard() {
   const navigate = useNavigate();
   const {
     step,
-    setorEnvelope,
-    tipoRh,
-    tipoEnvelope,
     enviado,
     enviando,
     showConfirmation,
     formData,
     formValues,
-    setSetorEnvelope,
-    setTipoEnvelope,
-    setShowConfirmation,
-    updateFormValues,
     handleContinue,
     handleRhSelection,
-    handleBack,
+    handleBack, // A lógica de voltar ainda existe no hook, mas não é mais chamada pelo botão
     handleConfirm,
-    handleEdit
+    handleEdit,
+    ...stepProps 
   } = useEnvelopeForm();
 
-  const handleViewEnvelope = () => {
-    navigate("/view");
-  };
-
-  const handleGoToDashboard = () => {
-    navigate("/dashboard");
-  };
+  const handleViewEnvelope = () => navigate("/view");
+  const handleGoToDashboard = () => navigate("/dashboard");
 
   const renderStep = () => {
+    const commonProps = { handleContinue, updateFormValues: stepProps.updateFormValues };
     switch (step) {
       case 1:
-        return (
-          <FormHeader
-            setorEnvelope={setorEnvelope}
-            setSetorEnvelope={setSetorEnvelope}
-            handleContinue={handleContinue}
-            updateFormValues={updateFormValues}
-            formValues={formValues.step1}
-          />
-        );
+        return <FormHeader {...stepProps} {...commonProps} formValues={formValues.step1} />;
       case 2:
-        return (
-          <ChooseForm
-            setorEnvelope={setorEnvelope}
-            tipoEnvelope={tipoEnvelope}
-            setTipoEnvelope={setTipoEnvelope}
-            handleContinue={handleContinue}
-            handleRhSelection={handleRhSelection}
-            updateFormValues={updateFormValues}
-          />
-        );
+        return <ChooseForm {...stepProps} {...commonProps} handleRhSelection={handleRhSelection} />;
       case 2.5:
-        return (
-          <MovementForm
-            tipoEnvelope={tipoEnvelope}
-            setTipoEnvelope={setTipoEnvelope}
-            handleContinue={handleContinue}
-            updateFormValues={updateFormValues}
-          />
-        );
+        return <MovementForm {...stepProps} {...commonProps} />;
       case 3:
-        return (
-          <AdmissionForm
-            tipoEnvelope={tipoEnvelope}
-            handleContinue={handleContinue}
-            updateFormValues={updateFormValues}
-            formValues={formValues}
-          />
-        );
+        return <AdmissionForm {...stepProps} {...commonProps} formValues={formValues} />;
       default:
         return null;
     }
   };
 
-  return (
-    <div className="min-h-screen bg-[#E3EDF1] flex flex-col items-center">
-      <h1 className="text-4xl font-bold w-[1000px] mr-64 mt-10 text-brand-blue-dark mb-8">Envelopes</h1>
+  // Renderiza os estados de tela cheia fora do layout principal
+  if (enviando) return <LoadingState />;
+  if (enviado) {
+    return (
+      <SuccessState
+        onViewEnvelope={handleViewEnvelope}
+        onGoToDashboard={handleGoToDashboard}
+      />
+    );
+  }
 
-      <div className="w-full max-w-5xl p-8">
-        {enviando ? (
-          <LoadingState />
-        ) : !enviado ? (
-          <>
-            <BackButton step={step} handleBack={handleBack} />
+  // Pega as informações do passo atual
+  const currentStepInfo = stepInfo[step] || { title: "Envelopes", subtitle: "" };
+
+  return (
+    // O botão de voltar do layout agora está ATIVADO em todas as etapas
+    <MainLayout 
+      title={currentStepInfo.title} 
+      subtitle={currentStepInfo.subtitle}
+      showBackButton={true} // O botão agora aparece em todas as etapas
+    >
+      {/* O conteúdo do wizard (passos do formulário) vai aqui */}
+      <div className="w-full">
+          {/* O botão de voltar customizado foi removido daqui */}
+          
+          <div className="mt-4">
             {renderStep()}
-            <ConfirmationModal
-              show={showConfirmation}
-              formData={formData}
-              formValues={formValues}
-              onEdit={handleEdit}
-              onConfirm={handleConfirm}
-            />
-          </>
-        ) : (
-          <SuccessState
-            onViewEnvelope={handleViewEnvelope}
-            onGoToDashboard={handleGoToDashboard}
+          </div>
+          
+          <ConfirmationModal
+            show={showConfirmation}
+            formData={formData}
+            formValues={formValues}
+            onEdit={handleEdit}
+            onConfirm={handleConfirm}
           />
-        )}
       </div>
-    </div>
+    </MainLayout>
   );
 }
+

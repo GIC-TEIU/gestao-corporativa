@@ -20,18 +20,9 @@ const Step3Form = ({
       case "admissao":
         return (
           <>
-            <h2 className="text-xl font-bold text-brand-teal-dark">
-              Formulário de Admissão
-            </h2>
-            <p className="text-sm text-gray-600 mb-4">
-              Requisição para Admissão de Pessoal (RAP)
-            </p>
-
-            {/* GRID PRINCIPAL */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* -------- COLUNA ESQUERDA -------- */}
               <div className="space-y-4 bg-brand-ice-blue p-6 rounded-tl-3xl rounded-bl-3xl">
-                {/* Cargo */}
+
                 <div>
                   <label className={labelClass}>Cargo *</label>
                   <input
@@ -43,7 +34,7 @@ const Step3Form = ({
                   />
                 </div>
 
-                {/* Categoria */}
+
                 <div>
                   <label className={labelClass}>Categoria *</label>
                   <select
@@ -62,7 +53,7 @@ const Step3Form = ({
                   </select>
                 </div>
 
-                {/* Horário de trabalho */}
+
                 <div>
                   <label className={labelClass}>Horário de trabalho *</label>
                   <select
@@ -81,7 +72,7 @@ const Step3Form = ({
                   </select>
                 </div>
 
-                {/* Setor */}
+
                 <div>
                   <label className={labelClass}>Setor *</label>
                   <select
@@ -101,7 +92,7 @@ const Step3Form = ({
                   </select>
                 </div>
 
-                {/* Motivo e Sexo (lado a lado) */}
+
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className={labelClass}>Motivo da Requisição *</label>
@@ -137,7 +128,7 @@ const Step3Form = ({
                   </div>
                 </div>
 
-                {/* Salário Inicial */}
+
                 <div>
                   <label className={labelClass}>Salário Inicial *</label>
                   <input
@@ -152,7 +143,7 @@ const Step3Form = ({
                   />
                 </div>
 
-                {/* Tipo de Seleção e Unidade (lado a lado) */}
+
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className={labelClass}>Tipo de Seleção *</label>
@@ -192,7 +183,6 @@ const Step3Form = ({
                 </div>
               </div>
 
-              {/* -------- COLUNA DIREITA -------- */}
               <div className="space-y-4 border border-brand-ice-blue p-6 rounded-tr-3xl rounded-br-3xl">
                 <div>
                   <label className={labelClass}>
@@ -237,10 +227,10 @@ const Step3Form = ({
                   />
                 </div>
 
-                {/* Alerta */}
+
                 <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-3 rounded-md text-sm">
                   {" "}
-                  {/* borda ao lado */}
+  
                   <div className="flex items-center">
                     <AlertTriangle className="w-5 h-5 mr-2 text-yellow-700" />
                     <span>
@@ -249,7 +239,7 @@ const Step3Form = ({
                   </div>
                 </div>
 
-                {/* Botão */}
+
                 <div className="flex justify-end">
                   <button
                     type="submit"

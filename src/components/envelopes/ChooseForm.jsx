@@ -13,19 +13,9 @@ const Step2Tipo = ({
   if (setorEnvelope === "RH") {
     return (
       <form className="p-6">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-          <div className="p-6">
-            <h2 className="text-xl font-bold text-brand-teal-dark mb-1">
-              Novo Envelope
-            </h2>
-            <p className="text-sm text-gray-600 mb-6">
-              Selecione o tipo de solicitação de RH
-            </p>
-          </div>
 
           <div className="p-6 pt-0">
             <div className="bg-brand-ice-blue rounded-2xl p-6 space-y-6">
-              {/* Botão Admissão */}
               <button
                 type="button"
                 onClick={() => handleRhSelection("admissao")}
@@ -35,7 +25,6 @@ const Step2Tipo = ({
                 <p className="text-sm text-gray-600">Solicitação de admissão de novo colaborador</p>
               </button>
 
-              {/* Botão Movimentação */}
               <button
                 type="button"
                 onClick={() => handleRhSelection("movimentacao")}
@@ -46,7 +35,6 @@ const Step2Tipo = ({
               </button>
             </div>
           </div>
-        </div>
       </form>
     );
   }
