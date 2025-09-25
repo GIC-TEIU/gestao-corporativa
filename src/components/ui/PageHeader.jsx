@@ -10,9 +10,9 @@ function PageHeader({ title, subtitle, showBackButton = true }) {
   };
 
   return (
-    <div className="mb-8">
+    <div className="mb-6 md:mb-8">
       {showBackButton && (
-        <div className="mb-4 -ml-20"> 
+        <div className="mb-4">
           <button
             onClick={handleBack}
             className="flex items-center gap-2 text-[#0F3B57] hover:opacity-80 transition"
@@ -24,7 +24,8 @@ function PageHeader({ title, subtitle, showBackButton = true }) {
       )}
 
       <div>
-        <h1 className="font-poppins font-bold text-4xl text-[#0F3B57]">{title}</h1>
+        {/* Tamanho da fonte do título agora é responsivo */}
+        <h1 className="font-poppins font-bold text-3xl md:text-4xl text-[#0F3B57]">{title}</h1>
         {subtitle && (
           <p className="text-gray-500 mt-1">{subtitle}</p>
         )}

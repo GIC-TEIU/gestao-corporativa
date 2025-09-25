@@ -11,40 +11,39 @@ function Header() {
     logout();
     navigate("/login");
   };
+  const getFirstName = (name) => {
+    if (!name) return "Usuário";
+    return name.split(" ")[0];
+  };
+
+  const firstName = getFirstName(currentUser?.nome);
 
   return (
-    <div className="pe-4 ps-4 bg-[#2A454E] flex justify-between items-center">
-      {/* Logo → Dashboard */}
+    <div className="px-2 sm:px-4 bg-[#0D6578] flex justify-between items-center">
       <Link to="/dashboard">
         <img
           src="/imgs/logo-marinho-white.png"
           alt="Logo"
-          className="p-2 w-[150px] transition-all hover:opacity-80 cursor-pointer"
+          className="p-2 w-[120px] sm:w-[150px] transition-all hover:opacity-80 cursor-pointer"
         />
       </Link>
-
-      {/* Infos do usuário */}
-      <div className="flex flex-col items-end gap-1">
-        {/* Nome + Perfil */}
+      <div className="flex flex-col items-end gap-1 py-2">
         <div className="flex flex-row justify-between gap-2 items-center">
-          <p className="text-white h-8 font-poppins flex items-center">
-            {currentUser?.nome || "Usuário"}
+          <p className="text-white h-8 font-poppins flex items-center text-sm sm:text-base">
+            {firstName}
           </p>
 
           <Link to="/profile">
-            {/* 3. A imagem de perfil foi substituída pelo ícone UserCircle2 */}
             <UserCircle2 className="w-8 h-8 text-white transition-all duration-200 hover:opacity-80 cursor-pointer" />
           </Link>
         </div>
 
-        {/* Logout */}
         <div
           onClick={handleLogout}
           className="flex flex-row gap-2 items-center cursor-pointer group"
         >
-          {/* 4. A imagem de sair foi substituída pelo ícone LogOut */}
           <LogOut className="w-5 h-5 text-white transition group-hover:opacity-80" />
-          <span className="text-white font-poppins text-sm group-hover:underline">
+          <span className="hidden sm:inline text-white font-poppins text-sm group-hover:underline">
             Sair
           </span>
         </div>
@@ -54,3 +53,4 @@ function Header() {
 }
 
 export default Header;
+
