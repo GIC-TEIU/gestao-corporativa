@@ -7,7 +7,7 @@ import MovementForm from "./MovementForm";
 import AdmissionForm from "./AdmissionForm";
 import ConfirmationModal from "./ConfirmationModal";
 import LoadingState from "./LoadingState";
-import SuccessState from "./SuccessState";
+import EnvelopeFormSuccess from "./EnvelopeFormSuccess";
 
 const stepInfo = {
   1: { title: "Novo Envelope", subtitle: "Preencha as informações do remetente e setor" },
@@ -57,7 +57,7 @@ export default function EnvelopeWizard() {
   if (enviando) return <LoadingState />;
   if (enviado) {
     return (
-      <SuccessState
+      <EnvelopeFormSuccess
         onViewEnvelope={handleViewEnvelope}
         onGoToDashboard={handleGoToDashboard}
       />
