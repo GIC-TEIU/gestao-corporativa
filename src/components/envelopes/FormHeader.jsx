@@ -1,43 +1,26 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import Button from "../ui/Button";
 
 const FormHeader = ({ formValues, updateFormValues, handleContinue, setSetorEnvelope }) => {
-  const navigate = useNavigate();
-
-  // 1. A função de onChange agora apenas atualiza o estado, sem redirecionar.
+  
   const handleSetorChange = (e) => {
-    const { value } = e.target;
+    const value = e.target.value;
+    console.log("Setor selecionado:", value);
     updateFormValues("step1", "setor", value);
     setSetorEnvelope(value);
   };
 
-  // 2. Nova função para lidar com o envio do formulário.
-  const handleSubmit = (e) => {
-    e.preventDefault(); // Previne o comportamento padrão do formulário.
-
-    // 3. Verifica a opção selecionada e decide para onde ir.
-    if (formValues.setor === "Documento Direto") {
-      navigate('/envelope/documento-direto'); // Redireciona se for a opção direta.
-    } else {
-      handleContinue(); // Continua para o próximo passo do formulário.
-    }
-  };
-
   return (
-    // 4. O formulário agora chama a nova função handleSubmit.
-    <form onSubmit={handleSubmit} className="p-6">
+    <form onSubmit={handleContinue} className="p-6">
       <div className="grid grid-cols-1 md:grid-cols-2 p-6 pt-0">
-        <div className="space-y-4 border-4 border-brand-ice-blue p-4 space-y-4 rounded-tl-3xl rounded-bl-2xl">
-          {/* Campos do formulário... */}
+        <div className="space-y-4 border-4 border-brand-ice-blue p-4 rounded-tl-3xl rounded-bl-2xl">
           <div>
             <label className="block text-brand-teal-dark font-semibold mb-1">
               Nome do requisitante
             </label>
             <input
               type="text"
-              name="requisitante"
-              value={formValues.requisitante}
+              value={formValues.requisitante || ""}
               onChange={(e) => updateFormValues("step1", "requisitante", e.target.value)}
               className="w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan"
             />
@@ -48,8 +31,7 @@ const FormHeader = ({ formValues, updateFormValues, handleContinue, setSetorEnve
               Cargo
             </label>
             <select
-              name="cargo"
-              value={formValues.cargo}
+              value={formValues.cargo || ""}
               onChange={(e) => updateFormValues("step1", "cargo", e.target.value)}
               className="w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan"
             >
@@ -65,8 +47,7 @@ const FormHeader = ({ formValues, updateFormValues, handleContinue, setSetorEnve
               Unidade
             </label>
             <select
-              name="unidade"
-              value={formValues.unidade}
+              value={formValues.unidade || ""}
               onChange={(e) => updateFormValues("step1", "unidade", e.target.value)}
               className="w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan"
             >
@@ -87,8 +68,7 @@ const FormHeader = ({ formValues, updateFormValues, handleContinue, setSetorEnve
               Tipo de Envelope
             </label>
             <select
-              name="setor"
-              value={formValues.setor}
+              value={formValues.setor || ""}
               onChange={handleSetorChange}
               className="w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan"
             >
@@ -97,15 +77,13 @@ const FormHeader = ({ formValues, updateFormValues, handleContinue, setSetorEnve
               <option>Documento Direto</option>
             </select>
           </div>
-          
-          {/* Outros campos... */}
+
           <div>
             <label className="block text-brand-teal-dark font-semibold mb-1">
               Diretor
             </label>
             <select
-              name="diretor"
-              value={formValues.diretor}
+              value={formValues.diretor || ""}
               onChange={(e) => updateFormValues("step1", "diretor", e.target.value)}
               className="w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan"
             >
@@ -119,9 +97,8 @@ const FormHeader = ({ formValues, updateFormValues, handleContinue, setSetorEnve
               Observações
             </label>
             <textarea
-              name="observacoes"
               rows="4"
-              value={formValues.observacoes}
+              value={formValues.observacoes || ""}
               onChange={(e) => updateFormValues("step1", "observacoes", e.target.value)}
               className="w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan"
             />
@@ -142,4 +119,3 @@ const FormHeader = ({ formValues, updateFormValues, handleContinue, setSetorEnve
 };
 
 export default FormHeader;
-

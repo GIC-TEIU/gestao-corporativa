@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 
 export const useEnvelopeForm = () => {
@@ -10,7 +9,6 @@ export const useEnvelopeForm = () => {
   const [enviando, setEnviando] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   
-  // Estado para armazenar dados dos formulários em tempo real
   const [formValues, setFormValues] = useState({
     step1: {
       requisitante: "Adriana mármore",
@@ -36,7 +34,6 @@ export const useEnvelopeForm = () => {
     dados: {}
   });
 
-  // Função para atualizar valores dos formulários em tempo real
   const updateFormValues = (stepName, field, value) => {
     setFormValues(prev => ({
       ...prev,
@@ -50,11 +47,16 @@ export const useEnvelopeForm = () => {
   const handleContinue = (e) => {
     e.preventDefault();
 
-    if (step === 1 && formValues.step1.setor) {
-      const tipo = 
-        setorEnvelope === "rh" ? (formData.tipo || "RAP/MOV") : 
-        setorEnvelope === "dp" ? "DP" : 
-        "DOC DIRETO";
+  
+
+   
+    if (step === 1) {
+      if (!formValues.step1.setor) {
+        alert("Selecione o tipo de envelope");
+        return;
+      }
+      
+      const tipo = formValues.step1.setor.toLowerCase() === "rh" ? "RAP/MOV" : "DOC DIRETO";
       
       setFormData(prev => ({
         ...prev, 
@@ -65,14 +67,35 @@ export const useEnvelopeForm = () => {
         gerente: formValues.step1.gerente,
         unidade: formValues.step1.unidade
       }));
-      setStep(2);
-    } else if (step === 2 && tipoEnvelope && setorEnvelope !== "rh") {
+      
+      setStep(2); 
+      return;
+    }
+
+    // PASSO 2 - Quando não é RH, vai para o passo 3
+    if (step === 2 && tipoEnvelope && setorEnvelope.toLowerCase() !== "rh") {
       setFormData(prev => ({...prev, tipo: tipoEnvelope}));
       setStep(3);
-    } else if (step === 2.5 && tipoEnvelope) {
-      setFormData(prev => ({...prev, tipo: "MOV", subtipo: tipoEnvelope}));
-      setStep(3);
-    } else if (step === 3) {
+      return;
+    }
+
+    // PASSO 2.5 (MOVIMENTAÇÃO) - MOSTRAR CONFIRMAÇÃO
+    if (step === 2.5 && tipoEnvelope) {
+      const currentFormValues = formValues.step2;
+      
+      setFormData(prev => ({
+        ...prev,
+        tipo: "MOV", 
+        subtipo: tipoEnvelope,
+        dados: {...prev.dados, movimentacao: currentFormValues}
+      }));
+      
+      setShowConfirmation(true);
+      return;
+    }
+
+    // PASSO 3 - Admissão - MOSTRAR CONFIRMAÇÃO
+    if (step === 3) {
       const form = e.target;
       const formElements = form.elements;
       const currentFormValues = {};
@@ -84,7 +107,6 @@ export const useEnvelopeForm = () => {
         }
       }
       
-      // Atualizar tanto formValues quanto formData
       setFormValues(prev => ({
         ...prev,
         step3: currentFormValues
@@ -99,16 +121,19 @@ export const useEnvelopeForm = () => {
     }
   };
 
-  const handleRhSelection = (tipo) => {
-    setTipoRh(tipo);
-    if (tipo === "admissao") {
-      setFormData(prev => ({...prev, tipo: "RAP", subtipo: "admissao"}));
-      setTipoEnvelope("admissao");
-      setStep(3);
-    } else if (tipo === "movimentacao") {
-      setStep(2.5);
-    }
-  };
+ const handleRhSelection = (tipo) => {
+  setTipoRh(tipo);
+  if (tipo === "admissao") {
+    setFormData(prev => ({...prev, tipo: "RAP", subtipo: "admissao"}));
+    setTipoEnvelope("admissao");
+    setStep(3);
+  } else if (tipo === "movimentacao") {
+    // MUDE PARA UM VALOR VÁLIDO OU DEIXE VAZIO
+    setTipoEnvelope(""); // ← Deixe vazio para o usuário selecionar
+    setFormData(prev => ({...prev, tipo: "MOV", subtipo: ""}));
+    setStep(2.5);
+  }
+};
 
   const handleBack = () => {
     if (step === 2.5) {
@@ -122,7 +147,6 @@ export const useEnvelopeForm = () => {
     setShowConfirmation(false);
     setEnviando(true);
     
-    // Simular envio para backend
     await new Promise(resolve => setTimeout(resolve, 2000));
     
     setEnviando(false);

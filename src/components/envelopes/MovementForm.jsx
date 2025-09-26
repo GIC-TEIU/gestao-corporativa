@@ -6,6 +6,17 @@ const Step2_5Movimentacao = ({
   handleContinue,
   updateFormValues 
 }) => {
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if(!tipoEnvelope){
+      alert("Por favor, selecione um tipo de movimentação.");
+      return;
+    }
+
+    handleContinue(e);
+  };
   
   const renderConteudoDireito = () => {
     switch(tipoEnvelope) {
@@ -180,7 +191,7 @@ const Step2_5Movimentacao = ({
   };
 
   return (
-    <form onSubmit={handleContinue} className="p-6">
+    <form onSubmit={handleSubmit} className="p-6">
       <div className="grid grid-cols-1 md:grid-cols-2 p-6 pt-0">
         
         {/* Lado Esquerdo - Campos Fixos */}
@@ -211,10 +222,10 @@ const Step2_5Movimentacao = ({
             </select>
           </div>
 
-          {/* Campos fixos do colaborador */}
+          
           <div className="mt-6 space-y-4">
             <h3 className="font-semibold text-brand-teal-dark border-b pb-2">
-              DADOS DO COLABORADOR
+              Dados do Colaborador
             </h3>
             
             <div>
@@ -267,18 +278,20 @@ const Step2_5Movimentacao = ({
           </div>
         </div>
 
-        {/* Lado Direito - Campos Variáveis */}
+        
         <div className="bg-brand-ice-blue rounded-tr-3xl rounded-br-2xl p-4 space-y-4">
           {renderConteudoDireito()}
         </div>
       </div>
+
+    
 
       <div className="flex justify-center mt-6">
         <Button
           type="submit"
           disabled={!tipoEnvelope}
         >
-          Continuar
+          Enviar
         </Button>
       </div>
     </form>
