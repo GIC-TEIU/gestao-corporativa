@@ -36,15 +36,11 @@ export const EnvelopeProvider = ({ children }) => {
   });
 
   const mockEnvelopes = [
-    { id: 1, nome: 'Adriana mármore', email: 'Adrianamármore@gmail.com', envelope: 'Atestado de férias', status: 'Pendente', data: '22/05/2004', matricula: '1202296354065', cargo: 'Admissão de RH', empresa: 'Teiú - Matriz' },
-    { id: 2, nome: 'Stéfani Freire', email: 'StefaniFreire@gmail.com', envelope: 'Atestado de férias', status: 'Pendente', data: '22/05/2004', matricula: '1202296354065', cargo: 'Techlead', empresa: 'Teiú - Matriz' },
-    { id: 3, nome: 'Joabe Souza', email: 'joabe@gmail.com', envelope: 'Atestado de férias', status: 'Concluído', data: '22/05/2004', matricula: '1202296354065', cargo: 'Gerente administrativo', empresa: 'Teiú - Matriz' },
-    { id: 4, nome: 'Igor Damasceno', email: 'IgorDamasceno@gmail.com', envelope: 'Atestado de férias', status: 'Concluído', data: '22/05/2004', matricula: '1202296354065', cargo: 'Desenvolvedor de Sistemas ', empresa: 'Teiú - Matriz' },
-    { id: 5, nome: 'Andersen Araújo', email: 'Andersen@gmail.com', envelope: 'Atestado de férias', status: 'Concluído', data: '22/05/2004', matricula: '1202296354065', cargo: 'Técnico de eletrônica', empresa: 'Teiú - Matriz' },
-    { id: 6, nome: 'Icaro Silva', email: 'Icaro@gmail.com', envelope: 'Atestado de férias', status: 'Concluído', data: '22/05/2004', matricula: '1202296354065', cargo: 'Desenvolvedor web', empresa: 'Teiú - Matriz' },
-    { id: 7, nome: 'Erlane Silva', email: 'Erlane@gmail.com', envelope: 'Atestado de férias', status: 'Concluído', data: '22/05/2004', matricula: '1202296354065', cargo: 'Supervisora de GIC', empresa: 'Teiú - Matriz' },
-    { id: 8, nome: 'Samira', email: 'Samira@gmail.com', envelope: 'Atestado de férias', status: 'Concluído', data: '22/05/2004', matricula: '1202296354065', cargo: 'Coordenadora de RH', empresa: 'Teiú - Matriz' },
-  ];
+    { id: 1, matricula: 'Nº 302394', data: '14/01/2024', nome: 'Carlos Oliveira', destinatarios: ['Helder Mendes', 'Adriana Mármore', 'Joabe Andrade'], envelope: 'Contrato de Trabalho...', status: 'Concluído' },
+    { id: 2, matricula: 'Nº 302395', data: '14/01/2024', nome: 'Juliana Pereira', destinatarios: ['Lázaro Silva', 'Stéfani Freire'], envelope: 'Contrato de Trabalho...', status: 'Concluído' },
+    { id: 3, matricula: 'Nº 302396', data: '14/01/2024', nome: 'Mariana Costa', destinatarios: ['Maria Santos', 'Ricardo Almeida'], envelope: 'Contrato de Trabalho...', status: 'Concluído' },
+    { id: 4, matricula: 'Nº 302397', data: '14/01/2024', nome: 'Mariana Costa', destinatarios: ['Igor Damasceno', 'Andersen Araújo', 'Icaro Silva'], envelope: 'Contrato de Trabalho...', status: 'Pendente' },
+     ];
 
   const documents = [
     { id: 1, name: "Documento-1.pdf", file: "/docs/doc1.pdf" },
@@ -90,7 +86,7 @@ export const EnvelopeProvider = ({ children }) => {
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
-  const toggleSelect = (id) => {  
+  const toggleSelect = (id) => { 
     setSelectedDocs((prev) =>
       prev.includes(id) ? prev.filter((d) => d !== id) : [...prev, id]
     );
@@ -152,3 +148,4 @@ export const EnvelopeProvider = ({ children }) => {
     </EnvelopeContext.Provider>
   );
 };
+

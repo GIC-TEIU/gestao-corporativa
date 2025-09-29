@@ -8,7 +8,7 @@ import Dashboard from "./pages/dashboard/Dashboard";
 import RequestReset from "./pages/password-recovery/RequestReset";
 import ResetPassword from "./pages/password-recovery/ResetPassword";
 import Password from "./pages/password-recovery/Password";
-import View from "./pages/view/View"; 
+import View from "./pages/view/View";
 import Funcionario from "./pages/Funcionario/Funcionario";
 import Envelope from "./pages/Envelope/Envelope";
 import Profile from './pages/Profile/Profile';
@@ -31,29 +31,35 @@ function App() {
         <Route path="/password" element={<Password />} />
 
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-        
+
         <Route path="/view" element={
           <ProtectedRoute>
             <EnvelopeProvider><View /></EnvelopeProvider>
           </ProtectedRoute>
-        }/> 
-          
+        } />
+
         <Route path="/funcionario" element={<ProtectedRoute><Funcionario /></ProtectedRoute>} />
-        
+
         <Route path="/envelope" element={<ProtectedRoute><Envelope /></ProtectedRoute>} />
 
         <Route path="/envelope/destinatario" element={
           <ProtectedRoute>
             <EnvelopeProvider><Destinatario /></EnvelopeProvider>
           </ProtectedRoute>
-        }/>
-        
+        } />
+
         <Route path="/envelope/sucesso" element={
           <ProtectedRoute>
             <RecipientSuccess />
           </ProtectedRoute>
-        }/>
-        <Route path="/hr-panel" element={<ProtectedRoute><HRPanel /></ProtectedRoute>} />
+        } />
+        <Route path="/hr-panel" element={
+          <ProtectedRoute>
+            <EnvelopeProvider>
+              <HRPanel />
+            </EnvelopeProvider>
+          </ProtectedRoute>
+        } />
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
       </Routes>
     </BrowserRouter>
