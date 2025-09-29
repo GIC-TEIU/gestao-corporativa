@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { LogOut, UserCircle2 } from "lucide-react";
+import { LogOut, UserCircle2, Bell} from "lucide-react";
 
 function Header() {
   const { currentUser, logout } = useAuth();
@@ -27,6 +27,16 @@ function Header() {
           className="p-2 w-[120px] sm:w-[150px] transition-all hover:opacity-80 cursor-pointer"
         />
       </Link>
+      <div className="hidden md:flex flex justify-center gap-12 text-white font-poppins font-light text-sm">
+        <Link to="/dashboard" className="hover:opacity-80">Inicio</Link>
+        <Link to="/envelope" className="hover:opacity-80">Novo Envelope</Link>
+        <Link to="/funcionario" className="hover:opacity-80">Funcionários</Link>
+        <Link to="/view" className="hover:opacity-80">Consulta Envelopes</Link>
+          </div>
+      <div className="flex justify-left ml-4">
+        <Bell className="w-6 h-6 text-white transition-all duration-200 hover:opacity-80 cursor-pointer" />
+      </div>
+        
       <div className="flex flex-col items-end gap-1 py-2">
         <div className="flex flex-row justify-between gap-2 items-center">
           <p className="text-white h-8 font-poppins flex items-center text-sm sm:text-base">

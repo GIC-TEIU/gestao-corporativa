@@ -22,7 +22,6 @@ const Step3Form = ({
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4 bg-brand-ice-blue p-6 rounded-tl-3xl rounded-bl-3xl">
-
                 <div>
                   <label className={labelClass}>Cargo *</label>
                   <input
@@ -34,8 +33,8 @@ const Step3Form = ({
                   />
                 </div>
 
-
-                <div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
                   <label className={labelClass}>Categoria *</label>
                   <select
                     name="categoria"
@@ -51,27 +50,25 @@ const Step3Form = ({
                     <option>Jovem Aprendiz</option>
                     <option>Temporário</option>
                   </select>
+                  </div>
+                  <div>
+                    <label className={labelClass}>Horário de trabalho *</label>
+                    <select
+                      name="horario_trabalho"
+                      value={formValues.step3.horario_trabalho || ""}
+                      onChange={(e) =>
+                        handleInputChange("horario_trabalho", e.target.value)
+                      }
+                      className={inputClass}
+                    >
+                      <option value="">Selecione</option>
+                      <option>08h às 18h</option>
+                      <option>08h às 14h</option>
+                      <option>12h às 18h</option>
+                      <option>Escala 12x36</option>
+                    </select>
+                  </div>
                 </div>
-
-
-                <div>
-                  <label className={labelClass}>Horário de trabalho *</label>
-                  <select
-                    name="horario_trabalho"
-                    value={formValues.step3.horario_trabalho || ""}
-                    onChange={(e) =>
-                      handleInputChange("horario_trabalho", e.target.value)
-                    }
-                    className={inputClass}
-                  >
-                    <option value="">Selecione</option>
-                    <option>08h às 18h</option>
-                    <option>08h às 14h</option>
-                    <option>12h às 18h</option>
-                    <option>Escala 12x36</option>
-                  </select>
-                </div>
-
 
                 <div>
                   <label className={labelClass}>Setor *</label>
@@ -91,7 +88,6 @@ const Step3Form = ({
                     <option>TI</option>
                   </select>
                 </div>
-
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -127,7 +123,26 @@ const Step3Form = ({
                     </select>
                   </div>
                 </div>
-
+                
+                <div className="grid grid-cols-2 gap-4">
+                <div>
+                    <label className={labelClass}>Gerente *</label>
+                    <select
+                      name="sexo"
+                      value={formValues.step3.gerente || ""}
+                      onChange={(e) =>
+                        handleInputChange("gerente", e.target.value)
+                      }
+                      className={inputClass}
+                    >
+                      <option value="">Selecione</option>
+                      <option>Joabe Andrade</option>
+                      <option>José Roberto</option>
+                      <option>Maria Helena</option>
+                      <option>Lazaro Paixão</option>
+                      <option>Edson Ramos</option>
+                    </select>
+                  </div>
 
                 <div>
                   <label className={labelClass}>Salário Inicial *</label>
@@ -142,7 +157,7 @@ const Step3Form = ({
                     className={inputClass}
                   />
                 </div>
-
+              </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -227,10 +242,8 @@ const Step3Form = ({
                   />
                 </div>
 
-
                 <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-3 rounded-md text-sm">
                   {" "}
-  
                   <div className="flex items-center">
                     <AlertTriangle className="w-5 h-5 mr-2 text-yellow-700" />
                     <span>
@@ -238,7 +251,6 @@ const Step3Form = ({
                     </span>
                   </div>
                 </div>
-
 
                 <div className="flex justify-end">
                   <button

@@ -258,7 +258,7 @@ function Register() {
             <button
               type="submit"
               disabled={loading}
-              className="font-poppins font-light w-auto hover:bg-[#29454E] text-white px-10 py-2 rounded-lg bg-[#19282e] transition disabled:opacity-50"
+              className="font-poppins font-light w-auto  bg-brand-teal-dark hover:bg-brand-blue-dark hover:scale-105 text-white px-10 py-2 rounded-lg transition disabled:opacity-50"
             >
               {loading ? 'Cadastrando...' : 'Cadastrar'}
             </button>

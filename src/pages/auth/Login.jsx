@@ -129,7 +129,7 @@ function Login() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-60 font-poppins font-light bg-[#19282e] hover:bg-[#29454E] text-white py-3 md:py-2 rounded-xl shadow-xl transition disabled:opacity-50"
+                className="w-60 font-poppins font-light bg-brand-teal-dark hover:bg-brand-blue-dark hover:scale-105 text-white py-3 md:py-2 rounded-xl shadow-xl transition disabled:opacity-50"
               >
                 {loading ? "Entrando..." : "Entrar"}
               </button>
