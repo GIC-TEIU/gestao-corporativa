@@ -34,8 +34,8 @@ const Step2_5Movimentacao = ({
 
       
       <div>
-        <label className="block text-brand-teal-dark font-medium mb-1 text-sm">
-          Nome do Novo Cargo
+        <label className="text-brand-teal-dark font-semibold mb-1">
+          Nome do Novo Cargo *
         </label>
         <input
           type="text"
@@ -49,8 +49,8 @@ const Step2_5Movimentacao = ({
 
       {/* Valor Anterior */}
       <div>
-        <label className="block text-brand-teal-dark font-medium mb-1 text-sm">
-          Valor Anterior R$
+        <label className="text-brand-teal-dark font-semibold mb-1">
+          Valor Anterior R$ *
         </label>
         <input
           type="number"
@@ -64,8 +64,8 @@ const Step2_5Movimentacao = ({
 
       
       <div>
-        <label className="block text-brand-teal-dark font-medium mb-1 text-sm">
-          Valor Final R$
+        <label className="text-brand-teal-dark font-semibold mb-1">
+          Valor Final R$ *
         </label>
         <input
           type="number"
@@ -73,7 +73,7 @@ const Step2_5Movimentacao = ({
           onChange={(e) =>
             updateFormValues("step2", "valorFinal", e.target.value)
           }
-          className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-brand-teal-dark focus:outline-none"
+          className="w-full border border-gray-700 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-brand-teal-dark focus:outline-none"
         />
       </div>
     </div>
@@ -493,17 +493,13 @@ const Step2_5Movimentacao = ({
        
     {/* Coluna Esquerda */}
   <div className="bg-brand-ice-blue rounded-tr-1x3 rounded-br-1x2 p-4 space-y-4">
-  {/* Título */}
-  <h2 className="text-2xl font-semibold text-brand-teal-dark mb-2">
-    Formulário de Movimentação de Pessoal
-  </h2>
   
 
   {/* Dados do Colaborador */}
-  <div className="space-y-5">
+  <div className="space-y-4 bg-brand-ice-blue p-6">
     <div>
-      <label className="block text-brand-teal-dark font-medium mb-1 text-sm">
-        Nome do Colaborador
+      <label className="text-brand-teal-dark font-semibold mb-1">
+        Nome do Colaborador *
       </label>
       <input
         type="text"
@@ -516,8 +512,8 @@ const Step2_5Movimentacao = ({
     </div>
 
     <div>
-      <label className="block text-brand-teal-dark font-medium mb-1 text-sm">
-        Cargo
+      <label className="text-brand-teal-dark font-semibold mb-1">
+        Cargo *
       </label>
       <input
         type="text"
@@ -531,8 +527,8 @@ const Step2_5Movimentacao = ({
 
     <div className="grid grid-cols-2 gap-4">
       <div>
-        <label className="block text-brand-teal-dark font-medium mb-1 text-sm">
-          Centro de Custo
+        <label className="text-brand-teal-dark font-semibold mb-1">
+          Centro de Custo *
         </label>
         <select
           onChange={(e) =>
@@ -551,8 +547,8 @@ const Step2_5Movimentacao = ({
       </div>
 
       <div>
-        <label className="block text-brand-teal-dark font-medium mb-1 text-sm">
-          Matrícula
+        <label className="text-brand-teal-dark font-semibold mb-1">
+          Matrícula *
         </label>
         <input
           type="text"
@@ -566,8 +562,8 @@ const Step2_5Movimentacao = ({
     </div>
 
     <div>
-      <label className="block text-brand-teal-dark font-medium mb-1 text-sm">
-        Tipo de Movimentação
+      <label className=" text-brand-teal-dark font-semibold mb-1">
+        Tipo de Movimentação *
       </label>
       <select
         value={tipoEnvelope}
@@ -575,7 +571,7 @@ const Step2_5Movimentacao = ({
           setTipoEnvelope(e.target.value);
           updateFormValues("step2", "tipo", e.target.value);
         }}
-        className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm appearance-none cursor-pointer focus:ring-2 focus:ring-brand-teal-dark focus:outline-none"
+        className="w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-brand-cyan"
       >
         <option value="">Selecione</option>
         <option value="desligamento">Desligamento</option>
@@ -591,8 +587,8 @@ const Step2_5Movimentacao = ({
     </div>
 
     <div>
-      <label className="block text-brand-teal-dark font-medium mb-1 text-sm">
-        Data da Requisição
+      <label className="text-brand-teal-dark font-semibold mb-1">
+        Data da Requisição *
       </label>
       <input
         type="date"

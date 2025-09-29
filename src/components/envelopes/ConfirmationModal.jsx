@@ -104,7 +104,7 @@ const ConfirmationModal = ({ show, formData, formValues, onEdit, onConfirm }) =>
               <h4 className="font-semibold text-brand-teal-dark">
                 Movimentação do Colaborador
               </h4>
-              <div className="grid grid-cols-2 gap-4 text-sm">
+              <div className="grid grid-cols-2 gap-4 text-brand-teal-dark">
                 <div>
                   <strong>Novo Centro de Custo:</strong>{" "}
                   {dadosMovimentacao.novoCentroCusto || "-"}
