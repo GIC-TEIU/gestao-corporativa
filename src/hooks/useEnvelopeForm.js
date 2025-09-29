@@ -128,9 +128,9 @@ export const useEnvelopeForm = () => {
     setTipoEnvelope("admissao");
     setStep(3);
   } else if (tipo === "movimentacao") {
-    // MUDE PARA UM VALOR VÁLIDO OU DEIXE VAZIO
-    setTipoEnvelope(""); // ← Deixe vazio para o usuário selecionar
+    // Apenas seta o tipo geral como MOV, o subtipo específico será setado depois
     setFormData(prev => ({...prev, tipo: "MOV", subtipo: ""}));
+    setTipoEnvelope(""); // ← Deixe vazio para o usuário selecionar
     setStep(2.5);
   }
 };
