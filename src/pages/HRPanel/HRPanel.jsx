@@ -3,11 +3,32 @@ import MainLayout from '../../components/layout/MainLayout';
 import PreEnvelopeTable from '../../components/envelopes/PreEnvelopeTable';
 import RapMovementTable from '../../components/envelopes/RapMovementTable';
 import EnvelopeQueryTable from '../../components/envelopes/EnvelopeQueryTable';
+import AnalysisModal from '../../components/ui/AnalysisModal';
 import { Search, Filter } from 'lucide-react';
+
+const mockModalData = {
+  requisitante: { nome: 'Adriana Mármore', cargo: 'Líder de RH', gerente: 'Não Informado', unidade: 'Teiú – Matriz' },
+  envelope: { setor: 'RH', tipo: 'RAP', subtipo: 'Admissao', status: 'Pronto Para Envio' },
+  especificos: { 
+    categoria: 'Celetista', 
+    horario: '08H ÀS 18H', 
+    setor: 'Recursos Humanos', 
+    motivo: 'Reposição', 
+    salario: '10.000,00', 
+    cargo: 'Líder de RH', 
+    justificativa: '08H ÀS 18H', 
+    tipoSelecao: 'Processo Externo Humanos', 
+    observacoes: 'Reposição', 
+    descricao: '' 
+  }
+};
 
 function HRPanel() {
   const [activeTab, setActiveTab] = useState('pre-envelope');
   const [searchTerm, setSearchTerm] = useState('');
+  
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedEnvelopeData, setSelectedEnvelopeData] = useState(null);
 
   const tabs = [
     { id: 'pre-envelope', label: 'Pré-Envelope' },
@@ -15,12 +36,23 @@ function HRPanel() {
     { id: 'consulta-envelopes', label: 'Consulta de Envelopes' },
   ];
 
+  const handleOpenModal = (data) => {
+    setSelectedEnvelopeData(data);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedEnvelopeData(null);
+  };
+
   const renderActiveTabContent = () => {
     switch (activeTab) {
       case 'pre-envelope':
-        return <PreEnvelopeTable />;
+      
+        return <PreEnvelopeTable onAnalyzeClick={() => handleOpenModal(mockModalData)} />;
       case 'movimentacao-rap':
-        return <RapMovementTable />;
+        return <RapMovementTable onAnalyzeClick={() => handleOpenModal(mockModalData)} />;
       case 'consulta-envelopes':
         return <EnvelopeQueryTable />;
       default:
@@ -36,7 +68,6 @@ function HRPanel() {
       <div className="w-full">
         <div className="flex justify-end mb-4">
             <div className="flex items-center gap-4 w-full max-w-lg">
-    
               <div className="relative flex-grow">
                 <input
                   type="text"
@@ -50,7 +81,6 @@ function HRPanel() {
                 </div>
               </div>
 
-    
               <button
                 className="flex items-center gap-2 bg-[#33748B] text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition"
               >
@@ -80,9 +110,25 @@ function HRPanel() {
           {renderActiveTabContent()}
         </div>
       </div>
+
+      <AnalysisModal 
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        data={selectedEnvelopeData}
+        onConfirm={() => {
+          alert('Análise Confirmada!');
+          handleCloseModal();
+        }}
+        onRequestChange={() => {
+          alert('Solicitação de Alteração enviada!');
+          handleCloseModal();
+        }}
+      />
     </MainLayout>
   );
 }
 
 export default HRPanel;
+
+
 

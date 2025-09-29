@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, Folder } from 'lucide-react';
+import { Search, ExternalLink } from 'lucide-react';
 
 const mockData = [
   { id: 1, rap: 'Nº 302394', requisitante: 'Maria Santos', cargo: 'Gerente de Marketing', tipoEnvelope: { text: 'RMP', color: 'orange' }, unidade: 'Teiú-Matriz', status: { text: 'Em Análise', color: 'purple' } },
@@ -14,11 +14,11 @@ const typeColors = {
 };
 
 const statusColors = {
-  purple: 'bg-[#C8B8CC80] text-[#60396c] border border-[#9D56B0]',
+    purple: 'bg-[#C8B8CC80] text-[#60396c] border border-[#9D56B0]',
 };
 
 
-function PreEnvelopeTable() {
+function PreEnvelopeTable({ onAnalyzeClick }) {
   return (
     <div className="overflow-x-auto rounded-[18px] overflow-hidden">
       <table className="w-full text-sm text-left">
@@ -46,26 +46,29 @@ function PreEnvelopeTable() {
                 <div className="bg-[#D9D9D9] text-gray-800 rounded-md px-3 h-12 flex items-center justify-center text-center">{item.cargo}</div>
               </td>
               <td className="p-2">
-                <div className="bg-[#D9D9D9] text-gray-800 rounded-md px-3 h-12 flex items-center justify-center text-center">{item.unidade}</div>
-              </td>
-              <td className="p-2">
                 <div className="flex items-center justify-center h-12">
-                  <span className={`px-4 py-1.5 text-sm font-bold rounded-full ${typeColors[item.tipoEnvelope.color]}`}>
+                   <span className={`px-4 py-1.5 text-sm font-bold rounded-full ${typeColors[item.tipoEnvelope.color]}`}>
                     {item.tipoEnvelope.text}
                   </span>
                 </div>
               </td>
               <td className="p-2">
+                <div className="bg-[#D9D9D9] text-gray-800 rounded-md px-3 h-12 flex items-center justify-center text-center">{item.unidade}</div>
+              </td>
+              <td className="p-2">
                 <div className="flex justify-center">
-                  <span className={`px-3 py-1 text-xs font-semibold rounded-full flex items-center gap-2 border ${statusColors[item.status.color]}`}>
-                    <Search size={14} /> {item.status.text}
-                  </span>
+                    <span className={`px-3 py-1 text-xs font-semibold rounded-full flex items-center gap-2 border ${statusColors[item.status.color]}`}>
+                        <Search size={14} /> {item.status.text}
+                    </span>
                 </div>
               </td>
               <td className="p-2">
                 <div className="flex justify-center">
-                  <button className="flex items-center justify-center w-9 h-9 rounded-lg bg-[#4EA64754] border border-[#2F7429] text-[#2F7429] hover:opacity-80 transition">
-                    <Folder size={20} />
+                  <button 
+                    onClick={() => onAnalyzeClick(item)}
+                    className="flex items-center justify-center w-9 h-9 rounded-lg bg-[#4EA64754] border border-[#2F7429] text-[#2F7429] hover:opacity-80 transition"
+                  >
+                    <ExternalLink size={20} />
                   </button>
                 </div>
               </td>
