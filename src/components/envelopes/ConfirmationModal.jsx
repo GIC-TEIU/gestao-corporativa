@@ -4,26 +4,38 @@ import { X } from "lucide-react";
 const ConfirmationModal = ({ show, formData, formValues, onEdit, onConfirm }) => {
   if (!show) return null;
 
+  // Função para formatar o subtipo para corresponder ao switch
+  const getSubtipoFormatado = (subtipo) => {
+    const mapping = {
+      "movimentacao": "movimentacao",
+      "promocao/cargo": "promocao/cargo",
+      "desligamento": "desligamento",
+      "salario": "salario",
+      "periculosidade": "periculosidade",
+      "insalubridade": "insalubridade",
+      "experiencia": "experiencia"
+    };
+    return mapping[subtipo] || subtipo;
+  };
+
   // Função para renderizar dados específicos baseado no tipo de envelope
   const renderDadosEspecificos = () => {
     const { tipo, subtipo } = formData;
+    const subtipoFormatado = getSubtipoFormatado(subtipo);
     
     if (tipo === "MOV") {
       // Dados de movimentação
       const dadosMovimentacao = formValues.step2 || {};
       
-      switch (subtipo) {
+      switch (subtipoFormatado) {
         case "promocao/cargo":
           return (
             <div className="space-y-3">
-              <h4 className="font-semibold text-brand-teal-dark">Promoção/Mudança de Cargo</h4>
+              <h4 className="font-semibold text-brand-teal-dark">Mudança de Cargo / Promoção Salarial</h4>
               <div className="grid grid-cols-2 gap-4 text-sm">
-                <div><strong>Novo Centro de Custo:</strong> {dadosMovimentacao.novoCentroCusto || "-"}</div>
-                <div><strong>Nova Unidade:</strong> {dadosMovimentacao.novaUnidadeOperacional || "-"}</div>
-                <div><strong>Substituição:</strong> {dadosMovimentacao.substituicao ? "Sim" : "Não"}</div>
                 <div><strong>Novo Cargo:</strong> {dadosMovimentacao.novoCargo || "-"}</div>
-                <div><strong>Característica Deslocamento:</strong> {dadosMovimentacao.caracteristicaDeslocamento || "-"}</div>
-                <div><strong>Aumento de Quadro:</strong> {dadosMovimentacao.aumentoQuadro ? "Sim" : "Não"}</div>
+                <div><strong>Valor Anterior:</strong> {dadosMovimentacao.valorAnterior ? `R$ ${dadosMovimentacao.valorAnterior}` : "-"}</div>
+                <div><strong>Valor Final:</strong> {dadosMovimentacao.valorFinal ? `R$ ${dadosMovimentacao.valorFinal}` : "-"}</div>
               </div>
             </div>
           );
@@ -33,11 +45,10 @@ const ConfirmationModal = ({ show, formData, formValues, onEdit, onConfirm }) =>
             <div className="space-y-3">
               <h4 className="font-semibold text-brand-teal-dark">Desligamento</h4>
               <div className="grid grid-cols-2 gap-4 text-sm">
-                <div><strong>Data Desligamento:</strong> {dadosMovimentacao.dataDesligamento || "-"}</div>
-                <div><strong>Motivo:</strong> {dadosMovimentacao.motivoDesligamento || "-"}</div>
-                <div className="col-span-2">
-                  <strong>Observações:</strong> {dadosMovimentacao.obsDesligamento || "-"}
-                </div>
+                <div><strong>Demissão Justa Causa:</strong> {dadosMovimentacao.demissaoJustaCausa ? "Sim" : "Não"}</div>
+                <div><strong>Demissão Sem Justa Causa:</strong> {dadosMovimentacao.demissaoSemJustaCausa ? "Sim" : "Não"}</div>
+                <div><strong>Acordo:</strong> {dadosMovimentacao.acordo ? "Sim" : "Não"}</div>
+                <div><strong>Aviso Prévio:</strong> {dadosMovimentacao.avisoPrevio || "-"}</div>
               </div>
             </div>
           );
@@ -47,19 +58,76 @@ const ConfirmationModal = ({ show, formData, formValues, onEdit, onConfirm }) =>
             <div className="space-y-3">
               <h4 className="font-semibold text-brand-teal-dark">Alteração Salarial</h4>
               <div className="grid grid-cols-2 gap-4 text-sm">
-                <div><strong>Novo Salário:</strong> {dadosMovimentacao.novoSalario ? `R$ ${dadosMovimentacao.novoSalario}` : "-"}</div>
-                <div><strong>Data Vigência:</strong> {dadosMovimentacao.dataVigencia || "-"}</div>
-                <div><strong>Percentual Aumento:</strong> {dadosMovimentacao.percentualAumento || "-"}</div>
+                <div><strong>Valor Anterior:</strong> {dadosMovimentacao.valorAnterior ? `R$ ${dadosMovimentacao.valorAnterior}` : "-"}</div>
+                <div><strong>Valor Final:</strong> {dadosMovimentacao.valorFinal ? `R$ ${dadosMovimentacao.valorFinal}` : "-"}</div>
+              </div>
+            </div>
+          );
+        
+        case "movimentacao":
+          return (
+            <div className="space-y-3">
+              <h4 className="font-semibold text-brand-teal-dark">Movimentação do Colaborador</h4>
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div><strong>Novo Centro de Custo:</strong> {dadosMovimentacao.novoCentroCusto || "-"}</div>
+                <div><strong>Nova Unidade Operacional:</strong> {dadosMovimentacao.novaUnidadeOperacional || "-"}</div>
+                <div><strong>Novo Cargo:</strong> {dadosMovimentacao.novoCargo || "-"}</div>
+                <div><strong>Aumento de Quadro:</strong> {dadosMovimentacao.aumentoQuadro ? "Sim" : "Não"}</div>
+                <div><strong>Substituição:</strong> {dadosMovimentacao.substituicao ? "Sim" : "Não"}</div>
+              </div>
+            </div>
+          );
+        
+        case "periculosidade":
+          return (
+            <div className="space-y-3">
+              <h4 className="font-semibold text-brand-teal-dark">Periculosidade</h4>
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div><strong>Valor Anterior:</strong> {dadosMovimentacao.valorAnterior ? `R$ ${dadosMovimentacao.valorAnterior}` : "-"}</div>
+                <div><strong>Valor Final:</strong> {dadosMovimentacao.valorFinal ? `R$ ${dadosMovimentacao.valorFinal}` : "-"}</div>
+              </div>
+            </div>
+          );
+        
+        case "insalubridade":
+          return (
+            <div className="space-y-3">
+              <h4 className="font-semibold text-brand-teal-dark">Insalubridade</h4>
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div><strong>Valor Anterior:</strong> {dadosMovimentacao.valorAnterior ? `R$ ${dadosMovimentacao.valorAnterior}` : "-"}</div>
+                <div><strong>Valor Final:</strong> {dadosMovimentacao.valorFinal ? `R$ ${dadosMovimentacao.valorFinal}` : "-"}</div>
+              </div>
+            </div>
+          );
+        
+        case "experiencia":
+          return (
+            <div className="space-y-3">
+              <h4 className="font-semibold text-brand-teal-dark">Término de Experiência</h4>
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div><strong>Demissão Justa Causa:</strong> {dadosMovimentacao.demissaoJustaCausa ? "Sim" : "Não"}</div>
+                <div><strong>Demissão Sem Justa Causa:</strong> {dadosMovimentacao.demissaoSemJustaCausa ? "Sim" : "Não"}</div>
+                <div><strong>Acordo:</strong> {dadosMovimentacao.acordo ? "Sim" : "Não"}</div>
+                <div><strong>Aviso Prévio:</strong> {dadosMovimentacao.avisoPrevio || "-"}</div>
               </div>
             </div>
           );
         
         default:
+          // Fallback para mostrar todos os dados em JSON se não encontrar o tipo
+          const dadosParaMostrar = { ...dadosMovimentacao };
+          delete dadosParaMostrar.nomeColaborador;
+          delete dadosParaMostrar.cargoAtual;
+          delete dadosParaMostrar.centroCusto;
+          delete dadosParaMostrar.matricula;
+          delete dadosParaMostrar.dataAtual;
+          delete dadosParaMostrar.tipo;
+          
           return (
             <div className="space-y-3">
               <h4 className="font-semibold text-brand-teal-dark">Movimentação - {subtipo}</h4>
               <div className="text-sm">
-                <pre>{JSON.stringify(dadosMovimentacao, null, 2)}</pre>
+                <pre>{JSON.stringify(dadosParaMostrar, null, 2)}</pre>
               </div>
             </div>
           );
@@ -133,7 +201,7 @@ const ConfirmationModal = ({ show, formData, formValues, onEdit, onConfirm }) =>
             </div>
           </div>
 
-          
+          {/* Dados do Colaborador (apenas para MOV) */}
           {formData.tipo === "MOV" && formValues.step2 && (
             <div className="space-y-4">
               <h3 className="font-semibold text-brand-teal-dark border-b pb-2">
@@ -144,6 +212,7 @@ const ConfirmationModal = ({ show, formData, formValues, onEdit, onConfirm }) =>
                 <div><strong>Cargo Atual:</strong> {formValues.step2.cargoAtual || "-"}</div>
                 <div><strong>Centro de Custo:</strong> {formValues.step2.centroCusto || "-"}</div>
                 <div><strong>Matrícula:</strong> {formValues.step2.matricula || "-"}</div>
+                <div><strong>Data da Requisição:</strong> {formValues.step2.dataAtual || "-"}</div>
               </div>
             </div>
           )}

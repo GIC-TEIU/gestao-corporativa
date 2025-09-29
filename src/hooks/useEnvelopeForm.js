@@ -12,7 +12,7 @@ export const useEnvelopeForm = () => {
   const [formValues, setFormValues] = useState({
     step1: {
       requisitante: "Adriana mármore",
-      cargo: "Líder de RH",
+      cargo: "Assistente de RH",
       gerente: "",
       unidade: "Teiú - Matriz",
       setor: ""
@@ -25,7 +25,7 @@ export const useEnvelopeForm = () => {
 
   const [formData, setFormData] = useState({
     requisitante: "Adriana mármore",
-    cargo: "Líder de RH",
+    cargo: "Assistente de RH",
     gerente: "",
     unidade: "Teiú - Matriz",
     setor: "",

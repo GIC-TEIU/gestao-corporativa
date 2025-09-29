@@ -47,7 +47,7 @@ export default function EnvelopeWizard() {
 
     if (step === 1 && formValues.step1?.setor === "Documento Direto") {
       
-      navigate('/envelope/documento-direto');
+      navigate('/envelope/destinatario');
       return;
     }
 

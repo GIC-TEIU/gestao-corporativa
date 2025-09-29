@@ -8,7 +8,7 @@ import Dashboard from "./pages/dashboard/Dashboard";
 import RequestReset from "./pages/password-recovery/RequestReset";
 import ResetPassword from "./pages/password-recovery/ResetPassword";
 import Password from "./pages/password-recovery/Password";
-import View from "./pages/view/View"; 
+import View from "./pages/view/view"; 
 import Funcionario from "./pages/Funcionario/Funcionario";
 import Envelope from "./pages/Envelope/Envelope";
 import Profile from './pages/Profile/Profile';
