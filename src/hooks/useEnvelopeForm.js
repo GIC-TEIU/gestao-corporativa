@@ -12,7 +12,7 @@ export const useEnvelopeForm = () => {
   const [formValues, setFormValues] = useState({
     step1: {
       requisitante: "Adriana mármore",
-      cargo: "Líder de RH",
+      cargo: "Assistente de RH",
       gerente: "",
       unidade: "Teiú - Matriz",
       setor: ""
@@ -25,7 +25,7 @@ export const useEnvelopeForm = () => {
 
   const [formData, setFormData] = useState({
     requisitante: "Adriana mármore",
-    cargo: "Líder de RH",
+    cargo: "Assistente de RH",
     gerente: "",
     unidade: "Teiú - Matriz",
     setor: "",
@@ -56,7 +56,7 @@ export const useEnvelopeForm = () => {
         return;
       }
       
-      const tipo = formValues.step1.setor.toLowerCase() === "rh" ? "RAP/MOV" : "DOC DIRETO";
+      const tipo = formValues.step1.setor.toLowerCase() === "rh" ? "RAP/RMP" : "DOC DIRETO";
       
       setFormData(prev => ({
         ...prev, 
@@ -85,7 +85,7 @@ export const useEnvelopeForm = () => {
       
       setFormData(prev => ({
         ...prev,
-        tipo: "MOV", 
+        tipo: "RMP", 
         subtipo: tipoEnvelope,
         dados: {...prev.dados, movimentacao: currentFormValues}
       }));
@@ -129,7 +129,7 @@ export const useEnvelopeForm = () => {
     setStep(3);
   } else if (tipo === "movimentacao") {
     // Apenas seta o tipo geral como MOV, o subtipo específico será setado depois
-    setFormData(prev => ({...prev, tipo: "MOV", subtipo: ""}));
+    setFormData(prev => ({...prev, tipo: "RMP", subtipo: ""}));
     setTipoEnvelope(""); // ← Deixe vazio para o usuário selecionar
     setStep(2.5);
   }
