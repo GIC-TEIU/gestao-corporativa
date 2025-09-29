@@ -6,23 +6,6 @@ import EnvelopeQueryTable from '../../components/envelopes/EnvelopeQueryTable';
 import AnalysisModal from '../../components/ui/AnalysisModal';
 import { Search, Filter } from 'lucide-react';
 
-const mockModalData = {
-  requisitante: { nome: 'Adriana Mármore', cargo: 'Líder de RH', gerente: 'Não Informado', unidade: 'Teiú – Matriz' },
-  envelope: { setor: 'RH', tipo: 'RAP', subtipo: 'Admissao', status: 'Pronto Para Envio' },
-  especificos: { 
-    categoria: 'Celetista', 
-    horario: '08H ÀS 18H', 
-    setor: 'Recursos Humanos', 
-    motivo: 'Reposição', 
-    salario: '10.000,00', 
-    cargo: 'Líder de RH', 
-    justificativa: '08H ÀS 18H', 
-    tipoSelecao: 'Processo Externo Humanos', 
-    observacoes: 'Reposição', 
-    descricao: '' 
-  }
-};
-
 function HRPanel() {
   const [activeTab, setActiveTab] = useState('pre-envelope');
   const [searchTerm, setSearchTerm] = useState('');
@@ -49,10 +32,11 @@ function HRPanel() {
   const renderActiveTabContent = () => {
     switch (activeTab) {
       case 'pre-envelope':
-      
-        return <PreEnvelopeTable onAnalyzeClick={() => handleOpenModal(mockModalData)} />;
+    
+        return <PreEnvelopeTable onAnalyzeClick={handleOpenModal} />;
       case 'movimentacao-rap':
-        return <RapMovementTable onAnalyzeClick={() => handleOpenModal(mockModalData)} />;
+    
+        return <RapMovementTable onAnalyzeClick={handleOpenModal} />;
       case 'consulta-envelopes':
         return <EnvelopeQueryTable />;
       default:
@@ -129,6 +113,4 @@ function HRPanel() {
 }
 
 export default HRPanel;
-
-
 
