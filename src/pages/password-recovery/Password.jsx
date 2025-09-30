@@ -2,12 +2,22 @@ import React from "react";
 import HeaderHome from "../../components/ui/HeaderHome.jsx";
 import Button from "../../components/ui/Button.jsx";
 import { MoveRight, Mail, Lock } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+
 
 function Password({ currentStep = 1 }) {
   const getStepColor = (step) => {
     return step <= currentStep
       ? "bg-brand-cyan text-white border-brand-cyan"
       : "bg-gray-200 text-gray-500 border-gray-300";
+  };
+
+   const navigate = useNavigate();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Aqui você faz o request para enviar o código de verificação por e-mail
+    navigate("/reset-password/:token?"); 
   };
 
   return (
@@ -76,7 +86,7 @@ function Password({ currentStep = 1 }) {
 
           {/* Texto  */}
           <div className="text-center mb-8">
-            <h1 className="text-md font-medium text-gray-700">
+            <h1 className="text-md font-regular text-gray-700">
               Digite seu email para receber o código de verificação
             </h1>
           </div>
@@ -97,7 +107,7 @@ function Password({ currentStep = 1 }) {
                 <input
                   type="email"
                   id="email"
-                  className="w-full bg-gray-100 border-2 border-gray-300 rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:border-brand-cyan focus:bg-white text-gray-800 placeholder-gray-400 transition-colors duration-200 italic"
+                  className="w-full bg-gray-100 border-2 border-gray-300 rounded-lg py-2 pl-10 pr-4 focus:outline-none focus:border-brand-cyan focus:bg-white text-gray-800 placeholder-gray-400 transition-colors duration-200 italic"
                   placeholder="Digite seu email"
                   required
                 />
