@@ -1,17 +1,43 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import MainLayout from '../../components/layout/MainLayout';
 import PreEnvelopeTable from '../../components/envelopes/PreEnvelopeTable';
 import RapMovementTable from '../../components/envelopes/RapMovementTable';
 import EnvelopeQueryTable from '../../components/envelopes/EnvelopeQueryTable';
 import AnalysisModal from '../../components/ui/AnalysisModal';
+import ConfirmationViewModal from '../../components/view/ConfirmationViewModal';
 import { Search, Filter } from 'lucide-react';
 
+// Dados de exemplo para o modal de análise
+const mockModalData = {
+  requisitante: { nome: 'Adriana Mármore', cargo: 'Líder de RH', gerente: 'Não Informado', unidade: 'Teiú – Matriz' },
+  envelope: { setor: 'RH', tipo: 'RAP', subtipo: 'Admissao', status: 'Pronto Para Envio' },
+  especificos: { 
+    categoria: 'Celetista', 
+    horario: '08H ÀS 18H', 
+    setor: 'Recursos Humanos', 
+    motivo: 'Reposição', 
+    salario: '10.000,00', 
+    cargo: 'Líder de RH', 
+    justificativa: '08H ÀS 18H', 
+    tipoSelecao: 'Processo Externo Humanos', 
+    observacoes: 'Reposição', 
+    descricao: '' 
+  }
+};
+
 function HRPanel() {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('pre-envelope');
   const [searchTerm, setSearchTerm] = useState('');
   
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  // Estados para o Modal de Análise
+  const [isAnalysisModalOpen, setIsAnalysisModalOpen] = useState(false);
   const [selectedEnvelopeData, setSelectedEnvelopeData] = useState(null);
+
+  // Estados para o Modal de Confirmação de Visualização
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [itemToView, setItemToView] = useState(null);
 
   const tabs = [
     { id: 'pre-envelope', label: 'Pré-Envelope' },
@@ -19,26 +45,40 @@ function HRPanel() {
     { id: 'consulta-envelopes', label: 'Consulta de Envelopes' },
   ];
 
-  const handleOpenModal = (data) => {
+  // Funções para o Modal de Análise
+  const handleOpenAnalysisModal = (data) => {
     setSelectedEnvelopeData(data);
-    setIsModalOpen(true);
+    setIsAnalysisModalOpen(true);
+  };
+  const handleCloseAnalysisModal = () => {
+    setIsAnalysisModalOpen(false);
+    setSelectedEnvelopeData(null);
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setSelectedEnvelopeData(null);
+  // Funções para o Modal de Confirmação de Visualização
+  const handleOpenViewModal = (item) => {
+    setItemToView(item);
+    setIsViewModalOpen(true);
+  };
+  const handleCloseViewModal = () => {
+    setIsViewModalOpen(false);
+    setItemToView(null);
+  };
+  const handleConfirmView = () => {
+    console.log("Visualização confirmada para o item:", itemToView.id);
+    handleCloseViewModal();
+    navigate('/envelope/destinatario');
   };
 
   const renderActiveTabContent = () => {
     switch (activeTab) {
       case 'pre-envelope':
-    
-        return <PreEnvelopeTable onAnalyzeClick={handleOpenModal} />;
+        return <PreEnvelopeTable onAnalyzeClick={handleOpenAnalysisModal} />;
       case 'movimentacao-rap':
-    
-        return <RapMovementTable onAnalyzeClick={handleOpenModal} />;
+        return <RapMovementTable onAnalyzeClick={handleOpenAnalysisModal} />;
       case 'consulta-envelopes':
-        return <EnvelopeQueryTable />;
+        // Passa a função correta para a tabela de consulta
+        return <EnvelopeQueryTable onViewClick={handleOpenViewModal} />;
       default:
         return null;
     }
@@ -64,7 +104,6 @@ function HRPanel() {
                   <Search size={20} className="text-gray-400" />
                 </div>
               </div>
-
               <button
                 className="flex items-center gap-2 bg-[#33748B] text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition"
               >
@@ -95,18 +134,26 @@ function HRPanel() {
         </div>
       </div>
 
+      {/* Modal de Análise */}
       <AnalysisModal 
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
+        isOpen={isAnalysisModalOpen}
+        onClose={handleCloseAnalysisModal}
         data={selectedEnvelopeData}
         onConfirm={() => {
           alert('Análise Confirmada!');
-          handleCloseModal();
+          handleCloseAnalysisModal();
         }}
         onRequestChange={() => {
           alert('Solicitação de Alteração enviada!');
-          handleCloseModal();
+          handleCloseAnalysisModal();
         }}
+      />
+      
+      {/* Modal de Confirmação de Visualização */}
+      <ConfirmationViewModal
+        isOpen={isViewModalOpen}
+        onClose={handleCloseViewModal}
+        onConfirm={handleConfirmView}
       />
     </MainLayout>
   );
