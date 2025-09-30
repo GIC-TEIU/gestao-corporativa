@@ -27,13 +27,10 @@ function HeaderHome() {
           className="p-2 w-[120px] sm:w-[150px] transition-all hover:opacity-80 cursor-pointer"
         />
       </Link>
-      
-      <div className="flex justify-left ml-4">
-        <Bell className="w-6 h-6 text-white transition-all duration-200 hover:opacity-80 cursor-pointer" />
-      </div>
-        
+        <Bell fill="#fff" className="w-6 h-6 text-white transition-all duration-200 hover:opacity-80 cursor-pointer" />
       <div className="flex flex-col items-end gap-1 py-2">
         <div className="flex flex-row justify-between gap-2 items-center">
+          
           <p className="text-white h-8 font-poppins flex items-center text-sm sm:text-base">
             {firstName}
           </p>

@@ -41,6 +41,24 @@ const FormHeader = ({ formValues, updateFormValues, handleContinue, setSetorEnve
               <option>Analista</option>
             </select>
           </div>
+          <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-brand-teal-dark font-semibold mb-1">
+              Gerente
+            </label>
+            <select
+              value={formValues.cargo || ""}
+              onChange={(e) => updateFormValues("step1", "cargo", e.target.value)}
+              className="w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan"
+            >
+              <option value="">Selecione</option>
+              <option>Joabe Andrade</option>
+              <option>José Roberto</option>
+              <option>Lázaro Paixão</option>
+              <option>Maria Helena</option>
+              <option>Edson Ramos</option>
+            </select>
+          </div>
 
           <div>
             <label className="block text-brand-teal-dark font-semibold mb-1">
@@ -61,6 +79,7 @@ const FormHeader = ({ formValues, updateFormValues, handleContinue, setSetorEnve
             </select>
           </div>
         </div>
+      </div>
 
         <div className="bg-brand-ice-blue rounded-tr-3xl rounded-br-2xl p-4 space-y-4">
           <div>

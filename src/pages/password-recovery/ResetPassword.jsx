@@ -2,6 +2,7 @@ import React from "react";
 import HeaderHome from "../../components/ui/HeaderHome.jsx";
 import Button from "../../components/ui/Button.jsx";
 import { MoveRight } from "lucide-react";
+import Header from "../../components/ui/Header.jsx";
 
 function ResetPassword({ currentStep = 2 }) {
   const getStepColor = (step) => {
@@ -12,7 +13,7 @@ function ResetPassword({ currentStep = 2 }) {
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      <HeaderHome />
+      <Header showLinks={false} showNotifications={false}/>
       <div className="flex-1 flex items-center justify-center px-4 py-8">
         <div className="max-w-md w-full bg-white px-6">
           {/* Ícone */}

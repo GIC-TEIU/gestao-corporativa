@@ -3,6 +3,7 @@ import HeaderHome from "../../components/ui/HeaderHome.jsx";
 import Button from "../../components/ui/Button.jsx";
 import { MoveRight, Mail, Lock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import Header from "../../components/ui/Header.jsx";
 
 
 function Password({ currentStep = 1 }) {
@@ -22,7 +23,7 @@ function Password({ currentStep = 1 }) {
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      <HeaderHome />
+      <Header showLinks={false} showNotifications={false} />
       <div className="flex-1 flex items-center justify-center px-4 py-8">
         <div className="max-w-md w-full bg-white px-6">
           {/* Ícone */}

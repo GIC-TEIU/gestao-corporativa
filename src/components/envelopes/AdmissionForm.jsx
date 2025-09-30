@@ -123,27 +123,7 @@ const Step3Form = ({
                     </select>
                   </div>
                 </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                <div>
-                    <label className={labelClass}>Gerente *</label>
-                    <select
-                      name="sexo"
-                      value={formValues.step3.gerente || ""}
-                      onChange={(e) =>
-                        handleInputChange("gerente", e.target.value)
-                      }
-                      className={inputClass}
-                    >
-                      <option value="">Selecione</option>
-                      <option>Joabe Andrade</option>
-                      <option>José Roberto</option>
-                      <option>Maria Helena</option>
-                      <option>Lazaro Paixão</option>
-                      <option>Edson Ramos</option>
-                    </select>
-                  </div>
-
+    
                 <div>
                   <label className={labelClass}>Salário Inicial *</label>
                   <input
@@ -157,7 +137,6 @@ const Step3Form = ({
                     className={inputClass}
                   />
                 </div>
-              </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
