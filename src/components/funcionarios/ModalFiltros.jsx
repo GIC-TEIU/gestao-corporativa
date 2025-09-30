@@ -1,32 +1,37 @@
 import React, { useState, useEffect } from "react";
+import { X } from "lucide-react"; // Importando o ícone
+
+// 1. Criando uma "fonte da verdade" para o estado inicial. Facilita a manutenção.
+const initialFilterState = { 
+  status: "", 
+  cargo: "", 
+  centroCusto: "",
+  empresa: "" 
+};
 
 const ModalFiltros = ({ filters, onApply, onClose }) => {
-  const [localFilters, setLocalFilters] = useState(filters || { 
-    status: "", 
-    cargo: "", 
-    centroCusto: "",
-    empresa: "" 
-  });
+  // Inicializa o estado local mesclando o estado inicial com os filtros ativos recebidos via props.
+  const [localFilters, setLocalFilters] = useState({ ...initialFilterState, ...filters });
 
+  // Sincroniza o estado local se os filtros externos mudarem enquanto o modal está aberto.
   useEffect(() => {
-    setLocalFilters(filters || { status: "", cargo: "", centroCusto: "", empresa: "" });
+    setLocalFilters({ ...initialFilterState, ...filters });
   }, [filters]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setLocalFilters((s) => ({ ...s, [name]: value }));
+    setLocalFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
   };
 
   const handleApply = (e) => {
     e.preventDefault();
-    onApply && onApply(localFilters);
-    onClose && onClose();
+    onApply(localFilters); // Envia apenas os filtros locais para o componente pai
+    onClose();
   };
 
+  // 2. CORREÇÃO PRINCIPAL: "Limpar" agora só afeta o estado do modal.
   const handleClear = () => {
-    const clearedFilters = { status: "", cargo: "", centroCusto: "", empresa: "" };
-    setLocalFilters(clearedFilters);
-    onApply && onApply(clearedFilters);
+    setLocalFilters(initialFilterState); // Apenas redefine os campos do formulário
   };
 
   return (
@@ -35,9 +40,10 @@ const ModalFiltros = ({ filters, onApply, onClose }) => {
         <button
           onClick={onClose}
           aria-label="Fechar"
-          className="absolute right-4 top-4 rounded-md px-2 py-1 text-gray-500 hover:text-gray-800"
+          className="absolute right-4 top-4 text-gray-500 hover:text-gray-800"
         >
-          ✕
+          {/* 3. Melhoria na UI do botão de fechar */}
+          <X size={22} /> 
         </button>
 
         <h3 className="mb-4 text-lg font-bold text-[#0F4D56]">Filtrar Funcionários</h3>

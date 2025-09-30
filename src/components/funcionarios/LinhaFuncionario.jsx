@@ -25,7 +25,7 @@ const IdCardIcon = ({ size = 20, className = '' }) => (
 const LinhaFuncionario = ({ funcionario, onVerDetalhes }) => {
   
 
-  const statusColor = funcionario.status === 'ativo' ? 'bg-[#165507]' : 'bg-[#B00909]';
+  const statusColor = funcionario.status === 'Ativo' ? 'bg-[#165507]' : 'bg-[#B00909]';
 
   return (
   
