@@ -37,8 +37,7 @@ export function AppProvider({ children }) {
       industria: "Tecnologia",
       assinatura: "/assets/signature.png",
     },
-
-     {
+    {
       id: 3,
       nome: "Ana",
       email: "Dev.ana@gmail.com",
@@ -52,8 +51,7 @@ export function AppProvider({ children }) {
       industria: "Tecnologia",
       assinatura: "/assets/signature.png",
     },
-
-     {
+    {
       id: 4,
       nome: "Stéfani Freire",
       email: "techLead@gmail.com",
@@ -67,9 +65,8 @@ export function AppProvider({ children }) {
       industria: "Tecnologia",
       assinatura: "/assets/signature.png",
     },
-
-     {
-      id: 3,
+    {
+      id: 5, // CORRIGIDO: era 3
       nome: "Andersen",
       email: "eletri.andersen@gmail.com",
       cargo: "Tec de eletronica",
@@ -82,9 +79,8 @@ export function AppProvider({ children }) {
       industria: "Tecnologia",
       assinatura: "/assets/signature.png",
     },
-
-     {
-      id: 3,
+    {
+      id: 6, // CORRIGIDO: era 3
       nome: "Ikaro",
       email: "web.igor@gmail.com",
       cargo: "Desenvolvedor web",
@@ -97,7 +93,6 @@ export function AppProvider({ children }) {
       industria: "Tecnologia",
       assinatura: "/assets/signature.png",
     },
-
   ]);
 
   // Estado para envelopes

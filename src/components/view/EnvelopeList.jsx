@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import EnvelopeQueryTable from '../envelopes/EnvelopeQueryTable';
 import ConfirmationViewModal from './ConfirmationViewModal'; 
+import { EnvelopeDetail } from './EnvelopeDetail';
 
 export const EnvelopeList = () => {
   const navigate = useNavigate(); 
@@ -20,7 +21,7 @@ export const EnvelopeList = () => {
   const handleConfirm = () => {
     console.log("Visualização confirmada para o envelope:", selectedEnvelope.id);
     handleCloseModal();
-    navigate('/envelope/destinatario');
+    
   };
 
   return (
@@ -32,6 +33,8 @@ export const EnvelopeList = () => {
         onClose={handleCloseModal}
         onConfirm={handleConfirm}
       />
+
+      {selectedEnvelope && <EnvelopeDetail envelope={selectedEnvelope} />}
     </>
   );
 };

@@ -1,5 +1,5 @@
 // src/components/envelopes/ConfirmationModal.jsx
-import { X, Pencil } from "lucide-react";
+import { X, Pencil, CheckCircle } from "lucide-react";
 
 const ConfirmationModal = ({ show, formData, formValues, onEdit, onConfirm }) => {
   if (!show) return null;
@@ -18,6 +18,14 @@ const ConfirmationModal = ({ show, formData, formValues, onEdit, onConfirm }) =>
     return mapping[subtipo] || subtipo;
   };
 
+  // Componente DataItem do primeiro código
+  const DataItem = ({ label, value }) => (
+    <div className="flex items-baseline gap-2">
+      <p className="text-sm font-semibold text-[#0F3B57] uppercase tracking-wider whitespace-nowrap">{label}:</p>
+      <p className="text-sm text-gray-800 font-normal">{value || 'Não informado'}</p>
+    </div>
+  );
+
   // Função para renderizar dados específicos
   const renderDadosEspecificos = () => {
     const { tipo, subtipo } = formData;
@@ -29,170 +37,73 @@ const ConfirmationModal = ({ show, formData, formValues, onEdit, onConfirm }) =>
       switch (subtipoFormatado) {
         case "promocao/cargo":
           return (
-            <div className="space-y-3">
-              <h4 className="font-semibold  text-brand-teal-dark">
-                Mudança de Cargo / Promoção Salarial
-              </h4>
-              <div className="grid grid-cols-2 gap-4  text-brand-teal-dark ">
-                <div>
-                  <strong>Novo Cargo:</strong> {dadosMovimentacao.novoCargo || "-"}
-                </div>
-                <div>
-                  <strong>Valor Anterior:</strong>{" "}
-                  {dadosMovimentacao.valorAnterior
-                    ? `R$ ${dadosMovimentacao.valorAnterior}`
-                    : "-"}
-                </div>
-                <div>
-                  <strong>Valor Final:</strong>{" "}
-                  {dadosMovimentacao.valorFinal
-                    ? `R$ ${dadosMovimentacao.valorFinal}`
-                    : "-"}
-                </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
+              <div className="space-y-2">
+                <DataItem label="Novo Cargo" value={dadosMovimentacao.novoCargo} />
+                <DataItem label="Valor Anterior" value={dadosMovimentacao.valorAnterior ? `R$ ${dadosMovimentacao.valorAnterior}` : ''} />
+              </div>
+              <div className="space-y-2">
+                <DataItem label="Valor Final" value={dadosMovimentacao.valorFinal ? `R$ ${dadosMovimentacao.valorFinal}` : ''} />
               </div>
             </div>
           );
 
         case "desligamento":
           return (
-            <div className="space-y-3">
-              <h4 className="font-semibold text-brand-teal-dark">Desligamento</h4>
-              <div className="grid grid-cols-2 gap-4  text-brand-teal-dark">
-                <div>
-                  <strong>Demissão Justa Causa:</strong>{" "}
-                  {dadosMovimentacao.demissaoJustaCausa ? "Sim" : "Não"}
-                </div>
-                <div>
-                  <strong>Demissão Sem Justa Causa:</strong>{" "}
-                  {dadosMovimentacao.demissaoSemJustaCausa ? "Sim" : "Não"}
-                </div>
-                <div>
-                  <strong>Acordo:</strong> {dadosMovimentacao.acordo ? "Sim" : "Não"}
-                </div>
-                <div>
-                  <strong>Aviso Prévio:</strong>{" "}
-                  {dadosMovimentacao.avisoPrevio || "-"}
-                </div>
-              </div>
+            <div className="space-y-2">
+              <DataItem label="Demissão Justa Causa" value={dadosMovimentacao.demissaoJustaCausa ? "Sim" : "Não"} />
+              <DataItem label="Demissão Sem Justa Causa" value={dadosMovimentacao.demissaoSemJustaCausa ? "Sim" : "Não"} />
+              <DataItem label="Acordo" value={dadosMovimentacao.acordo ? "Sim" : "Não"} />
+              <DataItem label="Aviso Prévio" value={dadosMovimentacao.avisoPrevio} />
             </div>
           );
 
         case "salario":
           return (
-            <div className="space-y-3">
-              <h4 className="font-semibold text-brand-teal-dark">Alteração Salarial</h4>
-              <div className="grid grid-cols-2 gap-4  text-brand-teal-dark">
-                <div>
-                  <strong>Valor Anterior:</strong>{" "}
-                  {dadosMovimentacao.valorAnterior
-                    ? `R$ ${dadosMovimentacao.valorAnterior}`
-                    : "-"}
-                </div>
-                <div>
-                  <strong>Valor Final:</strong>{" "}
-                  {dadosMovimentacao.valorFinal
-                    ? `R$ ${dadosMovimentacao.valorFinal}`
-                    : "-"}
-                </div>
-              </div>
+            <div className="space-y-2">
+              <DataItem label="Valor Anterior" value={dadosMovimentacao.valorAnterior ? `R$ ${dadosMovimentacao.valorAnterior}` : ''} />
+              <DataItem label="Valor Final" value={dadosMovimentacao.valorFinal ? `R$ ${dadosMovimentacao.valorFinal}` : ''} />
             </div>
           );
 
         case "movimentacao":
           return (
-            <div className="space-y-3">
-              <h4 className="font-semibold text-brand-teal-dark">
-                Movimentação do Colaborador
-              </h4>
-              <div className="grid grid-cols-2 gap-4 text-brand-teal-dark">
-                <div>
-                  <strong>Novo Centro de Custo:</strong>{" "}
-                  {dadosMovimentacao.novoCentroCusto || "-"}
-                </div>
-                <div>
-                  <strong>Nova Unidade Operacional:</strong>{" "}
-                  {dadosMovimentacao.novaUnidadeOperacional || "-"}
-                </div>
-                <div>
-                  <strong>Novo Cargo:</strong> {dadosMovimentacao.novoCargo || "-"}
-                </div>
-                <div>
-                  <strong>Aumento de Quadro:</strong>{" "}
-                  {dadosMovimentacao.aumentoQuadro ? "Sim" : "Não"}
-                </div>
-                <div>
-                  <strong>Substituição:</strong>{" "}
-                  {dadosMovimentacao.substituicao ? "Sim" : "Não"}
-                </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
+              <div className="space-y-2">
+                <DataItem label="Novo Centro de Custo" value={dadosMovimentacao.novoCentroCusto} />
+                <DataItem label="Nova Unidade Operacional" value={dadosMovimentacao.novaUnidadeOperacional} />
+                <DataItem label="Aumento de Quadro" value={dadosMovimentacao.aumentoQuadro ? "Sim" : "Não"} />
+              </div>
+              <div className="space-y-2">
+                <DataItem label="Novo Cargo" value={dadosMovimentacao.novoCargo} />
+                <DataItem label="Substituição" value={dadosMovimentacao.substituicao ? "Sim" : "Não"} />
               </div>
             </div>
           );
 
         case "periculosidade":
           return (
-            <div className="space-y-3">
-              <h4 className="font-semibold text-brand-teal-dark">Periculosidade</h4>
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <strong>Valor Anterior:</strong>{" "}
-                  {dadosMovimentacao.valorAnterior
-                    ? `R$ ${dadosMovimentacao.valorAnterior}`
-                    : "-"}
-                </div>
-                <div>
-                  <strong>Valor Final:</strong>{" "}
-                  {dadosMovimentacao.valorFinal
-                    ? `R$ ${dadosMovimentacao.valorFinal}`
-                    : "-"}
-                </div>
-              </div>
+            <div className="space-y-2">
+              <DataItem label="Valor Anterior" value={dadosMovimentacao.valorAnterior ? `R$ ${dadosMovimentacao.valorAnterior}` : ''} />
+              <DataItem label="Valor Final" value={dadosMovimentacao.valorFinal ? `R$ ${dadosMovimentacao.valorFinal}` : ''} />
             </div>
           );
 
         case "insalubridade":
           return (
-            <div className="space-y-3">
-              <h4 className="font-semibold text-brand-teal-dark">Insalubridade</h4>
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <strong>Valor Anterior:</strong>{" "}
-                  {dadosMovimentacao.valorAnterior
-                    ? `R$ ${dadosMovimentacao.valorAnterior}`
-                    : "-"}
-                </div>
-                <div>
-                  <strong>Valor Final:</strong>{" "}
-                  {dadosMovimentacao.valorFinal
-                    ? `R$ ${dadosMovimentacao.valorFinal}`
-                    : "-"}
-                </div>
-              </div>
+            <div className="space-y-2">
+              <DataItem label="Valor Anterior" value={dadosMovimentacao.valorAnterior ? `R$ ${dadosMovimentacao.valorAnterior}` : ''} />
+              <DataItem label="Valor Final" value={dadosMovimentacao.valorFinal ? `R$ ${dadosMovimentacao.valorFinal}` : ''} />
             </div>
           );
 
         case "experiencia":
           return (
-            <div className="space-y-3">
-              <h4 className="font-semibold text-brand-teal-dark">
-                Término de Experiência
-              </h4>
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <strong>Demissão Justa Causa:</strong>{" "}
-                  {dadosMovimentacao.demissaoJustaCausa ? "Sim" : "Não"}
-                </div>
-                <div>
-                  <strong>Demissão Sem Justa Causa:</strong>{" "}
-                  {dadosMovimentacao.demissaoSemJustaCausa ? "Sim" : "Não"}
-                </div>
-                <div>
-                  <strong>Acordo:</strong> {dadosMovimentacao.acordo ? "Sim" : "Não"}
-                </div>
-                <div>
-                  <strong>Aviso Prévio:</strong>{" "}
-                  {dadosMovimentacao.avisoPrevio || "-"}
-                </div>
-              </div>
+            <div className="space-y-2">
+              <DataItem label="Demissão Justa Causa" value={dadosMovimentacao.demissaoJustaCausa ? "Sim" : "Não"} />
+              <DataItem label="Demissão Sem Justa Causa" value={dadosMovimentacao.demissaoSemJustaCausa ? "Sim" : "Não"} />
+              <DataItem label="Acordo" value={dadosMovimentacao.acordo ? "Sim" : "Não"} />
+              <DataItem label="Aviso Prévio" value={dadosMovimentacao.avisoPrevio} />
             </div>
           );
 
@@ -206,61 +117,30 @@ const ConfirmationModal = ({ show, formData, formValues, onEdit, onConfirm }) =>
           delete dadosParaMostrar.tipo;
 
           return (
-            <div className="space-y-3">
-              <h4 className="font-semibold text-brand-teal-dark">
-                Movimentação - {subtipo}
-              </h4>
-              <div className="text-sm">
-                <pre>{JSON.stringify(dadosParaMostrar, null, 2)}</pre>
-              </div>
+            <div className="space-y-2">
+              <p className="text-center text-gray-500">Dados específicos para '{subtipo}' não disponíveis.</p>
             </div>
           );
       }
     } else if (tipo === "RAP") {
       const dadosAdmissao = formValues.step3 || {};
       return (
-        <div className="space-y-3">
-          <h4 className="font-semibold text-brand-teal-dark">Admissão</h4>
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            <div>
-              <strong>Cargo:</strong> {dadosAdmissao.cargo || "-"}
-            </div>
-            <div>
-              <strong>Categoria:</strong> {dadosAdmissao.categoria || "-"}
-            </div>
-            <div>
-              <strong>Horário Trabalho:</strong>{" "}
-              {dadosAdmissao.horario_trabalho || "-"}
-            </div>
-            <div>
-              <strong>Setor:</strong> {dadosAdmissao.setor || "-"}
-            </div>
-            <div>
-              <strong>Motivo Requisição:</strong> {dadosAdmissao.motivo || "-"}
-            </div>
-            <div>
-              <strong>Sexo:</strong> {dadosAdmissao.sexo || "-"}
-            </div>
-            <div>
-              <strong>Salário Inicial:</strong>{" "}
-              {dadosAdmissao.salario ? `R$ ${dadosAdmissao.salario}` : "-"}
-            </div>
-            <div>
-              <strong>Tipo Seleção:</strong> {dadosAdmissao.tipo_selecao || "-"}
-            </div>
-            <div>
-              <strong>Unidade:</strong> {dadosAdmissao.unidade || "-"}
-            </div>
-            <div className="col-span-2">
-              <strong>Justificativa:</strong> {dadosAdmissao.justificativa || "-"}
-            </div>
-            <div className="col-span-2">
-              <strong>Descrição Atividades:</strong>{" "}
-              {dadosAdmissao.descricao_atividades || "-"}
-            </div>
-            <div className="col-span-2">
-              <strong>Observações:</strong> {dadosAdmissao.observacoes || "-"}
-            </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
+          <div className="space-y-2">
+            <DataItem label="Categoria" value={dadosAdmissao.categoria} />
+            <DataItem label="Horário Trabalho" value={dadosAdmissao.horario_trabalho} />
+            <DataItem label="Setor" value={dadosAdmissao.setor} />
+            <DataItem label="Motivo Requisição" value={dadosAdmissao.motivo} />
+            <DataItem label="Salário Inicial" value={dadosAdmissao.salario ? `R$ ${dadosAdmissao.salario}` : ''} />
+          </div>
+          <div className="space-y-2">
+            <DataItem label="Cargo" value={dadosAdmissao.cargo} />
+            <DataItem label="Sexo" value={dadosAdmissao.sexo} />
+            <DataItem label="Tipo Seleção" value={dadosAdmissao.tipo_selecao} />
+            <DataItem label="Unidade" value={dadosAdmissao.unidade} />
+            <DataItem label="Justificativa" value={dadosAdmissao.justificativa} />
+            <DataItem label="Descrição Atividades" value={dadosAdmissao.descricao_atividades} />
+            <DataItem label="Observações" value={dadosAdmissao.observacoes} />
           </div>
         </div>
       );
@@ -270,128 +150,78 @@ const ConfirmationModal = ({ show, formData, formValues, onEdit, onConfirm }) =>
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 font-[Poppins]">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-4xl mx-4 max-h-[90vh] overflow-y-auto">
-        {/* Cabeçalho */}
-        <div className="flex justify-between items-center px-6 py-4 border-b">
-          <h2 className="text-2xl font-bold text-brand-teal-dark">
-            Análise Envelope
-          </h2>
-          <button
-            onClick={onEdit}
-            className="text-gray-400 hover:text-gray-600 transition"
-          >
-            <X size={24} />
-          </button>
-        </div>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl shadow-xl max-w-5xl w-full relative max-h-[90vh] overflow-hidden">
+        <button onClick={onEdit} className="absolute top-6 right-6 text-gray-500 hover:text-gray-800 z-10">
+          <X size={24} />
+        </button>
+        <div className="h-full overflow-y-auto p-8">
+          <h1 className="text-3xl font-bold text-[#0F3B57] mb-6">Análise Envelope</h1>
 
-        {/* Conteúdo */}
-        <div className="p-6 space-y-8">
           {/* Resumo do Envelope */}
-          <div className="bg-brand-ice-blue rounded-lg p-4">
-            <h3 className="font-semibold text-brand-teal-dark mb-3">
-              Resumo do Envelope
-            </h3>
-            <div className="grid grid-cols-2 gap-4 text-sm">
+          <div className="bg-[#D6E3E8] rounded-lg p-6 mb-6">
+            <h2 className="text-lg font-semibold text-[#0F3B57] mb-4">Resumo do Envelope</h2>
+            <hr className="border-t-2 border-white my-4" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
               <div>
-                <p className="text-gray-500">NOME:</p>
-                <p className="font-medium text-brand-teal-dark">
-                  {formData.requisitante}
-                </p>
-              </div>
-              <div>
-                <p className="text-gray-500">CARGO:</p>
-                <p className="font-medium text-brand-teal-dark">
-                  {formData.cargo}
-                </p>
-              </div>
-              <div>
-                <p className="text-gray-500">GERENTE:</p>
-                <p className="font-medium text-brand-teal-dark">
-                  {formData.gerente || "-"}
-                </p>
-              </div>
-              <div>
-                <p className="text-gray-500">UNIDADE:</p>
-                <p className="font-medium text-brand-teal-dark">
-                  {formData.unidade}
-                </p>
-              </div>
-              <div>
-                <p className="text-gray-500">SETOR:</p>
-                <p className="font-medium text-brand-teal-dark">
-                  {formData.setor}
-                </p>
-              </div>
-              <div>
-                <p className="text-gray-500">TIPO:</p>
-                <p className="font-medium text-brand-teal-dark">
-                  {formData.tipo}
-                </p>
-              </div>
-              {formData.subtipo && (
-                <div>
-                  <p className="text-gray-500">SUBTIPO:</p>
-                  <p className="font-medium text-brand-teal-dark">
-                    {formData.subtipo}
-                  </p>
+                <h3 className="font-bold text-[#0F3B57] mb-2">DADOS DO REQUISITANTE</h3>
+                <div className="space-y-1">
+                  <DataItem label="Nome" value={formData.requisitante} />
+                  <DataItem label="Cargo" value={formData.cargo} />
+                  <DataItem label="Gerente" value={formData.gerente} />
+                  <DataItem label="Unidade" value={formData.unidade} />
                 </div>
-              )}
+              </div>
+              <div>
+                <h3 className="font-bold text-[#0F3B57] mb-2">DADOS DO ENVELOPE</h3>
+                <div className="space-y-1">
+                  <DataItem label="Setor" value={formData.setor} />
+                  <DataItem label="Tipo" value={formData.tipo} />
+                  <DataItem label="Subtipo" value={formData.subtipo} />
+                </div>
+              </div>
             </div>
           </div>
 
           {/* Dados do Colaborador */}
           {formData.tipo === "RMP" && formValues.step2 && (
-            <div className="space-y-4">
-              <h3 className="font-semibold text-brand-teal-dark border-b pb-2">
-                DADOS DO COLABORADOR
-              </h3>
-              <div className="grid grid-cols-2 gap-4 text-sm  text-brand-teal-dark">
-                <div>
-                  <strong>Nome:</strong> {formValues.step2.nomeColaborador || "-"}
-                </div>
-                <div>
-                  <strong>Cargo Atual:</strong> {formValues.step2.cargoAtual || "-"}
-                </div>
-                <div>
-                  <strong>Centro de Custo:</strong>{" "}
-                  {formValues.step2.centroCusto || "-"}
-                </div>
-                <div>
-                  <strong>Matrícula:</strong> {formValues.step2.matricula || "-"}
-                </div>
-                <div>
-                  <strong>Data da Requisição:</strong>{" "}
-                  {formValues.step2.dataAtual || "-"}
-                </div>
+            <div className="bg-[#D6E3E8] rounded-lg p-6 mb-6">
+              <h3 className="font-bold text-[#0F3B57] mb-2">DADOS DO COLABORADOR</h3>
+              <hr className="border-t-2 border-white my-4" />
+              <div className="space-y-1">
+                <DataItem label="Nome" value={formValues.step2.nomeColaborador} />
+                <DataItem label="Cargo Atual" value={formValues.step2.cargoAtual} />
+                <DataItem label="Centro de Custo" value={formValues.step2.centroCusto} />
+                <DataItem label="Matrícula" value={formValues.step2.matricula} />
+                <DataItem label="Data da Requisição" value={formValues.step2.dataAtual} />
               </div>
             </div>
           )}
 
           {/* Dados Específicos */}
           <div>
-            <h3 className="font-semibold text-brand-teal-dark border-b pb-2 mb-3">
-              DADOS ESPECÍFICOS
-            </h3>
+            <h3 className="font-bold text-center text-[#0F3B57] mb-2">DADOS ESPECÍFICOS</h3>
+            <hr className="border-t border-gray-300 mb-4" />
             {renderDadosEspecificos()}
           </div>
-        </div>
 
-        {/* Rodapé */}
-        <div className="flex justify-end gap-4 px-6 py-4 border-t bg-gray-50 rounded-b-2xl">
-          <button
-            onClick={onEdit}
-            className="flex items-center gap-2 px-5 py-2 border border-brand-blue-dark text-brand-blue-dark rounded-lg hover:bg-brand-blue-dark hover:text-white transition"
-          >
-            <Pencil size={18} />
-            Editar
-          </button>
-          <button
-            onClick={onConfirm}
-            className="flex items-center gap-2 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
-          >
-            Confirmar Análise
-          </button>
+          {/* Botões */}
+          <div className="flex justify-center items-center gap-6 mt-8 pt-6 border-t">
+            <button
+              onClick={onEdit}
+              className="flex items-center gap-2 px-6 py-3 border-2 border-[#0D6578] text-[#0D6578] font-semibold rounded-lg hover:bg-teal-50 transition"
+            >
+              <Pencil size={18} />
+              Editar
+            </button>
+            <button
+              onClick={onConfirm}
+              className="flex items-center gap-2 px-6 py-3 bg-[#2F7429] text-white font-semibold rounded-lg shadow-md hover:bg-[#0a4b58] transition"
+            >
+              <CheckCircle size={18} />
+              Confirmar Análise
+            </button>
+          </div>
         </div>
       </div>
     </div>
