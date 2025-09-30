@@ -7,15 +7,12 @@ const HeaderFuncionarios = ({
   onFiltersClick,
   hasActiveFilters,
   onClearFilters,
-  filters
+  filters,
 }) => {
   return (
     <>
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-4">
-          <button className="text-[#0F4D56] hover:opacity-80">
-            <ArrowLeft className="w-6 h-6" />
-          </button>
 
           {hasActiveFilters && (
             <button
@@ -27,26 +24,29 @@ const HeaderFuncionarios = ({
           )}
         </div>
 
-        <div className="flex items-center space-x-3">
-          <div className="relative">
+        {/* INÍCIO DA SEÇÃO ATUALIZADA */}
+        <div className="flex items-center gap-4 w-full max-w-lg">
+          <div className="relative flex-grow">
             <input
               type="text"
-              placeholder="Pesquisar funcionários..."
-              value={searchTerm}
-              onChange={(e) => onSearchChange(e.target.value)}
-              className="w-80 rounded-lg border border-gray-300 bg-white px-10 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#0F4D56]"
+              placeholder="Pesquisar funcionários..." // Mantido o placeholder original
+              value={searchTerm} // Função original
+              onChange={(e) => onSearchChange(e.target.value)} // Função original
+              className="w-full bg-[#EEF1F1] border border-[#767676] text-gray-800 placeholder:text-[#9E9E9E] rounded-lg py-2 pl-4 pr-10 focus:outline-none focus:ring-2 focus:ring-[#33748B]" // Novo estilo
             />
-            <Search className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" />
+            <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+              <Search size={20} className="text-gray-400" />
+            </div>
           </div>
-
           <button
-            onClick={onFiltersClick}
-            className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            onClick={onFiltersClick} // Função original
+            className="flex items-center gap-2 bg-[#33748B] text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition" // Novo estilo
           >
-            <Filter className="w-4 h-4" />
-            <span>Filtrar</span>
+            <Filter size={18} />
+            <span className="font-semibold">Filtrar</span>
           </button>
         </div>
+        {/* FIM DA SEÇÃO ATUALIZADA */}
       </div>
 
       {hasActiveFilters && (

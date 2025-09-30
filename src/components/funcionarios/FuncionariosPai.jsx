@@ -58,9 +58,9 @@ const FuncionariosPai = () => {
     <MainLayout
       title="Funcionários"
       subtitle="Gerencie os funcionários cadastrados e suas assinaturas digitais"
-      showBackButton={false}
+      showBackButton={true}
     >
-      <div className="min-h-screen bg-[#F7F7F7] font-poppins">
+      <div className="min-h-screen font-poppins">
         <div className="p-6">
           <HeaderFuncionarios
             searchTerm={searchTerm}
