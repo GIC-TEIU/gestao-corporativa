@@ -1,7 +1,6 @@
 import React from 'react';
 import { X, Eye, CheckCircle } from 'lucide-react';
 
-// Nome do componente alterado
 const ConfirmationViewModal = ({ isOpen, onClose, onConfirm }) => {
   if (!isOpen) return null;
 
@@ -31,7 +30,7 @@ const ConfirmationViewModal = ({ isOpen, onClose, onConfirm }) => {
           </button>
           <button
             onClick={onConfirm}
-            className="flex items-center gap-2 px-8 py-3 bg-[#0D6578] text-white font-semibold rounded-lg shadow-md hover:bg-[#0a4b58] transition"
+            className="flex items-center gap-2 px-8 py-3 bg-[#2F7429] text-white font-semibold rounded-lg shadow-md hover:bg-[#22571e] transition"
           >
             <CheckCircle size={20} />
             Confirmar
@@ -42,6 +41,4 @@ const ConfirmationViewModal = ({ isOpen, onClose, onConfirm }) => {
   );
 };
 
-// Export alterado para o novo nome
 export default ConfirmationViewModal;
-

@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import MainLayout from '../layout/MainLayout';
+import { useNavigate } from 'react-router-dom';
 import EnvelopeQueryTable from '../envelopes/EnvelopeQueryTable';
 import ConfirmationViewModal from './ConfirmationViewModal'; 
-import { Search, Filter } from 'lucide-react';
 
 export const EnvelopeList = () => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const navigate = useNavigate(); 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEnvelope, setSelectedEnvelope] = useState(null);
 
@@ -18,10 +17,10 @@ export const EnvelopeList = () => {
     setIsModalOpen(false);
     setSelectedEnvelope(null);
   };
-
   const handleConfirm = () => {
     console.log("Visualização confirmada para o envelope:", selectedEnvelope.id);
     handleCloseModal();
+    navigate('/envelope/destinatario');
   };
 
   return (

@@ -57,7 +57,7 @@ function EnvelopeQueryTable({ onViewClick }) {
       <table className="w-full text-sm text-left">
         <thead className="bg-[#33748B3B] text-[#275667] font-semibold">
           <tr>
-            <th className="p-3 text-center">Nº RAP</th>
+            <th className="p-3 text-center">Protocolo</th>
             <th className="p-3 text-center">Nome do Colaborador</th>
             <th className="p-3 text-center">Destinatários</th>
             <th className="p-3 text-center">Qtd.</th>
@@ -108,9 +108,6 @@ function EnvelopeQueryTable({ onViewClick }) {
                       className="flex items-center justify-center w-9 h-9 rounded-lg bg-[#4EA64754] border border-[#2F7429] text-[#2F7429] hover:opacity-80 transition"
                     >
                       <Folder size={20} />
-                    </button>
-                    <button className="flex items-center justify-center w-9 h-9 rounded-lg bg-purple-200 border border-purple-400 text-purple-800 hover:opacity-80 transition">
-                      <Plus size={20} />
                     </button>
                   </div>
                 </td>
