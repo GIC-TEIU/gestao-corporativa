@@ -8,7 +8,6 @@ import AnalysisModal from '../../components/ui/AnalysisModal';
 import ConfirmationViewModal from '../../components/view/ConfirmationViewModal';
 import { Search, Filter } from 'lucide-react';
 
-// Dados de exemplo para o modal de análise
 const mockModalData = {
   requisitante: { nome: 'Adriana Mármore', cargo: 'Líder de RH', gerente: 'Não Informado', unidade: 'Teiú – Matriz' },
   envelope: { setor: 'RH', tipo: 'RAP', subtipo: 'Admissao', status: 'Pronto Para Envio' },
@@ -31,11 +30,9 @@ function HRPanel() {
   const [activeTab, setActiveTab] = useState('pre-envelope');
   const [searchTerm, setSearchTerm] = useState('');
   
-  // Estados para o Modal de Análise
   const [isAnalysisModalOpen, setIsAnalysisModalOpen] = useState(false);
   const [selectedEnvelopeData, setSelectedEnvelopeData] = useState(null);
 
-  // Estados para o Modal de Confirmação de Visualização
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [itemToView, setItemToView] = useState(null);
 
@@ -45,7 +42,6 @@ function HRPanel() {
     { id: 'consulta-envelopes', label: 'Consulta de Envelopes' },
   ];
 
-  // Funções para o Modal de Análise
   const handleOpenAnalysisModal = (data) => {
     setSelectedEnvelopeData(data);
     setIsAnalysisModalOpen(true);
@@ -55,7 +51,6 @@ function HRPanel() {
     setSelectedEnvelopeData(null);
   };
 
-  // Funções para o Modal de Confirmação de Visualização
   const handleOpenViewModal = (item) => {
     setItemToView(item);
     setIsViewModalOpen(true);
@@ -77,7 +72,7 @@ function HRPanel() {
       case 'movimentacao-rap':
         return <RapMovementTable onAnalyzeClick={handleOpenAnalysisModal} />;
       case 'consulta-envelopes':
-        // Passa a função correta para a tabela de consulta
+    
         return <EnvelopeQueryTable onViewClick={handleOpenViewModal} />;
       default:
         return null;
