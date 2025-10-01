@@ -36,10 +36,10 @@ export const EnvelopeProvider = ({ children }) => {
   });
 
   const mockEnvelopes = [
-    { id: 1, matricula: 'Nº 302394', data: '14/01/2024', nome: 'Carlos Oliveira', destinatarios: ['Helder Mendes', 'Adriana Mármore', 'Joabe Andrade'], envelope: 'Contrato de Trabalho...', status: 'Concluído' },
-    { id: 2, matricula: 'Nº 302395', data: '14/01/2024', nome: 'Juliana Pereira', destinatarios: ['Lázaro Silva', 'Stéfani Freire'], envelope: 'Contrato de Trabalho...', status: 'Concluído' },
-    { id: 3, matricula: 'Nº 302396', data: '14/01/2024', nome: 'Mariana Costa', destinatarios: ['Maria Santos', 'Ricardo Almeida'], envelope: 'Contrato de Trabalho...', status: 'Concluído' },
-    { id: 4, matricula: 'Nº 302397', data: '14/01/2024', nome: 'Mariana Costa', destinatarios: ['Igor Damasceno', 'Andersen Araújo', 'Icaro Silva'], envelope: 'Contrato de Trabalho...', status: 'Pendente' },
+    { id: 1, matricula: 'Nº 302394', data: '14/01/2024', nome: 'Carlos Oliveira', destinatarios: ['Helder Mendes', 'Adriana Mármore', 'Joabe Andrade'], visualizado: true, envelope: 'Contrato de Trabalho...', status: 'Concluído' },
+    { id: 2, matricula: 'Nº 302395', data: '14/01/2024', nome: 'Juliana Pereira', destinatarios: ['Lázaro Silva', 'Stéfani Freire'], visualizado: false, envelope: 'Contrato de Trabalho...', status: 'Concluído' },
+    { id: 3, matricula: 'Nº 302396', data: '14/01/2024', nome: 'Mariana Costa', destinatarios: ['Maria Santos', 'Ricardo Almeida'], visualizado: false, envelope: 'Contrato de Trabalho...', status: 'Concluído' },
+    { id: 4, matricula: 'Nº 302397', data: '14/01/2024', nome: 'Mariana Costa', destinatarios: ['Igor Damasceno', 'Andersen Araújo', 'Icaro Silva'], visualizado: true, envelope: 'Contrato de Trabalho...', status: 'Pendente' },
      ];
 
   const documents = [

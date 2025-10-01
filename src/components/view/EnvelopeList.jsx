@@ -1,14 +1,20 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import EnvelopeQueryTable from '../envelopes/EnvelopeQueryTable';
 import ConfirmationViewModal from './ConfirmationViewModal'; 
-import EnvelopeDetail from './EnvelopeDetail'; // Remove as chaves - importação default
 
 export const EnvelopeList = () => {
+
+  const navigate = useNavigate();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEnvelope, setSelectedEnvelope] = useState(null);
-  const [showEnvelopeDetail, setShowEnvelopeDetail] = useState(false);
+  
 
-  const handleOpenModal = (envelope) => {
+  const [envelopeConfirmado, setEnvelopeConfirmado] = useState(null);
+
+
+  const handleOpenViewModal = (envelope) => {
     setSelectedEnvelope(envelope);
     setIsModalOpen(true);
   };
@@ -18,31 +24,30 @@ export const EnvelopeList = () => {
     setSelectedEnvelope(null);
   };
 
+
   const handleConfirm = () => {
     console.log("Visualização confirmada para o envelope:", selectedEnvelope.id);
+    setEnvelopeConfirmado({ ...selectedEnvelope });
     handleCloseModal();
-    setShowEnvelopeDetail(true); // Mostra o componente EnvelopeDetail
+  
+  
+  };
+  
+
+  const handleNavigateToRecipients = (envelope) => {
+    navigate(`/envelope/destinatario`);
   };
 
-  const handleBackToList = () => {
-    setShowEnvelopeDetail(false); // Volta para a lista
-    setSelectedEnvelope(null);
-  };
 
-  // Se showEnvelopeDetail for true, mostra o componente EnvelopeDetail
-  if (showEnvelopeDetail && selectedEnvelope) {
-    return (
-      <EnvelopeDetail 
-        envelope={selectedEnvelope}
-        onBack={handleBackToList}
-      />
-    );
-  }
-
-  // Caso contrário, mostra a lista normal
+  
   return (
     <>
-      <EnvelopeQueryTable onViewClick={handleOpenModal} />
+      {/* 6. PASSAR AS PROPS CORRETAS PARA A TABELA */}
+      <EnvelopeQueryTable 
+        onOpenViewModal={handleOpenViewModal}
+        onViewClick={handleNavigateToRecipients}
+        envelopeParaAtualizar={envelopeConfirmado}
+      />
       
       <ConfirmationViewModal 
         isOpen={isModalOpen}

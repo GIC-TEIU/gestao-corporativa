@@ -1,6 +1,6 @@
-import React from 'react';
-import { Folder, Plus, CheckCircle, Clock } from 'lucide-react';
-import { useEnvelope } from '../../context/EnvelopeContext';
+import React, { useState, useEffect } from 'react';
+import { Folder, Eye, CheckCircle, Clock } from 'lucide-react';
+import { useEnvelope } from '../../context/EnvelopeContext'
 
 const getInitials = (name) => {
   if (!name) return '?';
@@ -48,13 +48,45 @@ const statusConfig = {
   },
 };
 
-// Componente agora aceita a prop onViewClick
-function EnvelopeQueryTable({ onViewClick }) {
+function EnvelopeQueryTable({ 
+  onViewClick = () => {}, 
+  onOpenViewModal = () => {},
+  envelopeParaAtualizar 
+}) {
+
   const { mockEnvelopes } = useEnvelope();
+
+
+  const [envelopes, setEnvelopes] = useState([]);
+
+
+  useEffect(() => {
+  
+    if (mockEnvelopes) {
+      const initialEnvelopes = mockEnvelopes.map(env => ({
+        ...env,
+        visualizado: env.visualizado || false,
+      }));
+      setEnvelopes(initialEnvelopes);
+    }
+  }, [mockEnvelopes]);
+
+
+  useEffect(() => {
+    if (envelopeParaAtualizar) {
+      setEnvelopes(currentEnvelopes =>
+        currentEnvelopes.map(env =>
+          env.id === envelopeParaAtualizar.id ? { ...env, visualizado: true } : env
+        )
+      );
+    }
+  }, [envelopeParaAtualizar]);
+
 
   return (
     <div className="overflow-x-auto rounded-[18px] overflow-hidden">
       <table className="w-full text-sm text-left">
+        {/* ... (o thead da tabela continua o mesmo) ... */}
         <thead className="bg-[#33748B3B] text-[#275667] font-semibold">
           <tr>
             <th className="p-3 text-center">Protocolo</th>
@@ -67,12 +99,14 @@ function EnvelopeQueryTable({ onViewClick }) {
           </tr>
         </thead>
         <tbody className="bg-[#EEF1F1]">
-          {mockEnvelopes.map((item) => {
+          {/* 5. MAPEIA O ESTADO LOCAL 'envelopes' */}
+          {envelopes.map((item) => {
             const statusInfo = statusConfig[item.status] || statusConfig['Pendente'];
             const destinatarios = item.destinatarios || [];
 
             return (
               <tr key={item.id} className="border-b border-[#D9D9D9]">
+                {/* ... (as outras colunas <td> continuam as mesmas) ... */}
                 <td className="p-2">
                   <div className="bg-[#D9D9D9] text-gray-800 rounded-md px-3 h-12 flex flex-col items-center justify-center text-center">
                     <span className="font-medium">{item.matricula}</span>
@@ -83,14 +117,14 @@ function EnvelopeQueryTable({ onViewClick }) {
                 <td className="p-2">
                   <div className="bg-[#D9D9D9] rounded-md px-3 h-12 flex items-center justify-center">
                     <div className="flex items-center justify-center -space-x-2">
-                      {destinatarios.slice(0, 3).map((name, i) => (
-                        <Avatar key={i} name={name} />
-                      ))}
+                      {destinatarios.slice(0, 3).map((name, i) => ( <Avatar key={i} name={name} /> ))}
                       {destinatarios.length > 3 && <span className="text-gray-500 pl-3">...</span>}
                     </div>
                   </div>
                 </td>
-                <td className="p-2"><div className="bg-[#D9D9D9] text-gray-800 font-medium rounded-md w-12 px-3 h-12 flex items-center justify-center text-center">{destinatarios.length}</div></td>
+                <td className="p-2 text-center">
+                  <div className="bg-[#D9D9D9] text-gray-800 font-medium rounded-md w-12 px-3 h-12 flex items-center justify-center text-center mx-auto">{destinatarios.length}</div>
+                </td>
                 <td className="p-2"><div className="bg-[#D9D9D9] text-gray-800 rounded-md px-3 h-12 flex items-center justify-center text-center">{item.envelope}</div></td>
                 <td className="p-2">
                   <div className="flex justify-center">
@@ -102,13 +136,23 @@ function EnvelopeQueryTable({ onViewClick }) {
                 </td>
                 <td className="p-2">
                   <div className="flex justify-center items-center gap-2">
-                    {/* Botão verde agora chama a função onViewClick */}
-                    <button 
-                      onClick={() => onViewClick(item)}
-                      className="flex items-center justify-center w-9 h-9 rounded-lg bg-[#4EA64754] border border-[#2F7429] text-[#2F7429] hover:opacity-80 transition"
-                    >
-                      <Folder size={20} />
-                    </button>
+                    {item.visualizado ? (
+                      <button 
+                        onClick={() => onViewClick(item)}
+                        className="flex items-center justify-center w-9 h-9 rounded-lg bg-[#4EA64754] border border-[#2F7429] text-[#2F7429] hover:opacity-80 transition"
+                        title="Ver detalhes"
+                      >
+                        <Folder size={20} />
+                      </button>
+                    ) : (
+                      <button 
+                        onClick={() => onOpenViewModal(item)}
+                        className="flex items-center justify-center w-9 h-9 rounded-lg bg-[#0776BC54] border border-[#0776BC] text-[#0776BC] hover:opacity-80 transition"
+                        title="Confirmar Visualização"
+                      >
+                        <Eye size={20} />
+                      </button>
+                    )}
                   </div>
                 </td>
               </tr>
@@ -121,4 +165,3 @@ function EnvelopeQueryTable({ onViewClick }) {
 }
 
 export default EnvelopeQueryTable;
-

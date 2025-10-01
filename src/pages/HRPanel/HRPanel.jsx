@@ -8,23 +8,6 @@ import AnalysisModal from '../../components/ui/AnalysisModal';
 import ConfirmationViewModal from '../../components/view/ConfirmationViewModal';
 import { Search, Filter } from 'lucide-react';
 
-const mockModalData = {
-  requisitante: { nome: 'Adriana Mármore', cargo: 'Líder de RH', gerente: 'Não Informado', unidade: 'Teiú – Matriz' },
-  envelope: { setor: 'RH', tipo: 'RAP', subtipo: 'Admissao', status: 'Pronto Para Envio' },
-  especificos: { 
-    categoria: 'Celetista', 
-    horario: '08H ÀS 18H', 
-    setor: 'Recursos Humanos', 
-    motivo: 'Reposição', 
-    salario: '10.000,00', 
-    cargo: 'Líder de RH', 
-    justificativa: '08H ÀS 18H', 
-    tipoSelecao: 'Processo Externo Humanos', 
-    observacoes: 'Reposição', 
-    descricao: '' 
-  }
-};
-
 function HRPanel() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('pre-envelope');
@@ -35,6 +18,9 @@ function HRPanel() {
 
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [itemToView, setItemToView] = useState(null);
+
+
+  const [envelopeConfirmado, setEnvelopeConfirmado] = useState(null);
 
   const tabs = [
     { id: 'pre-envelope', label: 'Pré-Envelope' },
@@ -51,6 +37,7 @@ function HRPanel() {
     setSelectedEnvelopeData(null);
   };
 
+
   const handleOpenViewModal = (item) => {
     setItemToView(item);
     setIsViewModalOpen(true);
@@ -59,10 +46,19 @@ function HRPanel() {
     setIsViewModalOpen(false);
     setItemToView(null);
   };
+
+
   const handleConfirmView = () => {
     console.log("Visualização confirmada para o item:", itemToView.id);
+  
+    setEnvelopeConfirmado({ ...itemToView }); 
     handleCloseViewModal();
-    navigate('/envelope/destinatario');
+  
+  };
+
+
+  const handleNavigateToRecipients = (envelope) => {
+    navigate(`/envelope/destinatario`);
   };
 
   const renderActiveTabContent = () => {
@@ -72,8 +68,14 @@ function HRPanel() {
       case 'movimentacao-rap':
         return <RapMovementTable onAnalyzeClick={handleOpenAnalysisModal} />;
       case 'consulta-envelopes':
-    
-        return <EnvelopeQueryTable onViewClick={handleOpenViewModal} />;
+      
+        return (
+          <EnvelopeQueryTable 
+            onOpenViewModal={handleOpenViewModal}   
+            onViewClick={handleNavigateToRecipients}
+            envelopeParaAtualizar={envelopeConfirmado}
+          />
+        );
       default:
         return null;
     }
@@ -85,6 +87,7 @@ function HRPanel() {
       subtitle="Acompanhe todas as etapas do RH"
     >
       <div className="w-full">
+        {/* Barra de Busca e Filtro (sem alterações) */}
         <div className="flex justify-end mb-4">
             <div className="flex items-center gap-4 w-full max-w-lg">
               <div className="relative flex-grow">
@@ -108,6 +111,7 @@ function HRPanel() {
             </div>
         </div>
 
+        {/* Abas (sem alterações) */}
         <div className="flex border-b border-gray-300">
           {tabs.map(tab => (
             <button
@@ -124,12 +128,13 @@ function HRPanel() {
           ))}
         </div>
 
+        {/* Conteúdo da Aba Ativa */}
         <div className="mt-4">
           {renderActiveTabContent()}
         </div>
       </div>
 
-      {/* Modal de Análise */}
+      {/* Modal de Análise (sem alterações) */}
       <AnalysisModal 
         isOpen={isAnalysisModalOpen}
         onClose={handleCloseAnalysisModal}
@@ -144,7 +149,7 @@ function HRPanel() {
         }}
       />
       
-      {/* Modal de Confirmação de Visualização */}
+      {/* Modal de Confirmação de Visualização (sem alterações) */}
       <ConfirmationViewModal
         isOpen={isViewModalOpen}
         onClose={handleCloseViewModal}
@@ -155,4 +160,3 @@ function HRPanel() {
 }
 
 export default HRPanel;
-
