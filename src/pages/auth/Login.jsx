@@ -42,8 +42,8 @@ function Login() {
         {/* Lado esquerdo */}
         <div className="hidden lg:flex lg:w-1/2 flex-col justify-between items-center text-left bg-white/60 p-8">
           <div className="w-full flex flex-col justify-center items-left flex-1">
-            <p className="text-base sm:text-md lg:text-lg text-gray-600 text-center lg:text-left mb-2 px-4">Bem-vindo ao</p>
-            <h1 className="text-2xl sm:text-2xl md:text-4xl lg:text-4xl font-semibold text-gray-800 text-center lg:text-left leading-tight px-4">
+            <p className="text-base sm:text-md lg:text-lg text-gray-600 text-center lg:text-left ml-2 mb-2 px-4">Bem-vindo ao</p>
+            <h1 className="text-2xl sm:text-2xl md:text-4xl lg:text-5xl font-semibold text-gray-800 text-center lg:text-left leading-tight px-4">
               Gestão Coorporativa
             </h1>
           </div>
