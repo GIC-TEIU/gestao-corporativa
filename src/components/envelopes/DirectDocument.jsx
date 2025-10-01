@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom'; // 1. Importar useNavigate
+import { useNavigate } from 'react-router-dom';
 import MainLayout from '../../components/layout/MainLayout';
 import { FileUp, Files, X, ArrowRight } from 'lucide-react';
 
@@ -9,7 +9,7 @@ function DirectDocument() {
   const [description, setDescription] = useState('');
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef(null);
-  const navigate = useNavigate(); // 2. Inicializar o hook de navegação
+  const navigate = useNavigate();
 
   const handleDragOver = (e) => {
     e.preventDefault();
@@ -51,13 +51,15 @@ function DirectDocument() {
   const handleRemoveAllFiles = () => {
     setFiles([]);
   };
-
-  // 3. Função "Avançar" agora navega para a página de destinatários
+  
   const handleNext = () => {
     console.log({ files, envelopeType, description });
-    // Aqui você pode salvar os dados (files, envelopeType, etc.) em um contexto
-    // ou passá-los através do estado da rota, se necessário.
     navigate('/envelope/destinatario');
+  };
+
+  // 1. ADICIONE A FUNÇÃO PARA VOLTAR
+  const handleBack = () => {
+    navigate(-1); // Navega para a página anterior no histórico
   };
 
   return (
@@ -66,7 +68,7 @@ function DirectDocument() {
       subtitle="Adicione o documento PDF que deseja encaminhar para aprovação:"
     >
       <div className="space-y-8">
-        {/* Área de Arrastar e Soltar agora está sempre visível */}
+        {/* Área de Arrastar e Soltar */}
         <div
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
@@ -79,7 +81,7 @@ function DirectDocument() {
             onChange={handleFileChange}
             className="hidden"
             accept=".pdf"
-            multiple 
+            multiple
           />
           <FileUp size={48} className="text-[#0D6578] mb-4" />
           <p className="text-gray-600 mb-4">Arraste seus PDF's aqui ou</p>
@@ -104,9 +106,9 @@ function DirectDocument() {
                   <p className="text-sm font-semibold text-gray-700 mt-2">
                     {files.length} {files.length > 1 ? 'arquivos' : 'arquivo'}
                   </p>
-                   <button onClick={handleRemoveAllFiles} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-0.5 hover:bg-red-600">
+                    <button onClick={handleRemoveAllFiles} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-0.5 hover:bg-red-600">
                       <X size={14} />
-                   </button>
+                    </button>
                 </div>
               ) : (
                 <div className="w-24 h-24 border-2 border-dashed border-[#a0b8c0] rounded-lg flex items-center justify-center">
@@ -142,8 +144,15 @@ function DirectDocument() {
         </div>
       </div>
 
-      {/* Botão de Ação */}
-      <div className="flex justify-end mt-8">
+      {/* 2. ALTERAÇÃO NOS BOTÕES DE AÇÃO */}
+      <div className="flex justify-between items-center mt-8">
+        <button
+          type="button"
+          onClick={handleBack}
+          className="bg-gray-200 text-gray-800 px-6 py-3 rounded-lg hover:bg-gray-300 transition-colors"
+        >
+          Anterior
+        </button>
         <button
           onClick={handleNext}
           disabled={files.length === 0 || !envelopeType || !description}
@@ -158,4 +167,3 @@ function DirectDocument() {
 }
 
 export default DirectDocument;
-

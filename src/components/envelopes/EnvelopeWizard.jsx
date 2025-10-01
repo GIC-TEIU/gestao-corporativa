@@ -27,31 +27,25 @@ export default function EnvelopeWizard() {
     formValues,
     setorEnvelope,
     setSetorEnvelope,
-    tipoEnvelope, 
+    tipoEnvelope,
     setTipoEnvelope,
     updateFormValues,
     handleContinue,
     handleRhSelection,
-    handleBack,
+    handleBack, // A função já está disponível aqui
     handleConfirm,
     handleEdit
   } = useEnvelopeForm();
 
-  // Função customizada para handleContinue
   const handleContinueCustom = (e) => {
     if (e && e.preventDefault) {
       e.preventDefault();
     }
 
-  
-
     if (step === 1 && formValues.step1?.setor === "Documento Direto") {
-      
       navigate('/envelope/documento-direto');
       return;
     }
-
-   
     handleContinue(e);
   };
 
@@ -59,40 +53,43 @@ export default function EnvelopeWizard() {
   const handleGoToDashboard = () => navigate("/dashboard");
 
   const renderStep = () => {
-    const commonProps = { 
-      handleContinue: handleContinueCustom, 
+    const commonProps = {
+      handleContinue: handleContinueCustom,
       updateFormValues,
       setSetorEnvelope,
       setTipoEnvelope,
       setorEnvelope,
-      tipoEnvelope: tipoEnvelope || "" 
+      tipoEnvelope: tipoEnvelope || ""
     };
-    
+
     switch (step) {
       case 1:
-        return <FormHeader {...commonProps} formValues={formValues.step1} />;
+        return <FormHeader {...commonProps} formValues={formValues.step1} handleBack={handleBack} />;
       case 2:
         return (
-          <ChooseForm 
-            {...commonProps} 
+          <ChooseForm
+            {...commonProps}
             formValues={formValues.step2}
-            handleRhSelection={handleRhSelection} 
+            handleRhSelection={handleRhSelection}
+            handleBack={handleBack} // Adicionado para consistência
           />
         );
       case 2.5:
         return (
-          <MovementForm 
-            {...commonProps} 
+          <MovementForm
+            {...commonProps}
             formValues={formValues.step2}
-            tipoEnvelope={tipoEnvelope} 
+            tipoEnvelope={tipoEnvelope}
+            handleBack={handleBack} // Adicionado para consistência
           />
         );
       case 3:
         return (
-          <AdmissionForm 
-            {...commonProps} 
+          <AdmissionForm
+            {...commonProps}
             formValues={formValues}
             tipoEnvelope={formData.subtipo}
+            handleBack={handleBack} // <-- ADICIONE ESTA LINHA
           />
         );
       default:
@@ -100,7 +97,6 @@ export default function EnvelopeWizard() {
     }
   };
 
-  
   if (enviando) return <LoadingState />;
   if (enviado) {
     return (
@@ -115,17 +111,15 @@ export default function EnvelopeWizard() {
   const currentStepInfo = stepInfo[step] || { title: "Envelopes", subtitle: "" };
 
   return (
-    <MainLayout 
-      title={currentStepInfo.title} 
+    <MainLayout
+      title={currentStepInfo.title}
       subtitle={currentStepInfo.subtitle}
-      showBackButton={step > 1}
-      onBack={handleBack}
     >
       <div className="w-full">
         <div className="mt-4">
           {renderStep()}
         </div>
-        
+
         <ConfirmationModal
           show={showConfirmation}
           formData={formData}
