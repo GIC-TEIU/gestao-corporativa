@@ -1,7 +1,7 @@
 import { EnvelopeProvider, useEnvelope } from '../../context/EnvelopeContext';
 import { Sidebar } from '../../components/view/Sidebar';
 import { EnvelopeList } from '../../components/view/EnvelopeList';
-import { EnvelopeDetail } from '../../components/view/EnvelopeDetail';
+import  EnvelopeDetail  from '../../components/view/EnvelopeDetail';
 import { SignatureModal } from '../../components/view/SignatureModal';
 import { RejectModal } from '../../components/view/RejectModal';
 import MainLayout from '../../components/layout/MainLayout';

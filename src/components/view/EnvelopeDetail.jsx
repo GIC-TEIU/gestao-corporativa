@@ -1,7 +1,18 @@
-import { FileText, Mail, ArrowLeft } from "lucide-react";
+import { FileText, Mail, ArrowLeft, CheckCircle, Clock } from "lucide-react";
 import PdfViewer from "../PdfViewer";
 import { StatusTimeline } from "./StatusTimeline";
 import { useEnvelope } from "../../context/EnvelopeContext";
+
+const statusConfig = {
+  Concluído: {
+    classes: "bg-green-100 text-green-800 border border-green-400",
+    icon: <CheckCircle size={14} />,
+  },
+  Pendente: {
+    classes: "bg-orange-100 text-orange-800 border border-orange-400",
+    icon: <Clock size={14} />,
+  },
+};
 
 const InfoEnvio = ({ info }) => {
   return (
@@ -35,19 +46,18 @@ const InfoEnvio = ({ info }) => {
   );
 };
 
-export const EnvelopeDetail = () => {
+const EnvelopeDetail = ({ envelope, onBack }) => {
   const {
     documents,
     selectedDocs,
     previewDoc,
     signatureError,
     envelopeInfo,
-    handleBackToList,
     setPreviewDoc,
     toggleSelect,
   } = useEnvelope();
 
-  const info = envelopeInfo || {
+  const info = envelopeInfo || envelope || {
     enviadoPor: "Adriana Mármore",
     dataEnvio: "14/06/2025",
     destinatarios: ["Joabe Andrade", "Helder Mendes"],
@@ -55,18 +65,27 @@ export const EnvelopeDetail = () => {
     observacoes: "lorem ipsum do envio...",
   };
 
+  const currentStatus = "Concluído"; // pode vir da API ou contexto
+
   return (
-    <div className="flex-1 flex flex-col p-8 bg-[#DFE9ED] rounded-xl overflow-y-auto">
+    <div className="flex-1 flex flex-col p-8 bg-gray-50 rounded-xl overflow-y-auto">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
-        
         <button
-          onClick={handleBackToList}
+          onClick={onBack}
           className="flex items-center gap-2 text-[#0F3B57] hover:text-[#0a2a3f] font-medium"
         >
           <ArrowLeft className="w-5 h-5" />
           Voltar para lista
         </button>
+
+          <span
+              className={`flex items-center gap-2 px-3 py-1 text-sm font-medium rounded-full ${statusConfig[currentStatus].classes}`}
+            >
+              {statusConfig[currentStatus].icon}
+              {currentStatus}
+            </span>
+
       </div>
 
       {/* Conteúdo */}
@@ -89,6 +108,10 @@ export const EnvelopeDetail = () => {
 
         {/* Lateral: Status + Info Envio */}
         <div className="flex flex-col gap-6">
+          {/* Badge de status */}
+         
+
+          {/* Status Timeline */}
           <div className="bg-white rounded-xl shadow p-6">
             <h3 className="font-semibold text-[#0F3B57] mb-6 text-center">
               Status do Documento
@@ -96,6 +119,7 @@ export const EnvelopeDetail = () => {
             <StatusTimeline />
           </div>
 
+          {/* Info envio */}
           <InfoEnvio info={info} />
         </div>
       </div>
@@ -117,8 +141,8 @@ export const EnvelopeDetail = () => {
               className={`flex items-center justify-between p-4 border rounded-xl cursor-pointer transition 
                 ${
                   previewDoc === doc.file
-                    ? "border-[#16A34A] bg-[#F0FDF4]"
-                    : "border-gray-300 bg-gray-50 hover:bg-gray-100"
+                    ? "border-green-400 bg-green-50"
+                    : "border-gray-300 bg-white hover:bg-gray-50"
                 }`}
               onClick={() => setPreviewDoc(doc.file)}
             >
@@ -130,14 +154,12 @@ export const EnvelopeDetail = () => {
                     e.stopPropagation();
                     toggleSelect(doc.id);
                   }}
-                  className="w-5 h-5 accent-[#16A34A]"
+                  className="w-5 h-5 accent-green-600"
                 />
-                <FileText className="text-[#0F3B57] w-6 h-6" />
+                <FileText className="text-blue-600 w-6 h-6" />
                 <div>
-                  <p className="font-medium text-blue-600 underline">
-                    {doc.name}
-                  </p>
-                  <p className="text-sm text-gray-500">PDF</p>
+                  <p className="font-medium text-gray-700">{doc.name}</p>
+                  <p className="text-sm text-gray-700">PDF</p>
                 </div>
               </div>
               {previewDoc === doc.file && (
@@ -152,3 +174,5 @@ export const EnvelopeDetail = () => {
     </div>
   );
 };
+
+export default EnvelopeDetail;

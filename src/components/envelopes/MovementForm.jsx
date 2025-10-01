@@ -602,17 +602,19 @@ const Step2_5Movimentacao = ({
   </div>
 </div>
 
+{/* Coluna Direita */} 
+<div className="flex flex-col justify-between border-8 border-brand-ice-blue p-4 rounded-tl-1x3 rounded-bl-1x2">
+  <div className="space-y-4">
+    {renderConteudoDireito()}
+  </div>
 
-        {/* Coluna Direita */}
-         <div className="space-y-4 border-8 border-brand-ice-blue p-4 rounded-tl-1x3 rounded-bl-1x2">
-          {renderConteudoDireito()}
+  <div className="flex justify-center mt-6">
+    <Button type="submit" disabled={!tipoEnvelope}>
+      Enviar
+    </Button>
+  </div>
+</div>
 
-          <div className="flex justify-end">
-            <Button type="submit" disabled={!tipoEnvelope}>
-              Enviar
-            </Button>
-          </div>
-        </div>
       </div>
     </form>
   );

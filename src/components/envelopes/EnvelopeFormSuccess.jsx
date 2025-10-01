@@ -1,6 +1,7 @@
 import React from 'react';
 import SuccessDisplay from '../ui/SuccessDisplay';
 import { Eye, Home } from 'lucide-react';
+import MainLayout from '../layout/MainLayout';
 
 function EnvelopeFormSuccess() {
   const handleVerEnvelope = () => {
@@ -12,6 +13,7 @@ function EnvelopeFormSuccess() {
   };
 
   return (
+    <MainLayout title="Criação de Fluxo de Documento" subtitle="Adicionar Destinatários">
     <div style={{ height: '100vh' }}>
       <SuccessDisplay
         title="Envelope enviado para análise!"
@@ -23,6 +25,7 @@ function EnvelopeFormSuccess() {
         SecondaryButtonIcon={Home}
       />
     </div>
+    </MainLayout>
   );
 }
 
