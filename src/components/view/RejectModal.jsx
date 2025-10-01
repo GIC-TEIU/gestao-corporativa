@@ -1,4 +1,4 @@
-import { Ban, Lock, X, Eye, EyeOff, FileText } from 'lucide-react';
+import { Lock, X, Eye, EyeOff, FileText } from 'lucide-react';
 import { useEnvelope } from '../../context/EnvelopeContext';
 import { useAuth } from '../../context/AuthContext';
 
@@ -37,7 +37,12 @@ export const RejectModal = () => {
     setSignatureError('');
 
     try {
-      await login(currentUser.email, password);
+      const success = await login(currentUser.email, password);
+
+      if (!success) {
+        setSignatureError('Senha incorreta. Por favor, tente novamente.');
+        return;
+      }
 
       const newStatus = {
         timelineStatus: 3,
@@ -58,7 +63,8 @@ export const RejectModal = () => {
       alert(`Envelope reprovado por ${currentUser.nome}!`);
 
     } catch (error) {
-      setSignatureError('Senha incorreta. Por favor, tente novamente.');
+      console.error("Erro inesperado no login:", error);
+      setSignatureError('Erro inesperado ao validar senha.');
     } finally {
       setIsSigning(false);
     }

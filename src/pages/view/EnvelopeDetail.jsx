@@ -74,7 +74,7 @@ function EnvelopeDetailContent() {
     dataEnvio: "14/06/2025",
     destinatarios: ["Joabe Andrade", "Helder Mendes"],
     protocolo: "Nº 51548415",
-    observacoes: "lorem ipsum do envio...",
+    observacoes: "Aguardando aprovação do diretor ",
   };
 
   const currentStatus = "Concluído";
@@ -84,13 +84,7 @@ function EnvelopeDetailContent() {
       <div className="flex-1 flex flex-col p-8 bg-gray-50 rounded-xl overflow-y-auto">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
-          <button
-            onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-[#0F3B57] hover:text-[#0a2a3f] font-medium"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            Voltar para lista
-          </button>
+          
          
           <span
             className={`flex items-center gap-2 px-3 py-1 text-sm font-medium rounded-full ${statusConfig[currentStatus].classes}`}
