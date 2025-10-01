@@ -4,6 +4,8 @@ import PdfViewer from "../../components/PdfViewer";
 import { StatusTimeline } from "../../components/view/StatusTimeline";
 import { EnvelopeProvider, useEnvelope } from "../../context/EnvelopeContext";
 import MainLayout from "../../components/layout/MainLayout";
+import { SignatureModal } from "../../components/view/SignatureModal";
+import { RejectModal } from "../../components/view/RejectModal";
 
 const statusConfig = {
   Concluído: {
@@ -57,6 +59,11 @@ function EnvelopeDetailContent() {
     envelopeInfo,
     setPreviewDoc,
     toggleSelect,
+    showSignatureModal,
+    showRejectModal,
+    // Adicione estas funções se não existirem no seu contexto
+    handleSignDocuments,
+    handleRejectDocuments
   } = useEnvelope();
 
   const { id } = useParams();
@@ -77,6 +84,13 @@ function EnvelopeDetailContent() {
       <div className="flex-1 flex flex-col p-8 bg-gray-50 rounded-xl overflow-y-auto">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-2 text-[#0F3B57] hover:text-[#0a2a3f] font-medium"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            Voltar para lista
+          </button>
          
           <span
             className={`flex items-center gap-2 px-3 py-1 text-sm font-medium rounded-full ${statusConfig[currentStatus].classes}`}
@@ -121,9 +135,30 @@ function EnvelopeDetailContent() {
 
         {/* Documentos para Assinar */}
         <div className="my-8 bg-white rounded-xl shadow p-6">
-          <h3 className="font-semibold mb-4 text-[#0F3B57]">
-            Selecionar Documentos para Assinar
-          </h3>
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="font-semibold text-[#0F3B57]">
+              Selecionar Documentos para Assinar
+            </h3>
+            
+            {/* Botões de ação */}
+            <div className="flex gap-3">
+              <button
+                onClick={handleRejectDocuments}
+                disabled={selectedDocs.length === 0}
+                className="px-4 py-2 border border-red-600 text-red-600 rounded-lg hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Rejeitar
+              </button>
+              <button
+                onClick={handleSignDocuments}
+                disabled={selectedDocs.length === 0}
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Assinar Documentos
+              </button>
+            </div>
+          </div>
+
           {signatureError && (
             <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
               {signatureError}
@@ -166,6 +201,10 @@ function EnvelopeDetailContent() {
             ))}
           </div>
         </div>
+
+        {/* Modais */}
+        {showSignatureModal && <SignatureModal />}
+        {showRejectModal && <RejectModal />}
       </div>
     </MainLayout>
   );
