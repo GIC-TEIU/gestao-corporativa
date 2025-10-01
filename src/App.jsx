@@ -17,6 +17,7 @@ import Destinatario from './pages/Envelope/Destinatario';
 import RecipientSuccess from './components/envelopes/RecipientSuccess';
 import HRPanel from './pages/HRPanel/HRPanel';
 import DirectDocument from './components/envelopes/DirectDocument';
+import EnvelopeDetail from'./pages/view/EnvelopeDetail';
 
 function App() {
   const { currentUser } = useAuth();
@@ -72,6 +73,8 @@ function App() {
           </ProtectedRoute>
         } />
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+
+        <Route path="/view/envelope-detail" element={<ProtectedRoute><EnvelopeDetail /></ProtectedRoute>} />
       </Routes>
     </BrowserRouter>
   );

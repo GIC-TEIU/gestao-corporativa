@@ -35,7 +35,7 @@ export const EnvelopeList = () => {
   
 
   const handleNavigateToRecipients = (envelope) => {
-    navigate(`/envelope/destinatario`);
+    navigate(`/view/envelope-detail`);
   };
 
 

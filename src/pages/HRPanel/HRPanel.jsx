@@ -58,7 +58,7 @@ function HRPanel() {
 
 
   const handleNavigateToRecipients = (envelope) => {
-    navigate(`/envelope/destinatario`);
+    navigate(`/view/envelope-detail`);
   };
 
   const renderActiveTabContent = () => {
