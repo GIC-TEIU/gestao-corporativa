@@ -7,7 +7,7 @@ import Header from '../../components/ui/Header.jsx';
 
 
 
-const RequestReset = () => {
+const PasswordSuccess = () => {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <Header showLinks={false} showNotifications={false} />
@@ -44,4 +44,4 @@ const RequestReset = () => {
   );
 };
 
-export default RequestReset;
+export default PasswordSuccess;

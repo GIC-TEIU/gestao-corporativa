@@ -5,9 +5,9 @@ import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import Home from './pages/home/Home';
 import Dashboard from "./pages/dashboard/Dashboard";
-import RequestReset from "./pages/password-recovery/RequestReset";
+import PasswordSuccess from "./pages/password-recovery/PasswordSuccess";
 import ResetPassword from "./pages/password-recovery/ResetPassword";
-import Password from "./pages/password-recovery/Password";
+import ForgotPassword from "./pages/password-recovery/ForgotPassword";
 import View from "./pages/view/View";
 import Funcionario from "./pages/Funcionario/Funcionario";
 import Envelope from "./pages/Envelope/Envelope";
@@ -16,6 +16,7 @@ import { EnvelopeProvider } from './context/EnvelopeContext';
 import Destinatario from './pages/Envelope/Destinatario';
 import RecipientSuccess from './components/envelopes/RecipientSuccess';
 import HRPanel from './pages/HRPanel/HRPanel';
+import DirectDocument from './components/envelopes/DirectDocument';
 
 function App() {
   const { currentUser } = useAuth();
@@ -26,9 +27,13 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={!currentUser ? <Login /> : <Dashboard />} />
         <Route path="/register" element={!currentUser ? <Register /> : <Dashboard />} />
-        <Route path="/forgot-password" element={<RequestReset />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        {/* 1: formulário para digitar o e-mail */}
         <Route path="/reset-password/:token" element={<ResetPassword />} />
-        <Route path="/password" element={<Password />} />
+        {/* 2: usuário insere nova senha */}
+        <Route path="/password-success" element={<PasswordSuccess />} />
+        {/* 3: confirmação de sucesso */}
+
 
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
 
@@ -45,6 +50,12 @@ function App() {
         <Route path="/envelope/destinatario" element={
           <ProtectedRoute>
             <EnvelopeProvider><Destinatario /></EnvelopeProvider>
+          </ProtectedRoute>
+        } />
+
+         <Route path="/envelope/documento-direto" element={
+          <ProtectedRoute>
+            <EnvelopeProvider><DirectDocument /></EnvelopeProvider>
           </ProtectedRoute>
         } />
 

@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import Header from "../../components/ui/Header.jsx";
 
 
-function Password({ currentStep = 1 }) {
+function ForgotPassword({ currentStep = 1 }) {
   const getStepColor = (step) => {
     return step <= currentStep
       ? "bg-brand-cyan text-white border-brand-cyan"
@@ -140,4 +140,4 @@ function Password({ currentStep = 1 }) {
   );
 }
 
-export default Password;
+export default ForgotPassword;
