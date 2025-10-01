@@ -44,7 +44,7 @@ export const EnvelopeProvider = ({ children }) => {
 
   const documents = [
     { id: 1, name: "Documento-1.pdf", file: "/docs/doc5.pdf" },
-    { id: 2, name: "Documento-2.pdf", file: "/docs/doc2.pdf" },
+    { id: 2, name: "Documento-2.pdf", file: "/docs/doc6.pdf" },
     { id: 3, name: "Documento-3.pdf", file: "/docs/doc4.pdf" },
   ];
 
