@@ -49,7 +49,8 @@ function Register() {
     matricula: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    role: 'request_viewer'
   });
   const [formErrors, setFormErrors] = useState({});
   const [error, setError] = useState('');
@@ -58,6 +59,8 @@ function Register() {
   
   const { register } = useAuth();
   const navigate = useNavigate();
+
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;

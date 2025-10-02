@@ -11,13 +11,89 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
 
-  useEffect(() => {
-    const savedUser = localStorage.getItem('currentUser');
-    if (savedUser) {
-      setCurrentUser(JSON.parse(savedUser));
-    }
+
+useEffect(() => {
+  const savedUser = localStorage.getItem('currentUser');
+  if (savedUser) {
+    setCurrentUser(JSON.parse(savedUser));
+  }
+
+const initializeTestUsers = () => {
+      const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
+      
+      const testUsers = [
+        {
+          id: 1,
+          name: "Administrador Geral",
+          email: "admin@empresa.com",
+          password: "123456",
+          role: "admin",
+          cpf: "123.456.789-00",
+          matricula: "001",
+          createdAt: new Date().toISOString()
+        },
+        {
+          id: 2,
+          name: "Criador de Requesição", 
+          email: "criador@empresa.com",
+          password: "123456",
+          role: "request_creator",
+          cpf: "234.567.890-11",
+          matricula: "002",
+          createdAt: new Date().toISOString()
+        },
+        {
+          id: 3,
+          name: "Gestor de RH",
+          email: "rh@empresa.com",
+          password: "123456",
+          role: "rh_manager", 
+          cpf: "345.678.901-22",
+          matricula: "003",
+          createdAt: new Date().toISOString()
+        },
+        {
+          id: 4,
+          name: "Consultor de Requesição",
+          email: "consultor@empresa.com",
+          password: "123456",
+          role: "request_viewer",
+          cpf: "456.789.012-33",
+          matricula: "004",
+          createdAt: new Date().toISOString()
+        },
+        {
+          id: 5,
+          name: "Usuário Sem Acesso",
+          email: "semacesso@empresa.com", 
+          password: "123456",
+          role: "no_access", // Novo perfil sem permissões
+          cpf: "567.890.123-44",
+          matricula: "005",
+          createdAt: new Date().toISOString()
+        }
+      ];
+
+      // Adiciona apenas usuários que não existem
+      let usersUpdated = false;
+      testUsers.forEach(testUser => {
+        const userExists = existingUsers.find(user => user.email === testUser.email);
+        if (!userExists) {
+          existingUsers.push(testUser);
+          usersUpdated = true;
+        }
+      });
+
+      if (usersUpdated) {
+        localStorage.setItem('users', JSON.stringify(existingUsers));
+        console.log('✅ Usuários de teste criados/atualizados!');
+      }
+    };
+
+    initializeTestUsers();
     setLoading(false);
   }, []);
+
 
 
   const register = (userData) => {
@@ -27,6 +103,7 @@ export function AuthProvider({ children }) {
     }
     const newUser = {
       id: Date.now(),
+      role: userData.role || 'request_viewer',
       ...userData,
       createdAt: new Date().toISOString()
     };
@@ -36,6 +113,21 @@ export function AuthProvider({ children }) {
     localStorage.setItem('currentUser', JSON.stringify(newUser));
     return newUser;
   };
+
+  const updateUserRole = (userId, newRole) =>{
+    const users = JSON.parse(localStorage.getItem('users') || '[]');
+    const updatedUsers = users.map(user =>
+      user.id === userId ? {...user, role: newRole } : user
+    );
+    localStorage.setItem('users', JSON.stringify(updatedUsers));
+
+    if(currentUser && currentUser.id === userId){
+      const updatedUser = { ...currentUser, role: newRole };
+      setCurrentUser(updatedUser);
+      localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+      
+    }
+  }
 
 
   const login = (email, password) => {
@@ -85,7 +177,8 @@ export function AuthProvider({ children }) {
     login,
     logout,
     updateProfile,
-    verifyPassword
+    verifyPassword,
+    updateUserRole
   };
 
   return (

@@ -6,7 +6,7 @@ const PermissionContext = createContext();
 
 export const PERMISSIONS = {
     DASHBOARD_FULL: 'dashboard_full',
-    REQUEST_CREATE: 'request_create',
+    REQUEST_CREATE: 'request_create', 
     REQUEST_VIEW: 'request_view',
     RH_PANEL: 'hr_panel',
     SETTINGS: 'settings'
@@ -24,7 +24,7 @@ export const USER_ROLES = {
             PERMISSIONS.SETTINGS
         ]
     },
-    ENVELOPE_CREATOR: {
+    REQUEST_CREATOR: {
         id: 'request_creator',
         name: 'Criador de Requisição',
         permissions: [
@@ -35,7 +35,7 @@ export const USER_ROLES = {
         id: 'rh_manager',
         name: 'Gestor RH',
         permissions: [
-            PERMISSIONS.REQUEST_CREATE, // CORREÇÃO: estava PERMISSONS (erro de digitação)
+            PERMISSIONS.REQUEST_CREATE,
             PERMISSIONS.RH_PANEL
         ]
     },
@@ -45,6 +45,11 @@ export const USER_ROLES = {
         permissions: [
             PERMISSIONS.REQUEST_VIEW
         ]
+    },
+    NO_ACCESS: {
+        id: 'no_access',
+        name: 'Sem Acesso',
+        permissions: [] 
     }
 };
 
@@ -56,12 +61,38 @@ export function PermissionProvider({ children }) {
     const { currentUser } = useAuth();
     const [userPermissions, setUserPermissions] = useState([]);
     const [userRole, setUserRole] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         if (currentUser) {
-            // CORREÇÃO: pegar a role do currentUser e usar toUpperCase()
             const userRoleType = currentUser.role || 'request_viewer';
-            const roleConfig = USER_ROLES[userRoleType.toUpperCase()] || USER_ROLES.REQUEST_VIEWER;
+           
+            let roleConfig;
+            switch(userRoleType) {
+                case 'admin':
+                    roleConfig = USER_ROLES.ADMIN;
+                    break;
+                case 'request_creator':
+                    roleConfig = USER_ROLES.REQUEST_CREATOR;
+                    break;
+                case 'rh_manager':
+                    roleConfig = USER_ROLES.RH_MANAGER;
+                    break;
+                case 'request_viewer':
+                    roleConfig = USER_ROLES.REQUEST_VIEWER;
+                    break;
+                case 'no_access':
+                    roleConfig = USER_ROLES.NO_ACCESS;
+                    break;
+                default:
+                    roleConfig = USER_ROLES.REQUEST_VIEWER;
+            }
+
+            console.log('🔄 PermissionContext: ', { 
+                userRoleType, 
+                roleConfig: roleConfig.id,
+                permissions: roleConfig.permissions 
+            });
 
             setUserRole(roleConfig);
             setUserPermissions(roleConfig.permissions);   
@@ -69,14 +100,13 @@ export function PermissionProvider({ children }) {
             setUserPermissions([]);
             setUserRole(null);
         }
+        setLoading(false);
     }, [currentUser]);
 
-    // CORREÇÃO: função hasPermission estava com erro
     const hasPermission = (permission) => {
         return userPermissions.includes(permission);
     };
 
-    // CORREÇÃO: adicionar funções que estavam faltando
     const hasAnyPermission = (permissions) => {
         return permissions.some(permission => userPermissions.includes(permission));
     };
@@ -93,6 +123,9 @@ export function PermissionProvider({ children }) {
         settings: hasPermission(PERMISSIONS.SETTINGS)
     };
 
+    // VERIFICA SE TEM ALGUM MÓDULO DISPONÍVEL
+    const hasAnyModuleAccess = Object.values(availableModules).some(access => access);
+
     const value = {
         userPermissions,
         userRole,
@@ -100,6 +133,8 @@ export function PermissionProvider({ children }) {
         hasAnyPermission,
         hasAllPermissions,
         availableModules,
+        hasAnyModuleAccess,
+        loading,
         PERMISSIONS,
         USER_ROLES
     };
