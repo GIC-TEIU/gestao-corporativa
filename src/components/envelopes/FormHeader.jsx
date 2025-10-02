@@ -96,7 +96,7 @@ const FormHeader = ({ formValues, updateFormValues, handleContinue, setSetorEnve
         <div className="bg-brand-ice-blue rounded-tr-3xl rounded-br-2xl p-4 space-y-4">
           <div>
             <label className="block text-brand-teal-dark font-semibold mb-1">
-              Tipo de Envelope
+              Tipo de Requisição
             </label>
             <select
               value={formValues.setor || ""}
