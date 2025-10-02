@@ -6,7 +6,8 @@ import RapMovementTable from '../../components/envelopes/RapMovementTable';
 import EnvelopeQueryTable from '../../components/envelopes/EnvelopeQueryTable';
 import AnalysisModal from '../../components/ui/AnalysisModal';
 import ConfirmationViewModal from '../../components/view/ConfirmationViewModal';
-import { Search, Filter } from 'lucide-react';
+
+import { Search, Filter, ClipboardList, ArrowRightLeft, MailSearch } from 'lucide-react';
 
 function HRPanel() {
   const navigate = useNavigate();
@@ -19,14 +20,16 @@ function HRPanel() {
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [itemToView, setItemToView] = useState(null);
 
-
   const [envelopeConfirmado, setEnvelopeConfirmado] = useState(null);
 
+
   const tabs = [
-    { id: 'requisicoes', label: 'Requisições' },
-    { id: 'movimentacao-rap', label: 'Movimentação de RAP' },
-    { id: 'consulta-envelopes', label: 'Consulta de Envelopes' },
+    { id: 'requisicoes', label: 'Requisições', icon: ClipboardList },
+    { id: 'movimentacao-rap', label: 'Movimentação de RAP', icon: ArrowRightLeft },
+    { id: 'consulta-envelopes', label: 'Consulta de Envelopes', icon: MailSearch },
   ];
+
+
 
   const handleOpenAnalysisModal = (data) => {
     setSelectedEnvelopeData(data);
@@ -37,7 +40,6 @@ function HRPanel() {
     setSelectedEnvelopeData(null);
   };
 
-
   const handleOpenViewModal = (item) => {
     setItemToView(item);
     setIsViewModalOpen(true);
@@ -47,15 +49,11 @@ function HRPanel() {
     setItemToView(null);
   };
 
-
   const handleConfirmView = () => {
     console.log("Visualização confirmada para o item:", itemToView.id);
-
     setEnvelopeConfirmado({ ...itemToView });
     handleCloseViewModal();
-
   };
-
 
   const handleNavigateToRecipients = (envelope) => {
     navigate(`/view/envelope-detail`);
@@ -68,7 +66,6 @@ function HRPanel() {
       case 'movimentacao-rap':
         return <RapMovementTable onAnalyzeClick={handleOpenAnalysisModal} />;
       case 'consulta-envelopes':
-
         return (
           <EnvelopeQueryTable
             onOpenViewModal={handleOpenViewModal}
@@ -87,9 +84,33 @@ function HRPanel() {
       subtitle="Acompanhe todas as etapas do RH"
     >
       <div className="w-full">
-        {/* Barra de Busca e Filtro (sem alterações) */}
-        <div className="flex justify-end mb-4">
-          <div className="flex items-center gap-4 w-full max-w-lg">
+        
+        <div className="flex justify-between items-center border-b border-gray-300 mb-4">
+
+          
+          <div className="flex">
+            
+            {tabs.map(tab => {
+              const Icon = tab.icon;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex items-center gap-2 py-3 px-6 font-semibold transition-colors focus:outline-none -mb-px
+                    ${activeTab === tab.id
+                      ? 'bg-[#D6E3E8] text-[#275667] border-b-4 border-[#0D6578] rounded-t-2xl'
+                      : 'border-b-4 border-transparent text-gray-500 hover:text-[#275667]'
+                    }`}
+                >
+                  <Icon size={18} />
+                  <span>{tab.label}</span>
+                </button>
+              );
+            })}
+          </div>
+          
+          
+          <div className="flex items-center gap-4 max-w-lg">
             <div className="relative flex-grow">
               <input
                 type="text"
@@ -111,30 +132,13 @@ function HRPanel() {
           </div>
         </div>
 
-        {/* Abas (sem alterações) */}
-        <div className="flex border-b border-gray-300">
-          {tabs.map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`py-3 px-6 font-semibold transition-colors focus:outline-none -mb-px
-                ${activeTab === tab.id
-                  ? 'bg-[#D6E3E8] text-[#275667] border-b-4 border-[#0D6578] rounded-t-2xl'
-                  : 'border-b-4 border-transparent text-gray-500 hover:text-[#275667]'
-                }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Conteúdo da Aba Ativa */}
+        
         <div className="mt-4">
           {renderActiveTabContent()}
         </div>
       </div>
 
-      {/* Modal de Análise (sem alterações) */}
+      
       <AnalysisModal
         isOpen={isAnalysisModalOpen}
         onClose={handleCloseAnalysisModal}
@@ -148,8 +152,6 @@ function HRPanel() {
           handleCloseAnalysisModal();
         }}
       />
-
-      {/* Modal de Confirmação de Visualização (sem alterações) */}
       <ConfirmationViewModal
         isOpen={isViewModalOpen}
         onClose={handleCloseViewModal}
