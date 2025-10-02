@@ -2,12 +2,23 @@ import React from "react";
 import Button from "../ui/Button";
 
 const FormHeader = ({ formValues, updateFormValues, handleContinue, setSetorEnvelope }) => {
-  
+
+
   const handleSetorChange = (e) => {
     const value = e.target.value;
-    console.log("Setor selecionado:", value);
+
     updateFormValues("step1", "setor", value);
     setSetorEnvelope(value);
+
+    let tipoSolicitacao = null;
+    if (value === 'RAP') {
+      tipoSolicitacao = 'admissao';
+    } else if (value === 'RMP') {
+      tipoSolicitacao = 'movimentacao';
+    }
+    
+  
+    updateFormValues("step1", "tipoSolicitacao", tipoSolicitacao);
   };
 
   return (
@@ -42,44 +53,45 @@ const FormHeader = ({ formValues, updateFormValues, handleContinue, setSetorEnve
             </select>
           </div>
           <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-brand-teal-dark font-semibold mb-1">
-              Gerente
-            </label>
-            <select
-              value={formValues.cargo || ""}
-              onChange={(e) => updateFormValues("step1", "cargo", e.target.value)}
-              className="w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan"
-            >
-              <option value="">Selecione</option>
-              <option>Joabe Andrade</option>
-              <option>José Roberto</option>
-              <option>Lázaro Paixão</option>
-              <option>Maria Helena</option>
-              <option>Edson Ramos</option>
-            </select>
-          </div>
+            <div>
+              <label className="block text-brand-teal-dark font-semibold mb-1">
+                Gerente
+              </label>
+              <select
+              
+                value={formValues.gerente || ""}
+                onChange={(e) => updateFormValues("step1", "gerente", e.target.value)}
+                className="w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan"
+              >
+                <option value="">Selecione</option>
+                <option>Joabe Andrade</option>
+                <option>José Roberto</option>
+                <option>Lázaro Paixão</option>
+                <option>Maria Helena</option>
+                <option>Edson Ramos</option>
+              </select>
+            </div>
 
-          <div>
-            <label className="block text-brand-teal-dark font-semibold mb-1">
-              Unidade
-            </label>
-            <select
-              value={formValues.unidade || ""}
-              onChange={(e) => updateFormValues("step1", "unidade", e.target.value)}
-              className="w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan"
-            >
-              <option value="">Selecione</option>
-              <option>Teiú - Matriz</option>
-              <option>Teiú Filial - Feira de Santana</option>
-              <option>Teiú - Cosméticos</option>
-              <option>Holding</option>
-              <option>Votre</option>
-              <option>Kaioka</option>
-            </select>
+            <div>
+              <label className="block text-brand-teal-dark font-semibold mb-1">
+                Unidade
+              </label>
+              <select
+                value={formValues.unidade || ""}
+                onChange={(e) => updateFormValues("step1", "unidade", e.target.value)}
+                className="w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan"
+              >
+                <option value="">Selecione</option>
+                <option>Teiú - Matriz</option>
+                <option>Teiú Filial - Feira de Santana</option>
+                <option>Teiú - Cosméticos</option>
+                <option>Holding</option>
+                <option>Votre</option>
+                <option>Kaioka</option>
+              </select>
+            </div>
           </div>
         </div>
-      </div>
 
         <div className="bg-brand-ice-blue rounded-tr-3xl rounded-br-2xl p-4 space-y-4">
           <div>
@@ -92,7 +104,8 @@ const FormHeader = ({ formValues, updateFormValues, handleContinue, setSetorEnve
               className="w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan"
             >
               <option value="">Selecione</option>
-              <option>RH</option>
+              <option>RAP</option>
+              <option>RMP</option>
               <option>Documento Direto</option>
             </select>
           </div>

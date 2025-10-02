@@ -72,14 +72,14 @@ export const useEnvelopeForm = () => {
       return;
     }
 
-    // PASSO 2 - Quando não é RH, vai para o passo 3
+    
     if (step === 2 && tipoEnvelope && setorEnvelope.toLowerCase() !== "rh") {
       setFormData(prev => ({...prev, tipo: tipoEnvelope}));
       setStep(3);
       return;
     }
 
-    // PASSO 2.5 (MOVIMENTAÇÃO) - MOSTRAR CONFIRMAÇÃO
+    
     if (step === 2.5 && tipoEnvelope) {
       const currentFormValues = formValues.step2;
       
@@ -94,7 +94,7 @@ export const useEnvelopeForm = () => {
       return;
     }
 
-    // PASSO 3 - Admissão - MOSTRAR CONFIRMAÇÃO
+    
     if (step === 3) {
       const form = e.target;
       const formElements = form.elements;
@@ -128,21 +128,21 @@ export const useEnvelopeForm = () => {
     setTipoEnvelope("admissao");
     setStep(3);
   } else if (tipo === "movimentacao") {
-    // Apenas seta o tipo geral como MOV, o subtipo específico será setado depois
+    
     setFormData(prev => ({...prev, tipo: "RMP", subtipo: ""}));
-    setTipoEnvelope(""); // ← Deixe vazio para o usuário selecionar
-    setStep(2.5);
+    setTipoEnvelope(""); 
+    setStep(2);
   }
 };
 
-  const handleBack = () => {
-    if (step === 2.5) {
-      setStep(2);
-    } else if (step > 1) {
-      setStep(step - 1);
+const handleBack = () => {
+  setStep(prevStep => {
+    if (prevStep === 2 || prevStep === 3) {
+      return 1;
     }
-  };
-
+    return prevStep - 1;
+  });
+};
   const handleConfirm = async () => {
     setShowConfirmation(false);
     setEnviando(true);

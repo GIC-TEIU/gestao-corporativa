@@ -2,7 +2,6 @@ import { useNavigate } from "react-router-dom";
 import { useEnvelopeForm } from "../../hooks/useEnvelopeForm";
 import MainLayout from "../layout/MainLayout";
 import FormHeader from "./FormHeader";
-import ChooseForm from "./ChooseForm";
 import MovementForm from "./MovementForm";
 import AdmissionForm from "./AdmissionForm";
 import ConfirmationModal from "./ConfirmationModal";
@@ -10,9 +9,8 @@ import LoadingState from "./LoadingState";
 import EnvelopeFormSuccess from "./EnvelopeFormSuccess";
 
 const stepInfo = {
-  1: { title: "Novo Envelope", subtitle: "Preencha as informações do remetente e setor" },
-  2: { title: "Novo Envelope", subtitle: "Selecione o tipo de solicitação" },
-  2.5: { title: "Formulário de Movimentação de Pessoal", subtitle: "Requisição para Movimentação de Pessoal (MRP)" },
+  1: { title: "Nova Requisição", subtitle: "Preencha as informações do remetente, setor e tipo de solicitação" },
+  2: { title: "Formulário de Movimentação de Pessoal", subtitle: "Requisição para Movimentação de Pessoal (RMP)" },
   3: { title: "Admissão de Colaborador", subtitle: "Preencha os detalhes do formulário de admissão" },
 };
 
@@ -32,21 +30,37 @@ export default function EnvelopeWizard() {
     updateFormValues,
     handleContinue,
     handleRhSelection,
-    handleBack, // A função já está disponível aqui
+    handleBack,
     handleConfirm,
     handleEdit
   } = useEnvelopeForm();
 
-  const handleContinueCustom = (e) => {
+const handleContinueFromHeader = (e) => {
     if (e && e.preventDefault) {
       e.preventDefault();
     }
 
-    if (step === 1 && formValues.step1?.setor === "Documento Direto") {
+  
+    console.log("--- Botão Continuar Clicado ---");
+    console.log("Valores do form no momento do clique:", formValues.step1);
+
+    const step1Data = formValues.step1 || {};
+
+  
+    if (step1Data.setor === "Documento Direto") {
       navigate('/envelope/documento-direto');
       return;
     }
-    handleContinue(e);
+    
+  
+    if (step1Data.tipoSolicitacao) {
+      console.log("Direcionando com tipoSolicitacao:", step1Data.tipoSolicitacao);
+      handleRhSelection(step1Data.tipoSolicitacao);
+    } else {
+    
+      console.log("ERRO: tipoSolicitacao está vazio! Usando fallback.");
+      handleContinue(e);
+    }
   };
 
   const handleViewEnvelope = () => navigate("/view");
@@ -54,7 +68,8 @@ export default function EnvelopeWizard() {
 
   const renderStep = () => {
     const commonProps = {
-      handleContinue: handleContinueCustom,
+    
+      handleContinue: handleContinue, 
       updateFormValues,
       setSetorEnvelope,
       setTipoEnvelope,
@@ -64,23 +79,28 @@ export default function EnvelopeWizard() {
 
     switch (step) {
       case 1:
-        return <FormHeader {...commonProps} formValues={formValues.step1} handleBack={handleBack} />;
-      case 2:
         return (
-          <ChooseForm
+          <FormHeader
             {...commonProps}
-            formValues={formValues.step2}
-            handleRhSelection={handleRhSelection}
-            handleBack={handleBack} // Adicionado para consistência
+          
+            handleContinue={handleContinueFromHeader} 
+            formValues={formValues.step1}
+            handleBack={handleBack}
           />
         );
-      case 2.5:
+    
+      
+    
+      case 2:
+        console.log("Renderizando MovementForm. Step:", step);
+        console.log("formValues para o step 2:", formValues.step2);
+        console.log("Tipo de Envelope:", tipoEnvelope);
         return (
           <MovementForm
             {...commonProps}
             formValues={formValues.step2}
             tipoEnvelope={tipoEnvelope}
-            handleBack={handleBack} // Adicionado para consistência
+            handleBack={handleBack}
           />
         );
       case 3:
@@ -89,7 +109,7 @@ export default function EnvelopeWizard() {
             {...commonProps}
             formValues={formValues}
             tipoEnvelope={formData.subtipo}
-            handleBack={handleBack} // <-- ADICIONE ESTA LINHA
+            handleBack={handleBack}
           />
         );
       default:
@@ -107,6 +127,7 @@ export default function EnvelopeWizard() {
       />
     );
   }
+
 
   const currentStepInfo = stepInfo[step] || { title: "Envelopes", subtitle: "" };
 
