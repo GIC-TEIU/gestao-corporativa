@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import MainLayout from '../../components/layout/MainLayout';
 import UsersTable from '../../components/user-management/UsersTable';
 import HistoryAndPermissionsTable from '../../components/user-management/HistoryAndPermissionsTable'
@@ -33,7 +34,6 @@ const UserManagement = () => {
     };
 
     const handleConfirmDeletion = () => {
-        
         console.log("Deletando usuário:", userToDelete.nome);
         handleCloseDeleteModal(); 
     };
@@ -43,10 +43,19 @@ const UserManagement = () => {
         { id: 'history', label: 'Histórico e Permissões', icon: History },
     ];
 
+    // --- FUNÇÃO CORRIGIDA AQUI ---
     const renderActiveTabContent = () => {
         switch (activeTab) {
             case 'users':
-                
+                return (
+                    <UsersTable
+                        onOpenPermissionsModal={handleOpenPermissionsModal}
+                        onOpenDeleteModal={handleOpenDeleteModal}
+                    />
+                );
+            case 'history': // Esta linha estava faltando
+                return <HistoryAndPermissionsTable />;
+            default: // Esta linha também estava faltando
                 return (
                     <UsersTable
                         onOpenPermissionsModal={handleOpenPermissionsModal}
@@ -72,9 +81,9 @@ const UserManagement = () => {
                                     key={tab.id}
                                     onClick={() => setActiveTab(tab.id)}
                                     className={`flex items-center gap-2 py-3 px-6 font-semibold transition-colors focus:outline-none -mb-px
-                    ${activeTab === tab.id
-                                            ? 'bg-[#D6E3E8] text-[#275667] border-b-4 border-[#0D6578] rounded-t-2xl'
-                                            : 'border-b-4 border-transparent text-gray-500 hover:text-[#275667]'
+                                        ${activeTab === tab.id
+                                        ? 'bg-[#D6E3E8] text-[#275667] border-b-4 border-[#0D6578] rounded-t-2xl'
+                                        : 'border-b-4 border-transparent text-gray-500 hover:text-[#275667]'
                                         }`}
                                 >
                                     <Icon size={18} />
