@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
 import MainLayout from '../../components/layout/MainLayout';
-
 import UsersTable from '../../components/user-management/UsersTable';
-import HistoryAndPermissionsTable from '../../components/user-management/HistoryAndPermissionsTable';
-
+import HistoryAndPermissionsTable from '../../components/user-management/HistoryAndPermissionsTable'
+import ManagementPermissionsModal from '../../components/user-management/ManagementPermissionsModal'; 
 import { UserPlus, Filter, Search, Users, History } from 'lucide-react';
 
 const UserManagement = () => {
@@ -13,6 +11,10 @@ const UserManagement = () => {
   const [activeTab, setActiveTab] = useState('users');
   const [searchTerm, setSearchTerm] = useState('');
 
+  const [isPermissionsModalOpen, setPermissionsModalOpen] = useState(false);
+
+  const handleOpenPermissionsModal = () => setPermissionsModalOpen(true);
+  const handleClosePermissionsModal = () => setPermissionsModalOpen(false);
 
   const tabs = [
     { id: 'users', label: 'Usuários', icon: Users },
@@ -22,11 +24,12 @@ const UserManagement = () => {
   const renderActiveTabContent = () => {
     switch (activeTab) {
       case 'users':
-        return <UsersTable />;
+
+        return <UsersTable onOpenPermissionsModal={handleOpenPermissionsModal} />;
       case 'history':
         return <HistoryAndPermissionsTable />;
       default:
-        return <UsersTable />;
+        return <UsersTable onOpenPermissionsModal={handleOpenPermissionsModal} />;
     }
   };
 
@@ -37,7 +40,7 @@ const UserManagement = () => {
     >
       <div className="w-full">
         <div className="flex justify-between items-center border-b border-gray-300 mb-4">
-          {/* Grupo de Abas (Esquerda) */}
+        
           <div className="flex">
             {tabs.map(tab => {
               const Icon = tab.icon;
@@ -58,7 +61,7 @@ const UserManagement = () => {
             })}
           </div>
 
-          {/* Grupo de Ações (Direita) */}
+        
           <div className="flex items-center gap-4">
             {activeTab === 'users' && (
               <button className="flex items-center gap-2 bg-[#3098F2]/[0.23] text-[#0D6578] border border-[#0D6578] px-4 py-2 rounded-lg font-semibold transition-all hover:bg-[#3098F2]/[0.35]">
@@ -95,6 +98,12 @@ const UserManagement = () => {
           {renderActiveTabContent()}
         </div>
       </div>
+
+    
+      <ManagementPermissionsModal 
+        isOpen={isPermissionsModalOpen}
+        onClose={handleClosePermissionsModal}
+      />
     </MainLayout>
   );
 };

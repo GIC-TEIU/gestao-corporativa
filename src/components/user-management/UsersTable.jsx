@@ -1,5 +1,6 @@
 import React from 'react';
 import { Shield, Trash2 } from 'lucide-react';
+
 const mockUsers = [
   {
     id: 1,
@@ -57,16 +58,15 @@ const mockUsers = [
   },
 ];
 
-const UsersTable = () => {
+// O componente agora recebe a prop 'onOpenPermissionsModal'
+const UsersTable = ({ onOpenPermissionsModal }) => {
   const StatusBadge = ({ status }) => {
     const isAtivo = status === 'Ativo';
     const baseStyle = 'px-4 py-1 rounded-md text-sm font-semibold inline-block';
 
     if (isAtivo) {
-
       return <span className={`${baseStyle} bg-[#4EA647]/[0.33] text-[#165507]`}>{status}</span>;
     } else {
-
       return <span className={`${baseStyle} bg-[#EE4444]/[0.30] text-[#B00909]`}>{status}</span>;
     }
   };
@@ -124,7 +124,10 @@ const UsersTable = () => {
     
               <td className="p-2">
                 <div className="flex items-center justify-center gap-2">
-                  <button className="p-2 bg-black/[0.30] rounded-md hover:bg-black/40 transition-colors border border-black">
+                  <button 
+                    className="p-2 bg-black/[0.30] rounded-md hover:bg-black/40 transition-colors border border-black"
+                    onClick={onOpenPermissionsModal} // Evento onClick adicionado aqui
+                  >
                     <Shield size={20} className="text-black" />
                   </button>
                   <button className="p-2 bg-[#EE4444]/[0.30] rounded-md hover:bg-[#EE4444]/40 transition-colors border border-[#B00909]">
