@@ -9,19 +9,22 @@ import Home from './pages/home/Home';
 import Dashboard from "./pages/dashboard/Dashboard";
 import PasswordSuccess from "./pages/password-recovery/PasswordSuccess";
 import ResetPassword from "./pages/password-recovery/ResetPassword";
-import ForgotPassword from "./pages/password-recovery/ForgotPassword"; // CORREÇÃO: Adicione este import
+import ForgotPassword from "./pages/password-recovery/ForgotPassword";
 import View from "./pages/view/View";
 import Funcionario from "./pages/Funcionario/Funcionario";
 import Envelope from "./pages/Envelope/Envelope";
 import Profile from './pages/Profile/Profile';
-import { EnvelopeProvider } from './context/EnvelopeContext';
 import Destinatario from './pages/Envelope/Destinatario';
 import RecipientSuccess from './components/envelopes/RecipientSuccess';
 import HRPanel from './pages/HRPanel/HRPanel';
 import DirectDocument from './components/envelopes/DirectDocument';
 import EnvelopeDetail from './pages/view/EnvelopeDetail';
 import PaginaDeStatus from './pages/dashboard/PaginaDeStatus';
-import { AppProvider } from './context/Appcontext'; // CORREÇÃO: Adicione este import
+import UserManagement from './pages/user-management/UserManagement'; 
+
+// Contextos
+import { EnvelopeProvider } from './context/EnvelopeContext';
+import { AppProvider } from './context/Appcontext';
 
 function AppContent() {
   const { currentUser } = useAuth();
@@ -29,6 +32,7 @@ function AppContent() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Rotas Públicas */}
         <Route path="/" element={<Home />} />
         <Route path="/login" element={!currentUser ? <Login /> : <Dashboard />} />
         <Route path="/register" element={!currentUser ? <Register /> : <Dashboard />} />
@@ -36,14 +40,15 @@ function AppContent() {
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/password-success" element={<PasswordSuccess />} />
         
-        {/* Rotas protegidas */}
+        {/* ====================================================== */}
+        {/* Rotas Protegidas */}
+        {/* ====================================================== */}
         <Route path="/dashboard" element={
           <ProtectedRoute>
             <Dashboard />
           </ProtectedRoute>
         } />
 
-        {/* Rota temporária - remover depois */}
         <Route path="/status" element={
           <ProtectedRoute>
             <PaginaDeStatus />
@@ -100,6 +105,12 @@ function AppContent() {
           </ProtectedRoute>
         } />
         
+        <Route path="/user-management" element={
+          <ProtectedRoute>
+            <UserManagement />
+          </ProtectedRoute>
+        } />
+
         <Route path="/profile" element={
           <ProtectedRoute>
             <Profile />
