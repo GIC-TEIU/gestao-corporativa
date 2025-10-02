@@ -18,6 +18,7 @@ import RecipientSuccess from './components/envelopes/RecipientSuccess';
 import HRPanel from './pages/HRPanel/HRPanel';
 import DirectDocument from './components/envelopes/DirectDocument';
 import EnvelopeDetail from'./pages/view/EnvelopeDetail';
+import PaginaDeStatus from './pages/dashboard/PaginaDeStatus';
 
 function App() {
   const { currentUser } = useAuth();
@@ -29,14 +30,16 @@ function App() {
         <Route path="/login" element={!currentUser ? <Login /> : <Dashboard />} />
         <Route path="/register" element={!currentUser ? <Register /> : <Dashboard />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
-        {/* 1: formulário para digitar o e-mail */}
         <Route path="/reset-password/:token" element={<ResetPassword />} />
-        {/* 2: usuário insere nova senha */}
         <Route path="/password-success" element={<PasswordSuccess />} />
-        {/* 3: confirmação de sucesso */}
-
-
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+
+        {/* remover essa linha depois */}
+         <Route path="/status" element={
+          <ProtectedRoute>
+            <PaginaDeStatus />
+          </ProtectedRoute>
+        } /> 
 
         <Route path="/view" element={
           <ProtectedRoute>
