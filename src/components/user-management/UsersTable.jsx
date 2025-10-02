@@ -58,8 +58,8 @@ const mockUsers = [
   },
 ];
 
-// O componente agora recebe a prop 'onOpenPermissionsModal'
-const UsersTable = ({ onOpenPermissionsModal }) => {
+
+const UsersTable = ({ onOpenPermissionsModal, onOpenDeleteModal }) => {
   const StatusBadge = ({ status }) => {
     const isAtivo = status === 'Ativo';
     const baseStyle = 'px-4 py-1 rounded-md text-sm font-semibold inline-block';
@@ -126,11 +126,14 @@ const UsersTable = ({ onOpenPermissionsModal }) => {
                 <div className="flex items-center justify-center gap-2">
                   <button 
                     className="p-2 bg-black/[0.30] rounded-md hover:bg-black/40 transition-colors border border-black"
-                    onClick={onOpenPermissionsModal} // Evento onClick adicionado aqui
+                    onClick={onOpenPermissionsModal} 
                   >
                     <Shield size={20} className="text-black" />
                   </button>
-                  <button className="p-2 bg-[#EE4444]/[0.30] rounded-md hover:bg-[#EE4444]/40 transition-colors border border-[#B00909]">
+                  <button 
+                    className="p-2 bg-[#EE4444]/[0.30] rounded-md hover:bg-[#EE4444]/40 transition-colors border border-[#B00909]"
+                    onClick={() => onOpenDeleteModal(user)} 
+                  >
                     <Trash2 size={20} className="text-[#B00909]" />
                   </button>
                 </div>
