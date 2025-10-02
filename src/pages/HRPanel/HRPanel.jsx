@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MainLayout from '../../components/layout/MainLayout';
-import PreEnvelopeTable from '../../components/envelopes/PreEnvelopeTable';
+import RequestTable from '../../components/envelopes/RequestTable';
 import RapMovementTable from '../../components/envelopes/RapMovementTable';
 import EnvelopeQueryTable from '../../components/envelopes/EnvelopeQueryTable';
 import AnalysisModal from '../../components/ui/AnalysisModal';
@@ -10,7 +10,7 @@ import { Search, Filter } from 'lucide-react';
 
 function HRPanel() {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('pre-envelope');
+  const [activeTab, setActiveTab] = useState('requisicoes');
   const [searchTerm, setSearchTerm] = useState('');
 
   const [isAnalysisModalOpen, setIsAnalysisModalOpen] = useState(false);
@@ -23,7 +23,7 @@ function HRPanel() {
   const [envelopeConfirmado, setEnvelopeConfirmado] = useState(null);
 
   const tabs = [
-    { id: 'pre-envelope', label: 'Pré-Envelope' },
+    { id: 'requisicoes', label: 'Requisições' },
     { id: 'movimentacao-rap', label: 'Movimentação de RAP' },
     { id: 'consulta-envelopes', label: 'Consulta de Envelopes' },
   ];
@@ -63,8 +63,8 @@ function HRPanel() {
 
   const renderActiveTabContent = () => {
     switch (activeTab) {
-      case 'pre-envelope':
-        return <PreEnvelopeTable onAnalyzeClick={handleOpenAnalysisModal} />;
+      case 'requisicoes':
+        return <RequestTable onAnalyzeClick={handleOpenAnalysisModal} />;
       case 'movimentacao-rap':
         return <RapMovementTable onAnalyzeClick={handleOpenAnalysisModal} />;
       case 'consulta-envelopes':

@@ -12,8 +12,8 @@ function Dashboard() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Card 
             imgSrc="/imgs/novo-envelope.png"
-            title="Novo envelope" 
-            description="Criar um novo envelope para assinatura digital de documentos" 
+            title="Nova Requisição" 
+            description="Criar um nova requisição para assinatura digital de documentos" 
             link="/Envelope" 
           />
           
