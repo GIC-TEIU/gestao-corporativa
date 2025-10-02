@@ -32,9 +32,9 @@ function Dashboard() {
           />
           
           <Card 
-            imgSrc="/imgs/funcionarios.png"  
-            title="Funcionários"
-            description="Gerenciar funcionários cadastrados e suas assinaturas digitais" 
+            imgSrc="/imgs/email.png"  
+            title="Assinaturas"
+            description="Criar e Gerenciar assinaturas de email" 
             link="/Funcionario" 
           />
         </div>
