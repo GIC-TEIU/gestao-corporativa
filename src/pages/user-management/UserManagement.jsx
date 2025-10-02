@@ -6,6 +6,9 @@ import UsersTable from '../../components/user-management/UsersTable';
 import HistoryAndPermissionsTable from '../../components/user-management/HistoryAndPermissionsTable'
 import ManagementPermissionsModal from '../../components/user-management/ManagementPermissionsModal';
 import ConfirmDeletionModal from '../../components/user-management/ConfirmDeletionModal';
+import PermissionsModal from '../../components/user-management/PermissionsModal';
+import HistoryPermissionsModal from '../../components/user-management/HistoryPermissionsModal';
+
 
 import { UserPlus, Filter, Search, Users, History } from 'lucide-react';
 
@@ -13,6 +16,10 @@ const UserManagement = () => {
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('users');
     const [searchTerm, setSearchTerm] = useState('');
+
+    const [isViewPermissionsModalOpen, setViewPermissionsModalOpen] = useState(false);
+    const [isHistoryModalOpen, setHistoryModalOpen] = useState(false);
+    const [selectedUser, setSelectedUser] = useState(null);
 
     const [isPermissionsModalOpen, setPermissionsModalOpen] = useState(false);
 
@@ -22,7 +29,7 @@ const UserManagement = () => {
     const handleOpenPermissionsModal = () => setPermissionsModalOpen(true);
     const handleClosePermissionsModal = () => setPermissionsModalOpen(false);
 
-    
+
     const handleOpenDeleteModal = (user) => {
         setUserToDelete(user);
         setDeleteModalOpen(true);
@@ -35,7 +42,7 @@ const UserManagement = () => {
 
     const handleConfirmDeletion = () => {
         console.log("Deletando usuário:", userToDelete.nome);
-        handleCloseDeleteModal(); 
+        handleCloseDeleteModal();
     };
 
     const tabs = [
@@ -43,7 +50,19 @@ const UserManagement = () => {
         { id: 'history', label: 'Histórico e Permissões', icon: History },
     ];
 
-    // --- FUNÇÃO CORRIGIDA AQUI ---
+    const handleOpenViewPermissionsModal = (user) => {
+        setSelectedUser(user);
+        setViewPermissionsModalOpen(true);
+    };
+    const handleCloseViewPermissionsModal = () => setViewPermissionsModalOpen(false);
+
+    const handleOpenHistoryModal = (user) => {
+        setSelectedUser(user);
+        setHistoryModalOpen(true);
+    };
+    const handleCloseHistoryModal = () => setHistoryModalOpen(false);
+
+
     const renderActiveTabContent = () => {
         switch (activeTab) {
             case 'users':
@@ -53,9 +72,15 @@ const UserManagement = () => {
                         onOpenDeleteModal={handleOpenDeleteModal}
                     />
                 );
-            case 'history': // Esta linha estava faltando
-                return <HistoryAndPermissionsTable />;
-            default: // Esta linha também estava faltando
+            case 'history':
+
+                return (
+                    <HistoryAndPermissionsTable
+                        onOpenViewPermissionsModal={handleOpenViewPermissionsModal}
+                        onOpenHistoryModal={handleOpenHistoryModal}
+                    />
+                );
+            default:
                 return (
                     <UsersTable
                         onOpenPermissionsModal={handleOpenPermissionsModal}
@@ -64,6 +89,7 @@ const UserManagement = () => {
                 );
         }
     };
+
 
     return (
         <MainLayout
@@ -82,8 +108,8 @@ const UserManagement = () => {
                                     onClick={() => setActiveTab(tab.id)}
                                     className={`flex items-center gap-2 py-3 px-6 font-semibold transition-colors focus:outline-none -mb-px
                                         ${activeTab === tab.id
-                                        ? 'bg-[#D6E3E8] text-[#275667] border-b-4 border-[#0D6578] rounded-t-2xl'
-                                        : 'border-b-4 border-transparent text-gray-500 hover:text-[#275667]'
+                                            ? 'bg-[#D6E3E8] text-[#275667] border-b-4 border-[#0D6578] rounded-t-2xl'
+                                            : 'border-b-4 border-transparent text-gray-500 hover:text-[#275667]'
                                         }`}
                                 >
                                     <Icon size={18} />
@@ -140,8 +166,19 @@ const UserManagement = () => {
                 isOpen={isDeleteModalOpen}
                 onClose={handleCloseDeleteModal}
                 onConfirm={handleConfirmDeletion}
-                userName={userToDelete?.nome} 
+                userName={userToDelete?.nome}
             />
+            <PermissionsModal
+                isOpen={isViewPermissionsModalOpen}
+                onClose={handleCloseViewPermissionsModal}
+                userName={selectedUser?.nome}
+            />
+            <HistoryPermissionsModal
+                isOpen={isHistoryModalOpen}
+                onClose={handleCloseHistoryModal}
+                userName={selectedUser?.nome}
+            />
+
         </MainLayout>
     );
 };

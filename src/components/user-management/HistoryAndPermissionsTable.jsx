@@ -58,7 +58,7 @@ const mockUsers = [
   },
 ];
 
-const HistoryAndPermissionsTable = () => {
+const HistoryAndPermissionsTable = ({ onOpenViewPermissionsModal, onOpenHistoryModal }) => {
 
   const StatusBadge = ({ status }) => {
     const isAtivo = status === 'Ativo';
@@ -119,11 +119,18 @@ const HistoryAndPermissionsTable = () => {
       
               <td className="p-2">
                 <div className="flex items-center justify-center gap-2">
-                  <button className="flex items-center gap-2 px-3 py-2 bg-black/[0.30] text-black rounded-md text-sm border border-black hover:bg-black/40 transition-colors">
+                  <button 
+                    className="flex items-center gap-2 px-3 py-2 bg-black/[0.30] text-black rounded-md text-sm border border-black hover:bg-black/40 transition-colors"
+                    onClick={() => onOpenViewPermissionsModal(user)}
+                  >
                     <Shield size={16} />
                     <span>Permissões</span>
                   </button>
-                  <button className="flex items-center gap-2 px-3 py-2 bg-[#D1FBEE] text-[#1A9E83] font-semibold rounded-md text-sm border border-[#1A9E83] hover:bg-[#b9f5e2] transition-colors">
+                  
+                  <button 
+                    className="flex items-center gap-2 px-3 py-2 bg-[#D1FBEE] text-[#1A9E83] font-semibold rounded-md text-sm border border-[#1A9E83] hover:bg-[#b9f5e2] transition-colors"
+                    onClick={() => onOpenHistoryModal(user)}
+                  >
                     <History size={16} />
                     <span>Histórico</span>
                   </button>
