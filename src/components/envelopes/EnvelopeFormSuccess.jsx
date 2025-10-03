@@ -33,19 +33,19 @@ function EnvelopeFormSuccess({
           </div>
 
           {/* Mensagem */}
-          <h2 className="text-2xl font-semibold text-gray-800 mb-2">
+          <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-2">
             Envelope enviado para análise!
           </h2>
-          <p className="text-gray-500 mb-6">
+          <p className="text-gray-500 mb-6 text-sm sm:text-base">
             Seu envelope foi enviado com sucesso e está em análise. 
             Você pode criar outro ou voltar para a tela inicial.
           </p>
 
           {/* Botões */}
-          <div className="flex justify-center gap-4">
+          <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4"> 
             <button
               onClick={handleVerEnvelope}
-              className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-lg shadow hover:bg-blue-700 transition"
+              className="flex items-center justify-center gap-2 bg-blue-600 text-white px-5 py-3 rounded-lg shadow hover:bg-blue-700 transition"
             >
               <Eye size={18} />
               Criar outro envelope
@@ -53,7 +53,7 @@ function EnvelopeFormSuccess({
 
             <button
               onClick={handleIrParaDashboard}
-              className="flex items-center gap-2 bg-teal-700 text-white px-5 py-2.5 rounded-lg shadow hover:bg-teal-800 transition"
+              className="flex items-center justify-center gap-2 bg-teal-700 text-white px-4 sm:px-5 py-3 sm:py-2.5 rounded-lg shadow hover:bg-teal-800 transition w-full sm:w-auto"
             >
               <Home size={18} />
               Ir para tela inicial

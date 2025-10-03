@@ -33,7 +33,7 @@ const AdmissionForm = ({
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                   <label className={labelClass}>Categoria *</label>
                   <select
@@ -137,7 +137,7 @@ const AdmissionForm = ({
                     className={inputClass}
                   />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className={labelClass}>Tipo de Seleção *</label>
                     <select
@@ -230,7 +230,7 @@ const AdmissionForm = ({
                 {/* ALTERAÇÃO AQUI */}
                 <div className="flex justify-between items-center mt-6">
                   <button
-                    type="button" // Importante: type="button" para não submeter o form
+                    type="button"
                     onClick={handleBack}
                     className="bg-gray-200 text-gray-800 px-6 py-2 rounded-md hover:bg-gray-300"
                   >
