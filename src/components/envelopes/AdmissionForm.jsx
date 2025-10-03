@@ -20,8 +20,8 @@ const AdmissionForm = ({
       case "admissao":
         return (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4 bg-brand-ice-blue p-6 rounded-tl-3xl rounded-bl-3xl">
+            <div className="grid grid-cols-1 sm:grid-cols-2 ">
+              <div className="space-y-4 bg-brand-ice-blue p-6 rounded-t-3xl md:rounded-tl-3xl md:rounded-bl-3xl md:rounded-tr-none rounded-b-none md:rounded-b-none">
                          <div>
                   <label className={labelClass}>Cargo *</label>
                   <input
@@ -33,7 +33,7 @@ const AdmissionForm = ({
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-2">
                   <div>
                   <label className={labelClass}>Categoria *</label>
                   <select
@@ -89,9 +89,9 @@ const AdmissionForm = ({
                   </select>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className={labelClass}>Motivo da Requisição *</label>
+                    <label className={labelClass}>Motivo *</label>
                     <select
                       name="motivo"
                       value={formValues.step3.motivo || ""}
@@ -176,7 +176,7 @@ const AdmissionForm = ({
                 </div>
               </div>
 
-              <div className="space-y-4 border border-brand-ice-blue p-6 rounded-tr-3xl rounded-br-3xl">
+              <div className="space-y-4 border border-brand-ice-blue p-6 rounded-b-3xl md:rounded-tr-3xl md:rounded-br-3xl md:rounded-tl-none rounded-t-none md:rounded-t-none">
                                 <div>
                   <label className={labelClass}>
                     Justificativa para Contratação *
@@ -238,7 +238,7 @@ const AdmissionForm = ({
                   </button>
                   <button
                     type="submit"
-                    className="bg-brand-blue-dark text-white px-6 py-2 rounded-md hover:bg-brand-blue-dark/90"
+                    className="bg-brand-cyan text-white px-6 py-2 rounded-md hover:bg-brand-blue-dark/90"
                   >
                     Enviar
                   </button>

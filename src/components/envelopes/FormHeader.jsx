@@ -23,8 +23,8 @@ const FormHeader = ({ formValues, updateFormValues, handleContinue, setSetorEnve
 
   return (
     <form onSubmit={handleContinue} className="p-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 p-6 pt-0">
-        <div className="space-y-4 border-4 border-brand-ice-blue p-4 rounded-tl-3xl rounded-bl-2xl">
+      <div className="grid grid-cols-1 md:grid-cols-2 px-4 py-6 md:p-6 md:pt-0">
+        <div className="space-y-4 border-4 border-brand-ice-blue p-4 rounded-t-3xl md:rounded-tl-3xl md:rounded-bl-2xl md:rounded-tr-none rounded-b-none md:rounded-br-none">
           <div>
             <label className="block text-brand-teal-dark font-semibold mb-1">
               Nome do requisitante
@@ -93,7 +93,7 @@ const FormHeader = ({ formValues, updateFormValues, handleContinue, setSetorEnve
           </div>
         </div>
 
-        <div className="bg-brand-ice-blue rounded-tr-3xl rounded-br-2xl p-4 space-y-4">
+        <div className="bg-brand-ice-blue p-4 space-y-4 rounded-b-3xl md:rounded-tr-3xl md:rounded-br-2xl md:rounded-tl-none rounded-t-none md:rounded-bl-none">
           <div>
             <label className="block text-brand-teal-dark font-semibold mb-1">
               Tipo de Requisição

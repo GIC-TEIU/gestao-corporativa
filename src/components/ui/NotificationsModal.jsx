@@ -160,12 +160,12 @@ function NotificationsModal({ isOpen, onClose, onNotificationsUpdate }) {
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header do Modal */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+        <div className="flex items-center justify-between p-4 border-b border-gray-200">
           <div className="flex items-center gap-3">
             <Bell className="w-6 h-6 text-[#0D6578]" />
             <h2 className="text-xl font-semibold text-gray-900">Notificações</h2>
             {unreadCount > 0 && (
-              <span className="bg-red-500 text-white px-2 py-1 rounded-full text-sm">
+              <span className="bg-red-500 text-white px-2 rounded-full text-xs text-center mr-1">
                 {unreadCount} não lidas
               </span>
             )}
@@ -175,7 +175,7 @@ function NotificationsModal({ isOpen, onClose, onNotificationsUpdate }) {
             {unreadCount > 0 && (
               <button
                 onClick={markAllAsRead}
-                className="flex items-center gap-2 px-3 py-1 text-sm bg-[#0D6578] text-white rounded-lg hover:bg-[#0a5161] transition-colors"
+                className="flex items-center gap-2 px-2 text-sm bg-[#0D6578] text-white rounded-lg hover:bg-[#0a5161] transition-colors"
               >
                 <CheckCircle2 className="w-4 h-4" />
                 Marcar todas
