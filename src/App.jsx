@@ -20,7 +20,8 @@ import HRPanel from './pages/HRPanel/HRPanel';
 import DirectDocument from './components/envelopes/DirectDocument';
 import EnvelopeDetail from './pages/view/EnvelopeDetail';
 import PaginaDeStatus from './pages/dashboard/PaginaDeStatus';
-import UserManagement from './pages/user-management/UserManagement'; 
+import UserManagement from './pages/user-management/UserManagement';
+import { EmployeeProvider } from './context/EmployeeContext'; 
 
 // Contextos
 import { EnvelopeProvider } from './context/EnvelopeContext';
@@ -131,9 +132,12 @@ function App() {
   return (
     <AuthProvider>
       <PermissionProvider>
+        <EmployeeProvider>
         <AppProvider>
+          
           <AppContent />
         </AppProvider>
+        </EmployeeProvider>
       </PermissionProvider>
     </AuthProvider>
   );

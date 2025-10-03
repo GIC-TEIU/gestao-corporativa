@@ -30,6 +30,7 @@ const initializeTestUsers = () => {
           role: "admin",
           cpf: "123.456.789-00",
           matricula: "001",
+          centroCusto: "TI",
           createdAt: new Date().toISOString()
         },
         {
@@ -40,6 +41,7 @@ const initializeTestUsers = () => {
           role: "request_creator",
           cpf: "234.567.890-11",
           matricula: "002",
+          centroCusto: "RH",
           createdAt: new Date().toISOString()
         },
         {
@@ -50,6 +52,7 @@ const initializeTestUsers = () => {
           role: "rh_manager", 
           cpf: "345.678.901-22",
           matricula: "003",
+          centroCusto: "RH",
           createdAt: new Date().toISOString()
         },
         {
@@ -60,6 +63,7 @@ const initializeTestUsers = () => {
           role: "request_viewer",
           cpf: "456.789.012-33",
           matricula: "004",
+          centroCusto: "RH",
           createdAt: new Date().toISOString()
         },
         {
@@ -70,6 +74,7 @@ const initializeTestUsers = () => {
           role: "no_access", // Novo perfil sem permissões
           cpf: "567.890.123-44",
           matricula: "005",
+          centroCusto: "RH",
           createdAt: new Date().toISOString()
         }
       ];
@@ -103,7 +108,7 @@ const initializeTestUsers = () => {
     }
     const newUser = {
       id: Date.now(),
-      role: userData.role || 'request_viewer',
+      role: userData.role || 'no_access',
       ...userData,
       createdAt: new Date().toISOString()
     };

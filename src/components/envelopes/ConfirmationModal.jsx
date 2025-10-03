@@ -1,8 +1,15 @@
 // src/components/envelopes/ConfirmationModal.jsx
 import { X, Pencil } from "lucide-react";
+import { useEmployees } from "../../context/EmployeeContext";
 
 const ConfirmationModal = ({ show, formData, formValues, onEdit, onConfirm }) => {
+  const { getLastThreeSalaries } = useEmployees();
+  
   if (!show) return null;
+
+  // Obter últimos 3 salários do funcionário
+  const employeeId = formValues.step2?.employeeId;
+  const lastSalaries = employeeId ? getLastThreeSalaries(employeeId) : [];
 
   // Função para formatar o subtipo
   const getSubtipoFormatado = (subtipo) => {
@@ -30,10 +37,10 @@ const ConfirmationModal = ({ show, formData, formValues, onEdit, onConfirm }) =>
         case "promocao/cargo":
           return (
             <div className="space-y-3">
-              <h4 className="font-semibold  text-brand-teal-dark">
+              <h4 className="font-semibold text-brand-teal-dark">
                 Mudança de Cargo / Promoção Salarial
               </h4>
-              <div className="grid grid-cols-2 gap-4  text-brand-teal-dark ">
+              <div className="grid grid-cols-2 gap-4 text-brand-teal-dark">
                 <div>
                   <strong>Novo Cargo:</strong> {dadosMovimentacao.novoCargo || "-"}
                 </div>
@@ -57,7 +64,7 @@ const ConfirmationModal = ({ show, formData, formValues, onEdit, onConfirm }) =>
           return (
             <div className="space-y-3">
               <h4 className="font-semibold text-brand-teal-dark">Desligamento</h4>
-              <div className="grid grid-cols-2 gap-4  text-brand-teal-dark">
+              <div className="grid grid-cols-2 gap-4 text-brand-teal-dark">
                 <div>
                   <strong>Demissão Justa Causa:</strong>{" "}
                   {dadosMovimentacao.demissaoJustaCausa ? "Sim" : "Não"}
@@ -81,7 +88,7 @@ const ConfirmationModal = ({ show, formData, formValues, onEdit, onConfirm }) =>
           return (
             <div className="space-y-3">
               <h4 className="font-semibold text-brand-teal-dark">Alteração Salarial</h4>
-              <div className="grid grid-cols-2 gap-4  text-brand-teal-dark">
+              <div className="grid grid-cols-2 gap-4 text-brand-teal-dark">
                 <div>
                   <strong>Valor Anterior:</strong>{" "}
                   {dadosMovimentacao.valorAnterior
@@ -346,7 +353,7 @@ const ConfirmationModal = ({ show, formData, formValues, onEdit, onConfirm }) =>
               <h3 className="font-semibold text-brand-teal-dark border-b pb-2">
                 DADOS DO COLABORADOR
               </h3>
-              <div className="grid grid-cols-2 gap-4 text-sm  text-brand-teal-dark">
+              <div className="grid grid-cols-2 gap-4 text-sm text-brand-teal-dark">
                 <div>
                   <strong>Nome:</strong> {formValues.step2.nomeColaborador || "-"}
                 </div>
@@ -364,6 +371,28 @@ const ConfirmationModal = ({ show, formData, formValues, onEdit, onConfirm }) =>
                   <strong>Data da Requisição:</strong>{" "}
                   {formValues.step2.dataAtual || "-"}
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* Histórico Salarial */}
+          {lastSalaries.length > 0 && (
+            <div className="space-y-4">
+              <h3 className="font-semibold text-brand-teal-dark border-b pb-2">
+                HISTÓRICO SALARIAL (ÚLTIMOS 3)
+              </h3>
+              <div className="space-y-3">
+                {lastSalaries.map((salario, index) => (
+                  <div key={index} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                    <div>
+                      <span className="font-semibold text-brand-teal-dark">
+                        R$ {salario.valor.toLocaleString('pt-BR')}
+                      </span>
+                      <span className="text-xs text-gray-500 ml-2">({salario.tipo})</span>
+                    </div>
+                    <span className="text-sm text-gray-600">{salario.data}</span>
+                  </div>
+                ))}
               </div>
             </div>
           )}
