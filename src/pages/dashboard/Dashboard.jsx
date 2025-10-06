@@ -82,7 +82,7 @@ function Dashboard() {
             <Card
               imgSrc="/imgs/email.png"
               title="Assinaturas"
-              description="Criar e Gerenciar assinaturas de e-mail"
+              description="Criar e Gerenciar assinaturas de email"
               link="/Funcionario"
               enabled={true}
             />

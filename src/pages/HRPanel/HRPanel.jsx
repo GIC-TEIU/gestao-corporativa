@@ -7,12 +7,11 @@ import EnvelopeQueryTable from '../../components/envelopes/EnvelopeQueryTable';
 import AnalysisModal from '../../components/ui/AnalysisModal';
 import ConfirmationViewModal from '../../components/view/ConfirmationViewModal';
 
-import { Search, Filter, ClipboardList, ArrowRightLeft, MailSearch } from 'lucide-react';
+import { ClipboardList, ArrowRightLeft, MailSearch, FolderPlus, Filter } from 'lucide-react';
 
 function HRPanel() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('requisicoes');
-  const [searchTerm, setSearchTerm] = useState('');
 
   const [isAnalysisModalOpen, setIsAnalysisModalOpen] = useState(false);
   const [selectedEnvelopeData, setSelectedEnvelopeData] = useState(null);
@@ -22,14 +21,19 @@ function HRPanel() {
 
   const [envelopeConfirmado, setEnvelopeConfirmado] = useState(null);
 
-
   const tabs = [
     { id: 'requisicoes', label: 'Requisições', icon: ClipboardList },
     { id: 'movimentacao-rap', label: 'Movimentação de RAP', icon: ArrowRightLeft },
     { id: 'consulta-envelopes', label: 'Consulta de Envelopes', icon: MailSearch },
   ];
-
-
+  
+  const handleAgruparEnvelopesClick = () => {
+    navigate('/envelope/destinatario');
+  };
+  
+  const handleFilterClick = () => {
+    alert("Funcionalidade de filtro a ser implementada!");
+  };
 
   const handleOpenAnalysisModal = (data) => {
     setSelectedEnvelopeData(data);
@@ -85,59 +89,58 @@ function HRPanel() {
     >
       <div className="w-full">
         
-        <div className="flex justify-between items-center border-b border-gray-300 mb-4">
-
+        <div className="flex flex-col md:flex-row justify-between items-stretch md:items-center border-b border-gray-300 mb-4 gap-4 md:gap-0">
           
-          <div className="flex">
-            
+          <div className="flex flex-wrap">
             {tabs.map(tab => {
               const Icon = tab.icon;
               return (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 py-3 px-6 font-semibold transition-colors focus:outline-none -mb-px
+                  className={`flex items-center gap-2 py-3 px-4 sm:px-6 font-semibold transition-colors focus:outline-none -mb-px
                     ${activeTab === tab.id
                       ? 'bg-[#D6E3E8] text-[#275667] border-b-4 border-[#0D6578] rounded-t-2xl'
                       : 'border-b-4 border-transparent text-gray-500 hover:text-[#275667]'
                     }`}
                 >
                   <Icon size={18} />
-                  <span>{tab.label}</span>
+                  {/* ALTERAÇÃO APLICADA AQUI */}
+                  <span className={
+                    activeTab === tab.id ? 'inline' : 'hidden sm:inline'
+                  }>
+                    {tab.label}
+                  </span>
                 </button>
               );
             })}
           </div>
           
-          
-          <div className="flex items-center gap-4 max-w-lg">
-            <div className="relative flex-grow">
-              <input
-                type="text"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Buscar por Nome ou Nº do Protocolo"
-                className="w-full bg-[#EEF1F1] border border-[#767676] text-gray-800 placeholder:text-[#9E9E9E] rounded-lg py-2 pl-4 pr-10 focus:outline-none focus:ring-2 focus:ring-[#33748B]"
-              />
-              <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                <Search size={20} className="text-gray-400" />
-              </div>
-            </div>
+          <div className="flex w-full md:w-auto items-center justify-end gap-4">
+            {activeTab === 'requisicoes' && (
+              <button
+                onClick={handleAgruparEnvelopesClick}
+                className="flex items-center gap-2 bg-[#A855F7]/[0.23] text-[#9D56B0] border border-[#A855F7] px-4 py-2 rounded-lg font-semibold transition-all hover:bg-[#A855F7]/[0.35]"
+              >
+                <FolderPlus size={18} />
+                <span className="hidden sm:inline whitespace-nowrap">Agrupar Envelopes</span>
+              </button>
+            )}
             <button
-              className="flex items-center gap-2 bg-[#33748B] text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition"
+                onClick={handleFilterClick}
+                className="flex items-center gap-2 bg-[#33748B] text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition"
             >
-              <Filter size={18} />
-              <span className="font-semibold">Filtrar</span>
+                <Filter size={18} />
+                <span className="hidden sm:inline font-semibold">Filtrar</span>
             </button>
           </div>
-        </div>
 
+        </div>
         
-        <div className="mt-4">
+        <div className="mt-4 overflow-x-auto">
           {renderActiveTabContent()}
         </div>
       </div>
-
       
       <AnalysisModal
         isOpen={isAnalysisModalOpen}

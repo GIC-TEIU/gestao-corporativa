@@ -19,11 +19,8 @@ import RecipientSuccess from './components/envelopes/RecipientSuccess';
 import HRPanel from './pages/HRPanel/HRPanel';
 import DirectDocument from './components/envelopes/DirectDocument';
 import EnvelopeDetail from './pages/view/EnvelopeDetail';
-import PaginaDeStatus from './pages/dashboard/PaginaDeStatus';
 import UserManagement from './pages/user-management/UserManagement';
 import { EmployeeProvider } from './context/EmployeeContext'; 
-import Teste from './pages/dashboard/teste';
-
 // Contextos
 import { EnvelopeProvider } from './context/EnvelopeContext';
 import { AppProvider } from './context/Appcontext';
@@ -51,12 +48,6 @@ function AppContent() {
           </ProtectedRoute>
         } />
 
-        <Route path="/status" element={
-          <ProtectedRoute>
-            <PaginaDeStatus />
-          </ProtectedRoute>
-        } /> 
-
         <Route path="/view" element={
           <ProtectedRoute>
             <EnvelopeProvider>
@@ -68,12 +59,6 @@ function AppContent() {
         <Route path="/funcionario" element={
           <ProtectedRoute>
             <Funcionario />
-          </ProtectedRoute>
-        } />
-
-        <Route path="/teste" element={
-          <ProtectedRoute>
-            <Teste />
           </ProtectedRoute>
         } />
 
