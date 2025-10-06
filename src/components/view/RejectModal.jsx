@@ -23,11 +23,13 @@ export const RejectModal = () => {
   const { currentUser, login } = useAuth();
 
   const handleRejectEnvelope = async () => {
+    // Validação do motivo (única diferença necessária)
     if (!rejectReason.trim()) {
       setSignatureError('Por favor, informe o motivo da reprovação');
       return;
     }
 
+    // EXATAMENTE igual ao SignatureModal
     if (!password) {
       setSignatureError('Por favor, insira sua senha para confirmar');
       return;
@@ -37,13 +39,10 @@ export const RejectModal = () => {
     setSignatureError('');
 
     try {
-      const success = await login(currentUser.email, password);
+      // EXATAMENTE igual ao SignatureModal
+      await login(currentUser.email, password);
 
-      if (!success) {
-        setSignatureError('Senha incorreta. Por favor, tente novamente.');
-        return;
-      }
-
+      // Apenas muda o status para rejeição
       const newStatus = {
         timelineStatus: 3,
         isRejected: true,
@@ -56,16 +55,19 @@ export const RejectModal = () => {
       setEnvelopeStatus(newStatus);
       localStorage.setItem(`envelopeStatus_${selectedEnvelope.id}`, JSON.stringify(newStatus));
 
+      // EXATAMENTE igual ao SignatureModal
       setShowRejectModal(false);
       setPassword('');
-      setRejectReason('');
-      
-      alert(`Envelope reprovado por ${currentUser.nome}!`);
+      setRejectReason(''); // Limpa o motivo também
+
+      // Mensagem específica para rejeição
+      alert('Seu envelope foi reprovado!');
 
     } catch (error) {
-      console.error("Erro inesperado no login:", error);
-      setSignatureError('Erro inesperado ao validar senha.');
+      // EXATAMENTE igual ao SignatureModal
+      setSignatureError('Senha incorreta. Por favor, tente novamente.');
     } finally {
+      // EXATAMENTE igual ao SignatureModal
       setIsSigning(false);
     }
   };
@@ -102,7 +104,7 @@ export const RejectModal = () => {
           </div>
         </div>
 
-        {/* Motivo da reprovação */}
+        {/* Motivo da reprovação (única diferença no JSX) */}
         <div className="mb-6">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Motivo da reprovação
@@ -116,7 +118,7 @@ export const RejectModal = () => {
           />
         </div>
 
-        {/* Senha */}
+        {/* Senha - EXATAMENTE igual ao SignatureModal */}
         <div className="mb-6">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Digite sua senha para confirmação
@@ -143,7 +145,7 @@ export const RejectModal = () => {
           )}
         </div>
 
-        {/* Botões */}
+        {/* Botões - EXATAMENTE igual ao SignatureModal, apenas muda o texto */}
         <div className="flex justify-end gap-3">
           <button
             onClick={() => {

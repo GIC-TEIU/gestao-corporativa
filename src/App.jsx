@@ -22,6 +22,7 @@ import EnvelopeDetail from './pages/view/EnvelopeDetail';
 import PaginaDeStatus from './pages/dashboard/PaginaDeStatus';
 import UserManagement from './pages/user-management/UserManagement';
 import { EmployeeProvider } from './context/EmployeeContext'; 
+import Teste from './pages/dashboard/teste';
 
 // Contextos
 import { EnvelopeProvider } from './context/EnvelopeContext';
@@ -67,6 +68,12 @@ function AppContent() {
         <Route path="/funcionario" element={
           <ProtectedRoute>
             <Funcionario />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/teste" element={
+          <ProtectedRoute>
+            <Teste />
           </ProtectedRoute>
         } />
 
