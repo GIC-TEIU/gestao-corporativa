@@ -12,6 +12,7 @@ export const StatusTimeline = () => {
   const steps = [
     {
       key: "Iniciado",
+      
       title: "Envelope iniciado",
       description: "Fluxo do envelope iniciado por Adriana Mármore",
       icon: <FilePlus className="w-5 h-5 text-[#7BB0B4]" />,

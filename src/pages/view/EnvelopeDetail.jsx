@@ -4,6 +4,8 @@ import PdfViewer from "../../components/PdfViewer";
 import { StatusTimeline } from "../../components/view/StatusTimeline";
 import { EnvelopeProvider, useEnvelope } from "../../context/EnvelopeContext";
 import MainLayout from "../../components/layout/MainLayout";
+import { SignatureModal } from "../../components/view/SignatureModal";
+import { RejectModal } from "../../components/view/RejectModal";
 
 const statusConfig = {
   Concluído: {
@@ -166,7 +168,10 @@ function EnvelopeDetailContent() {
             ))}
           </div>
         </div>
+        <SignatureModal />
+      <RejectModal />
       </div>
+     
     </MainLayout>
   );
 }
