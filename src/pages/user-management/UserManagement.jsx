@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
 import MainLayout from '../../components/layout/MainLayout';
 import UsersTable from '../../components/user-management/UsersTable';
 import HistoryAndPermissionsTable from '../../components/user-management/HistoryAndPermissionsTable'
@@ -8,8 +7,7 @@ import ManagementPermissionsModal from '../../components/user-management/Managem
 import ConfirmDeletionModal from '../../components/user-management/ConfirmDeletionModal';
 import PermissionsModal from '../../components/user-management/PermissionsModal';
 import HistoryPermissionsModal from '../../components/user-management/HistoryPermissionsModal';
-
-
+import InviteUserModal from '../../components/user-management/InviteUserModal'; 
 import { UserPlus, Filter, Search, Users, History } from 'lucide-react';
 
 const UserManagement = () => {
@@ -22,13 +20,14 @@ const UserManagement = () => {
     const [selectedUser, setSelectedUser] = useState(null);
 
     const [isPermissionsModalOpen, setPermissionsModalOpen] = useState(false);
-
     const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
     const [userToDelete, setUserToDelete] = useState(null);
 
+    // 2. Adicione este estado para controlar o modal de convite
+    const [isInviteUserModalOpen, setInviteUserModalOpen] = useState(false);
+
     const handleOpenPermissionsModal = () => setPermissionsModalOpen(true);
     const handleClosePermissionsModal = () => setPermissionsModalOpen(false);
-
 
     const handleOpenDeleteModal = (user) => {
         setUserToDelete(user);
@@ -43,6 +42,14 @@ const UserManagement = () => {
     const handleConfirmDeletion = () => {
         console.log("Deletando usuário:", userToDelete.nome);
         handleCloseDeleteModal();
+    };
+
+    const handleOpenInviteUserModal = () => setInviteUserModalOpen(true);
+    const handleCloseInviteUserModal = () => setInviteUserModalOpen(false);
+
+    const handleInviteUser = (userData) => {
+        console.log('Usuário convidado:', userData);
+        alert(`Convite enviado para ${userData.name} (${userData.email}) com permissão: ${userData.permission}`);
     };
 
     const tabs = [
@@ -61,7 +68,6 @@ const UserManagement = () => {
         setHistoryModalOpen(true);
     };
     const handleCloseHistoryModal = () => setHistoryModalOpen(false);
-
 
     const renderActiveTabContent = () => {
         switch (activeTab) {
@@ -122,7 +128,10 @@ const UserManagement = () => {
 
                     <div className="flex items-center gap-4">
                         {activeTab === 'users' && (
-                            <button className="flex items-center gap-2 bg-[#3098F2]/[0.23] text-[#0D6578] border border-[#0D6578] px-4 py-2 rounded-lg font-semibold transition-all hover:bg-[#3098F2]/[0.35]">
+                            <button 
+                                onClick={handleOpenInviteUserModal} // 4. Adicione o onClick aqui
+                                className="flex items-center gap-2 bg-[#3098F2]/[0.23] text-[#0D6578] border border-[#0D6578] px-4 py-2 rounded-lg font-semibold transition-all hover:bg-[#3098F2]/[0.35]"
+                            >
                                 <UserPlus size={18} />
                                 <span>Convidar Usuário</span>
                             </button>
@@ -157,6 +166,11 @@ const UserManagement = () => {
                 </div>
             </div>
 
+            <InviteUserModal
+                isOpen={isInviteUserModalOpen}
+                onClose={handleCloseInviteUserModal}
+                onInvite={handleInviteUser}
+            />
 
             <ManagementPermissionsModal
                 isOpen={isPermissionsModalOpen}

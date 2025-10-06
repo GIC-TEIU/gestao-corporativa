@@ -1,6 +1,19 @@
 import React, { useState } from 'react';
 import { X, User, Mail, Search, Send } from 'lucide-react';
 
+const Button = ({ children, ...props }) => {
+    return (
+        <button
+            className="px-10 py-2 rounded-2xl border-2 border-brand-cyan font-medium
+                     text-white bg-brand-cyan hover:bg-brand-cyan hover:bg-opacity-90
+                     flex items-center justify-center gap-2"
+            {...props}
+        >
+            {children}
+        </button>
+    );
+};
+
 const InviteUserModal = ({ isOpen, onClose, onInvite }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -22,9 +35,9 @@ const InviteUserModal = ({ isOpen, onClose, onInvite }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl w-full max-w-md">
-        {/* Cabeçalho com botão fechar */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-2xl font-bold text-gray-800">Convidar Novo Usuário</h2>
+        <div className="flex items-center justify-between p-4 border-b border-gray-200 px-6">
+          <Send size={20} className="text-brand-blue-dark" />
+          <h2 className="text-xl font-bold text-brand-blue-dark mr-20">Convidar Novo Usuário</h2>
           <button
             onClick={onClose}
             className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
@@ -33,8 +46,7 @@ const InviteUserModal = ({ isOpen, onClose, onInvite }) => {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6">
-          {/* Seção Nome e Email */}
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6">
           <div className="mb-6">
             <div className="mb-4">
               <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
@@ -45,8 +57,8 @@ const InviteUserModal = ({ isOpen, onClose, onInvite }) => {
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Dígito o nome"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-cyan focus:border-transparent transition-colors"
+                placeholder="Digite o nome"
+                className="w-full bg-gray-100 border border-gray-300 text-gray-600 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan"
                 required
               />
             </div>
@@ -60,33 +72,27 @@ const InviteUserModal = ({ isOpen, onClose, onInvite }) => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Dígito o email"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-cyan focus:border-transparent transition-colors"
+                placeholder="Digite o e-mail"
+                className="w-full bg-gray-100 border border-gray-300 text-gray-600 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan"
                 required
               />
             </div>
           </div>
-          <hr className="mb-6 border-gray-300" />
+          <hr className="mb-4 border-gray-300" />
 
-          {/* Seção Grupo de Permissões */}
-          <div className="mb-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-800">
+          <div className="mb-4">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-lg font-semibold text-brand-blue-dark">
                 Grupo de Permissões
               </h3>
               <div className="flex items-center gap-2">
-                <Search size={16} className="text-gray-600" />
-                <span className="text-sm text-gray-600">Permissões</span>
-                <Search size={16} className="text-gray-600" />
               </div>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-2">
               {[
                 { value: 'admin', label: 'Administrador', description: 'Acesso total ao sistema' },
-                { value: 'editor', label: 'Editor', description: 'Pode criar e editar conteúdo' },
                 { value: 'viewer', label: 'Visualizador', description: 'Apenas visualização' },
-                { value: 'collaborator', label: 'Colaborador', description: 'Permissões limitadas' }
               ].map((permission) => (
                 <label 
                   key={permission.value} 
@@ -108,9 +114,7 @@ const InviteUserModal = ({ isOpen, onClose, onInvite }) => {
               ))}
             </div>
           </div>
-
-          {/* Botão Enviar */}
-          <div className="flex justify-end">
+          <div className="flex justify-center">
             <Button type="submit">
               <Send size={18} />
               Enviar
