@@ -1,8 +1,10 @@
 import { Lock, X, Eye, EyeOff, FileText, CheckCircle } from 'lucide-react';
 import { useEnvelope } from '../../context/EnvelopeContext';
 import { useAuth } from '../../context/AuthContext';
+import Swal from 'sweetalert2';
 
 export const SignatureModal = () => {
+  // ... (seus hooks e estados continuam os mesmos) ...
   const {
     showSignatureModal,
     setShowSignatureModal,
@@ -32,23 +34,33 @@ export const SignatureModal = () => {
     setSignatureError('');
 
     try {
-      await login(currentUser.email, password);
+      // 1. Capture o retorno da função login. Este é o usuário validado.
+      const validatedUser = await login(currentUser.email, password);
 
       const newStatus = {
         timelineStatus: 4,
         isRejected: false,
-        signedBy: currentUser.nome,
+        signedBy: validatedUser.name,
         signedAt: new Date().toISOString(),
         rejectedBy: null,
         rejectedReason: ''
       };
 
       setEnvelopeStatus(newStatus);
-      setShowSignatureModal(false);
-      setPassword('');
-      setSelectedDocs([]);
 
-      alert(`Documentos assinados com sucesso por ${currentUser.nome}!`);
+      Swal.fire({
+        icon: 'success',
+        title: 'Assinatura Realizada!',
+        text: `Documentos assinados com sucesso por ${validatedUser.name}!`, // 3. Use validatedUser.name aqui também
+        confirmButtonColor: '#16a34a'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          setShowSignatureModal(false);
+          setPassword('');
+          setSelectedDocs([]);
+        }
+      });
+
     } catch (error) {
       setSignatureError('Senha incorreta. Por favor, tente novamente.');
     } finally {
