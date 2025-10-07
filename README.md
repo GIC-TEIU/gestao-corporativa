@@ -27,6 +27,7 @@ npm install react react-dom react-router-dom axios
 npm install -D tailwindcss postcss autoprefixer
 npx tailwindcss init -p
 npm install flowbite flowbite-react @headlessui/react @tailwindcss/forms
+npm install sweetalert2
 
 
 ### 3. Pra rodar:
