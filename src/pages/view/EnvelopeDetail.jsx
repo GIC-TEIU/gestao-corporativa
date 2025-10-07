@@ -1,6 +1,6 @@
 import { FileText, Mail, ArrowLeft, CheckCircle, Clock } from "lucide-react";
 import { useParams, useNavigate } from "react-router-dom";
-import PdfViewer from "../../components/PdfViewer";
+import PdfViewer from "../../components/view/PdfViewer";
 import { StatusTimeline } from "../../components/view/StatusTimeline";
 import { EnvelopeProvider, useEnvelope } from "../../context/EnvelopeContext";
 import MainLayout from "../../components/layout/MainLayout";

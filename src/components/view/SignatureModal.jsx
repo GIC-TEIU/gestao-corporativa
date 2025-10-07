@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import Swal from 'sweetalert2';
 
 export const SignatureModal = () => {
-  // ... (seus hooks e estados continuam os mesmos) ...
+  
   const {
     showSignatureModal,
     setShowSignatureModal,
@@ -34,7 +34,7 @@ export const SignatureModal = () => {
     setSignatureError('');
 
     try {
-      // 1. Capture o retorno da função login. Este é o usuário validado.
+      
       const validatedUser = await login(currentUser.email, password);
 
       const newStatus = {
@@ -51,7 +51,7 @@ export const SignatureModal = () => {
       Swal.fire({
         icon: 'success',
         title: 'Assinatura Realizada!',
-        text: `Documentos assinados com sucesso por ${validatedUser.name}!`, // 3. Use validatedUser.name aqui também
+        text: `Documentos assinados com sucesso por ${validatedUser.name}!`, 
         confirmButtonColor: '#16a34a'
       }).then((result) => {
         if (result.isConfirmed) {

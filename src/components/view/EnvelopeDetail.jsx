@@ -1,5 +1,5 @@
 import { FileText, Mail, ArrowLeft, CheckCircle, Clock } from "lucide-react";
-import PdfViewer from "../PdfViewer";
+import PdfViewer from "./PdfViewer";
 import { StatusTimeline } from "./StatusTimeline";
 import { useEnvelope } from "../../context/EnvelopeContext";
 
