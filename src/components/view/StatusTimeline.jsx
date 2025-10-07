@@ -28,7 +28,7 @@ export const StatusTimeline = () => {
     {
       key: "Encaminhado",
       title: "Encaminhado para o diretor",
-      description: "Joabe Andrade encaminhou para o diretor",
+      description: "Joabe Andrade encaminhou para Helder Mendes",
       icon: <Send className="w-5 h-5 text-[#A78BFA]" />,
       color: "bg-[#E0F0F1]",
     },
