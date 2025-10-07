@@ -7,6 +7,7 @@ const DataItem = ({ label, value }) => (
         <p className="text-sm text-gray-800 font-normal">{value || 'Não informado'}</p>
     </div>
 );
+
 const SpecificDataRenderer = ({ envelope, especificos }) => {
     if (envelope.tipo === 'RAP') {
         return (
@@ -94,11 +95,22 @@ const SpecificDataRenderer = ({ envelope, especificos }) => {
     return null;
 };
 
-
 export default function AnalysisModal({ isOpen, onClose, data, onConfirm, onRequestChange }) {
     if (!isOpen) return null;
 
-    const { requisitante, envelope, especificos } = data || {};
+    const { requisitante, envelope, especificos, id, onStatusUpdate } = data || {};
+
+    const handleConfirm = () => {
+        if (onStatusUpdate && id) {
+            onStatusUpdate(id);
+        }
+        
+        if (onConfirm) {
+            onConfirm();
+        }
+        
+        onClose();
+    };
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -152,7 +164,7 @@ export default function AnalysisModal({ isOpen, onClose, data, onConfirm, onRequ
                             Solicitar Alteração
                         </button>
                         <button
-                            onClick={onConfirm}
+                            onClick={handleConfirm}
                             className="flex items-center gap-2 px-6 py-3 bg-[#2F7429] text-white font-semibold rounded-lg shadow-md hover:bg-[#0a4b58] transition"
                         >
                             <CheckCircle size={18} />

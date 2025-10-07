@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MainLayout from '../../components/layout/MainLayout';
 import RequestTable from '../../components/envelopes/RequestTable';
@@ -6,6 +6,7 @@ import RapMovementTable from '../../components/envelopes/RapMovementTable';
 import EnvelopeQueryTable from '../../components/envelopes/EnvelopeQueryTable';
 import AnalysisModal from '../../components/ui/AnalysisModal';
 import ConfirmationViewModal from '../../components/view/ConfirmationViewModal';
+import GroupingModal from '../../components/envelopes/GroupingModal';
 
 import { ClipboardList, ArrowRightLeft, MailSearch, FolderPlus, Filter } from 'lucide-react';
 
@@ -21,14 +22,55 @@ function HRPanel() {
 
   const [envelopeConfirmado, setEnvelopeConfirmado] = useState(null);
 
+  // NOVO: Estado para armazenar os envelopes selecionados
+  const [selectedRequisitions, setSelectedRequisitions] = useState([]);
+  // NOVO: Estado para controlar a visibilidade do GroupingModal
+  const [isGroupingModalOpen, setIsGroupingModalOpen] = useState(false);
+
   const tabs = [
     { id: 'requisicoes', label: 'Requisições', icon: ClipboardList },
     { id: 'movimentacao-rap', label: 'Movimentação de RAP', icon: ArrowRightLeft },
     { id: 'consulta-envelopes', label: 'Consulta de Envelopes', icon: MailSearch },
   ];
   
+  // NOVO: Callback para receber os itens selecionados da tabela
+  const handleSelectedItemsChange = useCallback((items) => {
+    setSelectedRequisitions(items);
+  }, []);
+
+  // MODIFICADO: Agora abre o GroupingModal em vez de navegar diretamente
   const handleAgruparEnvelopesClick = () => {
-    navigate('/envelope/destinatario');
+    if (selectedRequisitions.length === 0) {
+      alert("Nenhum envelope selecionado. Selecione pelo menos um para agrupar.");
+      return;
+    }
+
+    // Verifica se todos os envelopes selecionados estão analisados
+    const allAnalyzed = selectedRequisitions.every(req => req.status.text === 'Analisado');
+    
+    if (!allAnalyzed) {
+      alert("Não é possível agrupar envelopes não analisados! Analise todos os envelopes primeiro.");
+      return;
+    }
+
+    // Se chegou aqui, todos estão analisados - abre o modal
+    setIsGroupingModalOpen(true);
+  };
+
+  // NOVO: Função para confirmar o agrupamento (chamada pelo GroupingModal)
+  const handleConfirmGrouping = () => {
+    console.log("Agrupamento confirmado para os envelopes:", selectedRequisitions.map(r => r.rap));
+    setIsGroupingModalOpen(false);
+    
+    // Navega para a próxima tela
+    navigate('/envelope/destinatario', { 
+      state: { groupedEnvelopes: selectedRequisitions } 
+    });
+  };
+
+  // NOVO: Função para fechar o GroupingModal
+  const handleCloseGroupingModal = () => {
+    setIsGroupingModalOpen(false);
   };
   
   const handleFilterClick = () => {
@@ -66,7 +108,13 @@ function HRPanel() {
   const renderActiveTabContent = () => {
     switch (activeTab) {
       case 'requisicoes':
-        return <RequestTable onAnalyzeClick={handleOpenAnalysisModal} />;
+        return (
+          <RequestTable 
+            onAnalyzeClick={handleOpenAnalysisModal} 
+            // NOVO: Passando a prop para capturar os itens selecionados
+            onSelectedItemsChange={handleSelectedItemsChange}
+          />
+        );
       case 'movimentacao-rap':
         return <RapMovementTable onAnalyzeClick={handleOpenAnalysisModal} />;
       case 'consulta-envelopes':
@@ -81,6 +129,9 @@ function HRPanel() {
         return null;
     }
   };
+
+  // NOVO: Desabilita o botão se não houver seleção ou não estiver na tab correta
+  const isGroupingDisabled = selectedRequisitions.length === 0 || activeTab !== 'requisicoes';
 
   return (
     <MainLayout
@@ -120,10 +171,20 @@ function HRPanel() {
             {activeTab === 'requisicoes' && (
               <button
                 onClick={handleAgruparEnvelopesClick}
-                className="flex items-center gap-2 bg-[#A855F7]/[0.23] text-[#9D56B0] border border-[#A855F7] px-4 py-2 rounded-lg font-semibold transition-all hover:bg-[#A855F7]/[0.35]"
+                disabled={isGroupingDisabled}
+                // NOVO: Estilo condicional para botão desabilitado
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-all whitespace-nowrap
+                    ${isGroupingDisabled 
+                        ? 'bg-gray-300 text-gray-500 border border-gray-400 cursor-not-allowed' 
+                        : 'bg-[#A855F7]/[0.23] text-[#9D56B0] border border-[#A855F7] hover:bg-[#A855F7]/[0.35]'
+                    }
+                `}
               >
                 <FolderPlus size={18} />
-                <span className="hidden sm:inline whitespace-nowrap">Agrupar Envelopes</span>
+                {/* NOVO: Mostra o número de envelopes selecionados */}
+                <span className="hidden sm:inline whitespace-nowrap">
+                  Agrupar Envelopes ({selectedRequisitions.length})
+                </span>
               </button>
             )}
             <button
@@ -148,7 +209,7 @@ function HRPanel() {
         data={selectedEnvelopeData}
         onConfirm={() => {
           handleCloseAnalysisModal();
-          navigate('/envelope/destinatario');
+          
         }}
         onRequestChange={() => {
           alert('Solicitação de Alteração enviada!');
@@ -159,6 +220,14 @@ function HRPanel() {
         isOpen={isViewModalOpen}
         onClose={handleCloseViewModal}
         onConfirm={handleConfirmView}
+      />
+
+      
+      <GroupingModal
+        isOpen={isGroupingModalOpen}
+        onClose={handleCloseGroupingModal}
+        selectedRequisitions={selectedRequisitions}
+        onConfirmGrouping={handleConfirmGrouping}
       />
     </MainLayout>
   );
