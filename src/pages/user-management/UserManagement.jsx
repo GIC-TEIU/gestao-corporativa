@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import MainLayout from '../../components/layout/MainLayout';
 import UsersTable from '../../components/user-management/UsersTable';
 import HistoryAndPermissionsTable from '../../components/user-management/HistoryAndPermissionsTable'
@@ -7,7 +8,9 @@ import ManagementPermissionsModal from '../../components/user-management/Managem
 import ConfirmDeletionModal from '../../components/user-management/ConfirmDeletionModal';
 import PermissionsModal from '../../components/user-management/PermissionsModal';
 import HistoryPermissionsModal from '../../components/user-management/HistoryPermissionsModal';
-import InviteUserModal from '../../components/user-management/InviteUserModal'; 
+import InviteUserModal from '../../components/user-management/InviteUserModal';
+import FilterSidebar from '../../components/user-management/FilterSidebar';
+
 import { UserPlus, Filter, Search, Users, History } from 'lucide-react';
 
 const UserManagement = () => {
@@ -22,9 +25,8 @@ const UserManagement = () => {
     const [isPermissionsModalOpen, setPermissionsModalOpen] = useState(false);
     const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
     const [userToDelete, setUserToDelete] = useState(null);
-
-    // 2. Adicione este estado para controlar o modal de convite
     const [isInviteUserModalOpen, setInviteUserModalOpen] = useState(false);
+    const [isFilterSidebarOpen, setIsFilterSidebarOpen] = useState(false);
 
     const handleOpenPermissionsModal = () => setPermissionsModalOpen(true);
     const handleClosePermissionsModal = () => setPermissionsModalOpen(false);
@@ -46,6 +48,14 @@ const UserManagement = () => {
 
     const handleOpenInviteUserModal = () => setInviteUserModalOpen(true);
     const handleCloseInviteUserModal = () => setInviteUserModalOpen(false);
+
+    const handleOpenFilterSidebar = () => setIsFilterSidebarOpen(true);
+    const handleCloseFilterSidebar = () => setIsFilterSidebarOpen(false);
+
+    const handleApplyFilters = (filters) => {
+        console.log('Filtros aplicados:', filters);
+        handleCloseFilterSidebar();
+    };
 
     const handleInviteUser = (userData) => {
         console.log('Usuário convidado:', userData);
@@ -79,7 +89,6 @@ const UserManagement = () => {
                     />
                 );
             case 'history':
-
                 return (
                     <HistoryAndPermissionsTable
                         onOpenViewPermissionsModal={handleOpenViewPermissionsModal}
@@ -96,49 +105,53 @@ const UserManagement = () => {
         }
     };
 
-
     return (
         <MainLayout
             title="Gerenciador de Usuários"
             subtitle="Gerencie permissões e acessos de forma centralizada e segura"
         >
             <div className="w-full">
-                <div className="flex justify-between items-center border-b border-gray-300 mb-4">
-
-                    <div className="flex">
+                <div className="flex flex-col md:flex-row justify-between items-stretch md:items-center border-b border-gray-300 mb-4 gap-4 md:gap-0">
+                    
+                    <div className="flex flex-wrap">
                         {tabs.map(tab => {
                             const Icon = tab.icon;
                             return (
                                 <button
                                     key={tab.id}
                                     onClick={() => setActiveTab(tab.id)}
-                                    className={`flex items-center gap-2 py-3 px-6 font-semibold transition-colors focus:outline-none -mb-px
+                                    className={`flex items-center gap-2 py-3 px-4 sm:px-6 font-semibold transition-colors focus:outline-none -mb-px
                                         ${activeTab === tab.id
                                             ? 'bg-[#D6E3E8] text-[#275667] border-b-4 border-[#0D6578] rounded-t-2xl'
                                             : 'border-b-4 border-transparent text-gray-500 hover:text-[#275667]'
                                         }`}
                                 >
                                     <Icon size={18} />
-                                    <span>{tab.label}</span>
+                                    {/* Texto visível apenas quando ativo ou em telas maiores */}
+                                    <span className={
+                                        activeTab === tab.id ? 'inline' : 'hidden sm:inline'
+                                    }>
+                                        {tab.label}
+                                    </span>
                                 </button>
                             );
                         })}
                     </div>
-
-
-                    <div className="flex items-center gap-4">
+                    
+                    <div className="flex w-full md:w-auto items-center justify-end gap-4">
                         {activeTab === 'users' && (
                             <button 
-                                onClick={handleOpenInviteUserModal} // 4. Adicione o onClick aqui
+                                onClick={handleOpenInviteUserModal}
                                 className="flex items-center gap-2 bg-[#3098F2]/[0.23] text-[#0D6578] border border-[#0D6578] px-4 py-2 rounded-lg font-semibold transition-all hover:bg-[#3098F2]/[0.35]"
                             >
                                 <UserPlus size={18} />
-                                <span>Convidar Usuário</span>
+                                <span className="hidden sm:inline whitespace-nowrap">Convidar Usuário</span>
+                                <span className="sm:hidden">Convidar</span>
                             </button>
                         )}
 
                         {activeTab === 'history' && (
-                            <div className="relative w-full max-w-sm">
+                            <div className="relative w-full sm:max-w-sm">
                                 <input
                                     type="text"
                                     value={searchTerm}
@@ -153,19 +166,29 @@ const UserManagement = () => {
                         )}
 
                         <button
+                            onClick={handleOpenFilterSidebar}
                             className="flex items-center gap-2 bg-[#33748B] text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition"
                         >
                             <Filter size={18} />
-                            <span className="font-semibold">Filtrar</span>
+                            <span className="hidden sm:inline font-semibold">Filtrar</span>
                         </button>
                     </div>
-                </div>
 
-                <div className="mt-4">
+                </div>
+                <div className="mt-4 overflow-x-auto">
                     {renderActiveTabContent()}
                 </div>
             </div>
 
+            {/* Sidebar de Filtro */}
+            <FilterSidebar
+                isOpen={isFilterSidebarOpen}
+                onClose={handleCloseFilterSidebar}
+                onApplyFilters={handleApplyFilters}
+                activeTab={activeTab}
+            />
+
+            {/* Modals */}
             <InviteUserModal
                 isOpen={isInviteUserModalOpen}
                 onClose={handleCloseInviteUserModal}
@@ -192,7 +215,6 @@ const UserManagement = () => {
                 onClose={handleCloseHistoryModal}
                 userName={selectedUser?.nome}
             />
-
         </MainLayout>
     );
 };

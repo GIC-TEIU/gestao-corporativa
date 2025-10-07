@@ -1,8 +1,13 @@
 import React from "react";
 import Button from "../ui/Button";
 
-const FormHeader = ({ formValues, updateFormValues, handleContinue, setSetorEnvelope }) => {
+const CARGOS = ["Líder de RH", "Gerente", "Analista"];
+const GERENTES = ["Joabe Andrade", "José Roberto", "Lázaro Paixão", "Maria Helena", "Edson Ramos"];
+const UNIDADES = ["Teiú - Matriz", "Teiú Filial - Feira de Santana", "Teiú - Cosméticos", "Holding", "Votre", "Kaioka"];
+const SETORES = ["RAP", "RMP", "Documento Direto"];
+const DIRETORES = ["Helder"];
 
+const FormHeader = ({ formValues, updateFormValues, handleContinue, setSetorEnvelope }) => {
 
   const handleSetorChange = (e) => {
     const value = e.target.value;
@@ -17,128 +22,123 @@ const FormHeader = ({ formValues, updateFormValues, handleContinue, setSetorEnve
       tipoSolicitacao = 'movimentacao';
     }
     
-  
     updateFormValues("step1", "tipoSolicitacao", tipoSolicitacao);
   };
 
+  const FormField = ({ label, name, type = "text", value, onChange, options = null, rows = 1 }) => {
+    const commonClasses = "w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan transition duration-150 ease-in-out";
+    const fieldId = `field-${name}`;
+
+    return (
+      <div>
+        <label htmlFor={fieldId} className="block text-brand-teal-dark font-semibold mb-1">
+          {label}
+        </label>
+        {options ? (
+          <select
+            id={fieldId}
+            value={value || ""}
+            onChange={onChange}
+            className={commonClasses}
+          >
+            <option value="">Selecione</option>
+            {options.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        ) : type === "textarea" ? (
+          <textarea
+            id={fieldId}
+            rows={rows}
+            value={value || ""}
+            onChange={onChange}
+            className={`${commonClasses} resize-y`}
+          />
+        ) : (
+          <input
+            id={fieldId}
+            type={type}
+            value={value || ""}
+            onChange={onChange}
+            className={commonClasses}
+          />
+        )}
+      </div>
+    );
+  };
+
+
   return (
-    <form onSubmit={handleContinue} className="p-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 px-4 py-6 md:p-6 md:pt-0">
-        <div className="space-y-4 border-4 border-brand-ice-blue p-4 rounded-t-3xl md:rounded-tl-3xl md:rounded-bl-2xl md:rounded-tr-none rounded-b-none md:rounded-br-none">
-          <div>
-            <label className="block text-brand-teal-dark font-semibold mb-1">
-              Nome do requisitante
-            </label>
-            <input
-              type="text"
-              value={formValues.requisitante || ""}
-              onChange={(e) => updateFormValues("step1", "requisitante", e.target.value)}
-              className="w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan"
+    <form onSubmit={handleContinue} className="p-2 md:p-2">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+
+        <div className="space-y-4 p-6 border-4 border-brand-ice-blue rounded-xl md:rounded-r-none md:rounded-l-3xl">
+          
+          <FormField
+            label="Nome do requisitante"
+            name="requisitante"
+            value={formValues.requisitante}
+            onChange={(e) => updateFormValues("step1", "requisitante", e.target.value)}
+          />
+
+          <FormField
+            label="Cargo"
+            name="cargo"
+            value={formValues.cargo}
+            onChange={(e) => updateFormValues("step1", "cargo", e.target.value)}
+            options={CARGOS}
+          />
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <FormField
+              label="Gerente"
+              name="gerente"
+              value={formValues.gerente}
+              onChange={(e) => updateFormValues("step1", "gerente", e.target.value)}
+              options={GERENTES}
             />
-          </div>
 
-          <div>
-            <label className="block text-brand-teal-dark font-semibold mb-1">
-              Cargo
-            </label>
-            <select
-              value={formValues.cargo || ""}
-              onChange={(e) => updateFormValues("step1", "cargo", e.target.value)}
-              className="w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan"
-            >
-              <option value="">Selecione</option>
-              <option>Líder de RH</option>
-              <option>Gerente</option>
-              <option>Analista</option>
-            </select>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-brand-teal-dark font-semibold mb-1">
-                Gerente
-              </label>
-              <select
-              
-                value={formValues.gerente || ""}
-                onChange={(e) => updateFormValues("step1", "gerente", e.target.value)}
-                className="w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan"
-              >
-                <option value="">Selecione</option>
-                <option>Joabe Andrade</option>
-                <option>José Roberto</option>
-                <option>Lázaro Paixão</option>
-                <option>Maria Helena</option>
-                <option>Edson Ramos</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-brand-teal-dark font-semibold mb-1">
-                Unidade
-              </label>
-              <select
-                value={formValues.unidade || ""}
-                onChange={(e) => updateFormValues("step1", "unidade", e.target.value)}
-                className="w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan"
-              >
-                <option value="">Selecione</option>
-                <option>Teiú - Matriz</option>
-                <option>Teiú Filial - Feira de Santana</option>
-                <option>Teiú - Cosméticos</option>
-                <option>Holding</option>
-                <option>Votre</option>
-                <option>Kaioka</option>
-              </select>
-            </div>
+            <FormField
+              label="Unidade"
+              name="unidade"
+              value={formValues.unidade}
+              onChange={(e) => updateFormValues("step1", "unidade", e.target.value)}
+              options={UNIDADES}
+            />
           </div>
         </div>
 
-        <div className="bg-brand-ice-blue p-4 space-y-4 rounded-b-3xl md:rounded-tr-3xl md:rounded-br-2xl md:rounded-tl-none rounded-t-none md:rounded-bl-none">
-          <div>
-            <label className="block text-brand-teal-dark font-semibold mb-1">
-              Tipo de Requisição
-            </label>
-            <select
-              value={formValues.setor || ""}
-              onChange={handleSetorChange}
-              className="w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan"
-            >
-              <option value="">Selecione</option>
-              <option>RAP</option>
-              <option>RMP</option>
-              <option>Documento Direto</option>
-            </select>
-          </div>
+        <div className="space-y-4 p-6 bg-brand-ice-blue rounded-xl md:rounded-l-none md:rounded-r-3xl">
+          <FormField
+            label="Tipo de Requisição"
+            name="setor"
+            value={formValues.setor}
+            onChange={handleSetorChange}
+            options={SETORES}
+          />
 
-          <div>
-            <label className="block text-brand-teal-dark font-semibold mb-1">
-              Diretor
-            </label>
-            <select
-              value={formValues.diretor || ""}
-              onChange={(e) => updateFormValues("step1", "diretor", e.target.value)}
-              className="w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan"
-            >
-              <option value="">Selecione</option>
-              <option>Helder</option>
-            </select>
-          </div>
+          <FormField
+            label="Diretor"
+            name="diretor"
+            value={formValues.diretor}
+            onChange={(e) => updateFormValues("step1", "diretor", e.target.value)}
+            options={DIRETORES}
+          />
 
-          <div>
-            <label className="block text-brand-teal-dark font-semibold mb-1">
-              Observações
-            </label>
-            <textarea
-              rows="4"
-              value={formValues.observacoes || ""}
-              onChange={(e) => updateFormValues("step1", "observacoes", e.target.value)}
-              className="w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan"
-            />
-          </div>
+          <FormField
+            label="Observações"
+            name="observacoes"
+            type="textarea"
+            rows={4}
+            value={formValues.observacoes}
+            onChange={(e) => updateFormValues("step1", "observacoes", e.target.value)}
+          />
         </div>
       </div>
 
-      <div className="flex justify-center mt-6">
+      <div className="flex justify-center mt-8">
         <Button
           type="submit"
           disabled={!formValues.setor || formValues.setor === ""}

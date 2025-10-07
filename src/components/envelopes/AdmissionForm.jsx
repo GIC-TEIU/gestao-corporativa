@@ -1,11 +1,11 @@
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, Send } from "lucide-react";
 
 const AdmissionForm = ({
   tipoEnvelope,
   handleContinue,
   updateFormValues,
   formValues,
-  handleBack, // <-- RECEBA A PROP AQUI
+  handleBack, // 
 }) => {
   const handleInputChange = (field, value) => {
     updateFormValues("step3", field, value);
@@ -20,8 +20,8 @@ const AdmissionForm = ({
       case "admissao":
         return (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 ">
-              <div className="space-y-4 bg-brand-ice-blue p-6 rounded-t-3xl md:rounded-tl-3xl md:rounded-bl-3xl md:rounded-tr-none rounded-b-none md:rounded-b-none">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-4 bg-brand-ice-blue p-6 rounded-xl md:rounded-r-none md:rounded-l-3xl">
                          <div>
                   <label className={labelClass}>Cargo *</label>
                   <input
@@ -33,7 +33,7 @@ const AdmissionForm = ({
                   />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                   <label className={labelClass}>Categoria *</label>
                   <select
@@ -89,7 +89,7 @@ const AdmissionForm = ({
                   </select>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className={labelClass}>Motivo *</label>
                     <select
@@ -176,7 +176,7 @@ const AdmissionForm = ({
                 </div>
               </div>
 
-              <div className="space-y-4 border border-brand-ice-blue p-6 rounded-b-3xl md:rounded-tr-3xl md:rounded-br-3xl md:rounded-tl-none rounded-t-none md:rounded-t-none">
+              <div className="space-y-4 p-6 border border-brand-ice-blue rounded-xl md:rounded-l-none md:rounded-r-3xl">
                                 <div>
                   <label className={labelClass}>
                     Justificativa para Contratação *
@@ -227,7 +227,6 @@ const AdmissionForm = ({
                   </div>
                 </div>
 
-                {/* ALTERAÇÃO AQUI */}
                 <div className="flex justify-between items-center mt-6">
                   <button
                     type="button"
@@ -238,8 +237,9 @@ const AdmissionForm = ({
                   </button>
                   <button
                     type="submit"
-                    className="bg-brand-cyan text-white px-6 py-2 rounded-md hover:bg-brand-blue-dark/90"
+                    className="flex items-center bg-brand-cyan text-white px-6 py-2 rounded-md hover:bg-brand-blue-dark/90"
                   >
+                    <Send size={14} className="mr-2" />
                     Enviar
                   </button>
                 </div>
@@ -256,7 +256,7 @@ const AdmissionForm = ({
   return (
     <form
       onSubmit={handleContinue}
-      className="space-y-4 bg-white p-6 rounded-md shadow"
+      className="space-y-4 p-2 rounded-md "
     >
       {renderForm()}
     </form>

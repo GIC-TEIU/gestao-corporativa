@@ -99,7 +99,8 @@ const TabelaFuncionarios = ({ onVerDetalhes, totalFuncionarios }) => {
   const funcionarios = mockFuncionarios; 
 
   return (
-    <div className="rounded-lg overflow-hidden">
+     <div className="overflow-x-auto">
+    <div className= "overflow-x-auto">
       <table className="w-full border-collapse">
         <thead className="bg-[#33748B3B] text-[#2A454E] text-sm font-semibold">
           <tr>
@@ -133,6 +134,7 @@ const TabelaFuncionarios = ({ onVerDetalhes, totalFuncionarios }) => {
           )}
         </tbody>
       </table>
+    </div>
     </div>
   );
 };

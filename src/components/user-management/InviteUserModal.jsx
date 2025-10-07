@@ -33,11 +33,11 @@ const InviteUserModal = ({ isOpen, onClose, onInvite }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-6">
       <div className="bg-white rounded-2xl w-full max-w-md">
         <div className="flex items-center justify-between p-4 border-b border-gray-200 px-6">
           <Send size={20} className="text-brand-blue-dark" />
-          <h2 className="text-xl font-bold text-brand-blue-dark mr-20">Convidar Novo Usuário</h2>
+          <h2 className="text-lg font-bold text-brand-blue-dark mr-10">Convidar Novo Usuário</h2>
           <button
             onClick={onClose}
             className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
@@ -78,21 +78,15 @@ const InviteUserModal = ({ isOpen, onClose, onInvite }) => {
               />
             </div>
           </div>
-          <hr className="mb-4 border-gray-300" />
+          <hr className="mb-2 border-gray-300" />
 
-          <div className="mb-4">
+          <div className="mb-2">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-lg font-semibold text-brand-blue-dark">
-                Grupo de Permissões
-              </h3>
-              <div className="flex items-center gap-2">
-              </div>
+            
             </div>
 
             <div className="space-y-2">
               {[
-                { value: 'admin', label: 'Administrador', description: 'Acesso total ao sistema' },
-                { value: 'viewer', label: 'Visualizador', description: 'Apenas visualização' },
               ].map((permission) => (
                 <label 
                   key={permission.value} 

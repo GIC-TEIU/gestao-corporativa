@@ -11,8 +11,9 @@ const HeaderFuncionarios = ({
 }) => {
   return (
     <>
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center space-x-4">
+      <div className="flex flex-col sm:flex-row gap-4 mb-6">
+        <div className="flex flex-1 items-center gap-3">
+          <div className="relative flex-1 max-w-md"></div>
 
           {hasActiveFilters && (
             <button
@@ -38,6 +39,7 @@ const HeaderFuncionarios = ({
               <Search size={20} className="text-gray-400" />
             </div>
           </div>
+          
           <button
             onClick={onFiltersClick} // Função original
             className="flex items-center gap-2 bg-[#33748B] text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition" // Novo estilo
