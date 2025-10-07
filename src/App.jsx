@@ -1,29 +1,29 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { PermissionProvider } from './context/PermissionContext';
-import { useAuth } from './context/AuthContext';
-import ProtectedRoute from './components/ProtectedRoute';
-import Login from './pages/auth/Login';
-import Register from './pages/auth/Register';
-import Home from './pages/home/Home';
-import Dashboard from "./pages/dashboard/Dashboard";
-import PasswordSuccess from "./pages/password-recovery/PasswordSuccess";
-import ResetPassword from "./pages/password-recovery/ResetPassword";
-import ForgotPassword from "./pages/password-recovery/ForgotPassword";
-import View from "./pages/view/View";
-import Funcionario from "./pages/Funcionario/Funcionario";
-import Envelope from "./pages/Envelope/Envelope";
-import Profile from './pages/Profile/Profile';
-import Destinatario from './pages/Envelope/Destinatario';
-import RecipientSuccess from './components/envelopes/RecipientSuccess';
-import HRPanel from './pages/HRPanel/HRPanel';
-import DirectDocument from './components/envelopes/DirectDocument';
-import EnvelopeDetail from './pages/view/EnvelopeDetail';
-import UserManagement from './pages/user-management/UserManagement';
-import { EmployeeProvider } from './context/EmployeeContext'; 
-// Contextos
+import { EmployeeProvider } from './context/EmployeeContext';
 import { EnvelopeProvider } from './context/EnvelopeContext';
 import { AppProvider } from './context/Appcontext';
+
+import ProtectedRoute from './components/ProtectedRoute';
+
+// Páginas
+import Login from './pages/auth/Login';
+import Register from './pages/auth/Register';
+import Dashboard from './pages/dashboard/Dashboard';
+import PasswordSuccess from './pages/password-recovery/PasswordSuccess';
+import ResetPassword from './pages/password-recovery/ResetPassword';
+import ForgotPassword from './pages/password-recovery/ForgotPassword';
+import View from './pages/view/View';
+import Funcionario from './pages/Funcionario/Funcionario';
+import Envelope from './pages/Envelope/Envelope';
+import Destinatario from './pages/Envelope/Destinatario';
+import DirectDocument from './components/envelopes/DirectDocument';
+import RecipientSuccess from './components/envelopes/RecipientSuccess';
+import HRPanel from './pages/HRPanel/HRPanel';
+import UserManagement from './pages/user-management/UserManagement';
+import EnvelopeDetail from './pages/view/EnvelopeDetail';
+import Profile from './pages/Profile/Profile';
 
 function AppContent() {
   const { currentUser } = useAuth();
@@ -31,17 +31,17 @@ function AppContent() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Redireciona / para dashboard ou login */}
+        <Route path="/" element={<Navigate to={currentUser ? "/dashboard" : "/login"} replace />} />
+
         {/* Rotas Públicas */}
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={!currentUser ? <Login /> : <Dashboard />} />
-        <Route path="/register" element={!currentUser ? <Register /> : <Dashboard />} />
+        <Route path="/login" element={!currentUser ? <Login /> : <Navigate to="/dashboard" replace />} />
+        <Route path="/register" element={!currentUser ? <Register /> : <Navigate to="/dashboard" replace />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/password-success" element={<PasswordSuccess />} />
-        
-        {/* ====================================================== */}
+
         {/* Rotas Protegidas */}
-        {/* ====================================================== */}
         <Route path="/dashboard" element={
           <ProtectedRoute>
             <Dashboard />
@@ -53,6 +53,12 @@ function AppContent() {
             <EnvelopeProvider>
               <View />
             </EnvelopeProvider>
+          </ProtectedRoute>
+        } />
+
+        <Route path="/view/envelope-detail" element={
+          <ProtectedRoute>
+            <EnvelopeDetail />
           </ProtectedRoute>
         } />
 
@@ -89,7 +95,7 @@ function AppContent() {
             <RecipientSuccess />
           </ProtectedRoute>
         } />
-        
+
         <Route path="/hr-panel" element={
           <ProtectedRoute>
             <EnvelopeProvider>
@@ -97,7 +103,7 @@ function AppContent() {
             </EnvelopeProvider>
           </ProtectedRoute>
         } />
-        
+
         <Route path="/user-management" element={
           <ProtectedRoute>
             <UserManagement />
@@ -109,30 +115,21 @@ function AppContent() {
             <Profile />
           </ProtectedRoute>
         } />
-
-        <Route path="/view/envelope-detail" element={
-          <ProtectedRoute>
-            <EnvelopeDetail />
-          </ProtectedRoute>
-        } />
       </Routes>
     </BrowserRouter>
   );
 }
 
-function App() {
+export default function App() {
   return (
     <AuthProvider>
       <PermissionProvider>
         <EmployeeProvider>
-        <AppProvider>
-          
-          <AppContent />
-        </AppProvider>
+          <AppProvider>
+            <AppContent />
+          </AppProvider>
         </EmployeeProvider>
       </PermissionProvider>
     </AuthProvider>
   );
 }
-
-export default App;
