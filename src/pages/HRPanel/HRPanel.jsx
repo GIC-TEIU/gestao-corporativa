@@ -85,7 +85,7 @@ function HRPanel() {
     setIsGroupingModalOpen(false);
   };
   
-  // MODIFICADO: Substituindo alert nativo por AlertModal
+  
   const handleFilterClick = () => {
     setAlertMessage("Funcionalidade de filtro a ser implementada!");
     setAlertType('info');
