@@ -4,26 +4,25 @@ import { PermissionProvider } from './context/PermissionContext';
 import { EmployeeProvider } from './context/EmployeeContext';
 import { EnvelopeProvider } from './context/EnvelopeContext';
 import { AppProvider } from './context/Appcontext';
-
 import ProtectedRoute from './components/ProtectedRoute';
 
 // Páginas
-import Login from './pages/auth/Login';
-import Register from './pages/auth/Register';
-import Dashboard from './pages/dashboard/Dashboard';
-import PasswordSuccess from './pages/password-recovery/PasswordSuccess';
-import ResetPassword from './pages/password-recovery/ResetPassword';
-import ForgotPassword from './pages/password-recovery/ForgotPassword';
-import View from './pages/view/View';
-import Funcionario from './pages/Funcionario/Funcionario';
-import Envelope from './pages/Envelope/Envelope';
-import Destinatario from './pages/Envelope/Destinatario';
-import DirectDocument from './components/envelopes/DirectDocument';
-import RecipientSuccess from './components/envelopes/RecipientSuccess';
-import HRPanel from './pages/HRPanel/HRPanel';
-import UserManagement from './pages/user-management/UserManagement';
-import EnvelopeDetail from './pages/view/EnvelopeDetail';
-import Profile from './pages/Profile/Profile';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Home from './pages/Home';
+import PasswordSuccess from './pages/PasswordSuccess';
+import ResetPassword from './pages/ResetPassword';
+import ForgotPassword from './pages/ForgotPassword';
+import EnvelopeSearch from './pages/EnvelopeSearch';
+import EmailSignatures from './pages/EmailSignatures';
+import RequestForm from './pages/RequestForm';
+import RecipientFlow from './pages/RecipientFlow';
+import DirectDocument from './components/request-form/DirectDocumentForm';
+import RecipientSuccess from './components/envelope-search/RecipientFlowSuccess';
+import HRPanel from './pages/HRPanel';
+import UserManagement from './pages/UserManagement';
+import PdfPreviewForSignature from './pages/PdfPreviewForSignature';
+import Profile from './pages/Profile';
 
 function AppContent() {
   const { currentUser } = useAuth();
@@ -31,53 +30,53 @@ function AppContent() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Redireciona / para dashboard ou login */}
-        <Route path="/" element={<Navigate to={currentUser ? "/dashboard" : "/login"} replace />} />
+        {/* Redireciona / para Home ou login */}
+        <Route path="/" element={<Navigate to={currentUser ? "/Home" : "/login"} replace />} />
 
         {/* Rotas Públicas */}
-        <Route path="/login" element={!currentUser ? <Login /> : <Navigate to="/dashboard" replace />} />
-        <Route path="/register" element={!currentUser ? <Register /> : <Navigate to="/dashboard" replace />} />
+        <Route path="/login" element={!currentUser ? <Login /> : <Navigate to="/Home" replace />} />
+        <Route path="/register" element={!currentUser ? <Register /> : <Navigate to="/Home" replace />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/password-success" element={<PasswordSuccess />} />
 
         {/* Rotas Protegidas */}
-        <Route path="/dashboard" element={
+        <Route path="/home" element={
           <ProtectedRoute>
-            <Dashboard />
+            <Home />
           </ProtectedRoute>
         } />
 
-        <Route path="/view" element={
+        <Route path="/envelope-search" element={
           <ProtectedRoute>
             <EnvelopeProvider>
-              <View />
+              <EnvelopeSearch />
             </EnvelopeProvider>
           </ProtectedRoute>
         } />
 
-        <Route path="/view/envelope-detail" element={
+        <Route path="/envelope-search/pdf-preview-for-signature" element={
           <ProtectedRoute>
-            <EnvelopeDetail />
+            <PdfPreviewForSignature />
           </ProtectedRoute>
         } />
 
-        <Route path="/funcionario" element={
+        <Route path="/email-signatures" element={
           <ProtectedRoute>
-            <Funcionario />
+            <EmailSignatures />
           </ProtectedRoute>
         } />
 
-        <Route path="/envelope" element={
+        <Route path="/request-form" element={
           <ProtectedRoute>
-            <Envelope />
+            <RequestForm />
           </ProtectedRoute>
         } />
 
-        <Route path="/envelope/destinatario" element={
+        <Route path="/envelope/recipient-flow" element={
           <ProtectedRoute>
             <EnvelopeProvider>
-              <Destinatario />
+              <RecipientFlow />
             </EnvelopeProvider>
           </ProtectedRoute>
         } />

@@ -50,19 +50,19 @@ function Header({ showLinks = true, showNotifications = true }) {
 
   const DesktopNavLinks = () => (
     <>
-      <Link to="/dashboard" className="hover:opacity-80">
+      <Link to="/home" className="hover:opacity-80">
         Inicio
       </Link>
-      <Link to="/envelope" className="hover:opacity-80">
-        Novo Envelope
+      <Link to="/request-form" className="hover:opacity-80">
+        Nova Requisição
       </Link>
-      <Link to="/funcionario" className="hover:opacity-80">
+      <Link to="/email-signatures" className="hover:opacity-80">
         Funcionários
       </Link>
-      <Link to="/view" className="hover:opacity-80">
+      <Link to="/envelope-search" className="hover:opacity-80">
         Consulta Envelopes
       </Link>
-      <Link to="/HRPanel" className="hover:opacity-80">
+      <Link to="/hr-panel" className="hover:opacity-80">
         Painel RH
       </Link>
     </>
@@ -82,18 +82,18 @@ function Header({ showLinks = true, showNotifications = true }) {
         Perfil
       </Link>
       <Link
-        to="/dashboard"
+        to="/home"
         className={`hover:opacity-80 ${className}`}
         onClick={onClick}
       >
         Inicio
       </Link>
       <Link
-        to="/envelope"
+        to="/request-form"
         className={`hover:opacity-80 font-regular ${className}`}
         onClick={onClick}
       >
-        Novo Envelope
+        Nova Requisição
       </Link>
       <Link
         to="/funcionario"
@@ -103,14 +103,14 @@ function Header({ showLinks = true, showNotifications = true }) {
         Funcionários
       </Link>
       <Link
-        to="/view"
+        to="/envelope-search"
         className={`hover:opacity-80 ${className}`}
         onClick={onClick}
       >
         Consulta Envelopes
       </Link>
       <Link
-        to="/HRPanel"
+        to="/hr-panel"
         className={`hover:opacity-80 ${className}`}
         onClick={onClick}
       >
@@ -134,7 +134,7 @@ function Header({ showLinks = true, showNotifications = true }) {
   return (
     <>
       <div className="px-4 sm:px-6 lg:px-8 bg-[#0D6578] flex justify-between items-center w-full shadow-lg">
-        <Link to="/dashboard">
+        <Link to="/home">
           <img
             src="/imgs/logo-marinho-white.png"
             alt="Logo"

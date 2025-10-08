@@ -20,7 +20,7 @@ function HeaderHome() {
 
   return (
     <div className="px-2 sm:px-4 bg-[#0D6578] flex justify-between items-center">
-      <Link to="/dashboard">
+      <Link to="/home">
         <img
           src="/imgs/logo-marinho-white.png"
           alt="Logo"
