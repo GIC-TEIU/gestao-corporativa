@@ -13,7 +13,7 @@ const RequisitionCard = ({ rap, requisitante, tipoEnvelope }) => (
       <div>
         <p className="text-xs text-gray-500">Tipo</p>
         <p className="text-sm font-semibold text-gray-800">
-          {tipoEnvelope?.text || tipoEnvelope} – Nº {rap}
+          {tipoEnvelope?.text || tipoEnvelope}:  {rap}
         </p>
       </div>
     </div>

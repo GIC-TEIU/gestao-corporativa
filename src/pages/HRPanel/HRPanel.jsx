@@ -7,6 +7,8 @@ import EnvelopeQueryTable from '../../components/envelopes/EnvelopeQueryTable';
 import AnalysisModal from '../../components/ui/AnalysisModal';
 import ConfirmationViewModal from '../../components/view/ConfirmationViewModal';
 import GroupingModal from '../../components/envelopes/GroupingModal';
+// NOVO: Importando o AlertModal
+import AlertModal from '../../components/ui/AlertModal';
 
 import { ClipboardList, ArrowRightLeft, MailSearch, FolderPlus, Filter } from 'lucide-react';
 
@@ -27,6 +29,12 @@ function HRPanel() {
   // NOVO: Estado para controlar a visibilidade do GroupingModal
   const [isGroupingModalOpen, setIsGroupingModalOpen] = useState(false);
 
+  // NOVO: Estados para o AlertModal
+  const [showAlertModal, setShowAlertModal] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertType, setAlertType] = useState('info');
+  const [alertOnConfirm, setAlertOnConfirm] = useState(null);
+
   const tabs = [
     { id: 'requisicoes', label: 'Requisições', icon: ClipboardList },
     { id: 'movimentacao-rap', label: 'Movimentação de RAP', icon: ArrowRightLeft },
@@ -38,10 +46,12 @@ function HRPanel() {
     setSelectedRequisitions(items);
   }, []);
 
-  // MODIFICADO: Agora abre o GroupingModal em vez de navegar diretamente
+  // MODIFICADO: Agora usando AlertModal em vez de alert nativo
   const handleAgruparEnvelopesClick = () => {
     if (selectedRequisitions.length === 0) {
-      alert("Nenhum envelope selecionado. Selecione pelo menos um para agrupar.");
+      setAlertMessage("Nenhum envelope selecionado. Selecione pelo menos um para agrupar.");
+      setAlertType('warning');
+      setShowAlertModal(true);
       return;
     }
 
@@ -49,7 +59,9 @@ function HRPanel() {
     const allAnalyzed = selectedRequisitions.every(req => req.status.text === 'Analisado');
     
     if (!allAnalyzed) {
-      alert("Não é possível agrupar envelopes não analisados! Analise todos os envelopes primeiro.");
+      setAlertMessage("Não é possível agrupar requisições não analisadas! Analise todas as requesições primeiro.");
+      setAlertType('warning');
+      setShowAlertModal(true);
       return;
     }
 
@@ -73,8 +85,11 @@ function HRPanel() {
     setIsGroupingModalOpen(false);
   };
   
+  // MODIFICADO: Substituindo alert nativo por AlertModal
   const handleFilterClick = () => {
-    alert("Funcionalidade de filtro a ser implementada!");
+    setAlertMessage("Funcionalidade de filtro a ser implementada!");
+    setAlertType('info');
+    setShowAlertModal(true);
   };
 
   const handleOpenAnalysisModal = (data) => {
@@ -84,6 +99,14 @@ function HRPanel() {
   const handleCloseAnalysisModal = () => {
     setIsAnalysisModalOpen(false);
     setSelectedEnvelopeData(null);
+  };
+
+  // MODIFICADO: Substituindo alert nativo por AlertModal no AnalysisModal
+  const handleRequestChange = () => {
+    setAlertMessage('Solicitação de Alteração enviada!');
+    setAlertType('success');
+    setShowAlertModal(true);
+    handleCloseAnalysisModal();
   };
 
   const handleOpenViewModal = (item) => {
@@ -209,12 +232,8 @@ function HRPanel() {
         data={selectedEnvelopeData}
         onConfirm={() => {
           handleCloseAnalysisModal();
-          
         }}
-        onRequestChange={() => {
-          alert('Solicitação de Alteração enviada!');
-          handleCloseAnalysisModal();
-        }}
+        onRequestChange={handleRequestChange} // MODIFICADO: Agora usando a nova função
       />
       <ConfirmationViewModal
         isOpen={isViewModalOpen}
@@ -228,6 +247,16 @@ function HRPanel() {
         onClose={handleCloseGroupingModal}
         selectedRequisitions={selectedRequisitions}
         onConfirmGrouping={handleConfirmGrouping}
+      />
+
+      {/* NOVO: AlertModal para substituir todos os alerts nativos */}
+      <AlertModal 
+        isOpen={showAlertModal}
+        onClose={() => setShowAlertModal(false)}
+        title="Atenção"
+        message={alertMessage}
+        type={alertType}
+        onConfirm={alertOnConfirm}
       />
     </MainLayout>
   );
