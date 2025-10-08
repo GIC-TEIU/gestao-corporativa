@@ -81,12 +81,12 @@ const EmailSignatures = () => {
           />
 
           {/* Modais */}
-          {selectedCollaborator && (
-            <ModalDetalhes 
-              collaborator={selectedCollaborator} 
-              onClose={() => setSelectedCollaborator(null)} 
-            />
-          )}
+        {selectedCollaborator && (
+          <ModalDetalhes 
+            item={selectedCollaborator} 
+            onClose={() => setSelectedCollaborator(null)} 
+          />
+        )}
 
           {showFilters && (
             <ModalFiltros 
