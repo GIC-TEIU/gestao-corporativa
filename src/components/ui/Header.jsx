@@ -49,8 +49,7 @@ function Header({ showLinks = true, showNotifications = true }) {
   const firstName = getFirstName(currentUser?.nome);
 
   const DesktopNavLinks = () => (
-    <>
-      <Link to="/dashboard" className="hover:opacity-80">
+<div className="flex justify-center gap-3 text-sm text-white font-poppins font-light md:gap-4 md:text-xs lg:gap-6 lg:text-sm xl:gap-8">      <Link to="/dashboard" className="hover:opacity-80">
         Inicio
       </Link>
       <Link to="/envelope" className="hover:opacity-80">
@@ -62,10 +61,10 @@ function Header({ showLinks = true, showNotifications = true }) {
       <Link to="/view" className="hover:opacity-80">
         Consulta Envelopes
       </Link>
-      <Link to="/HRPanel" className="hover:opacity-80">
+      <Link to="/hr-panel" className="hover:opacity-80">
         Painel RH
       </Link>
-    </>
+    </div>
   );
 
   const MobileNavContent = ({ onClick, className }) => (
@@ -110,7 +109,7 @@ function Header({ showLinks = true, showNotifications = true }) {
         Consulta Envelopes
       </Link>
       <Link
-        to="/HRPanel"
+        to="/hr-panel"
         className={`hover:opacity-80 ${className}`}
         onClick={onClick}
       >

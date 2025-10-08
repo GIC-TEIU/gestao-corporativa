@@ -111,6 +111,7 @@ const UserManagement = () => {
             subtitle="Gerencie permissões e acessos de forma centralizada e segura"
         >
             <div className="w-full">
+                {/* Header com o mesmo padrão do Painel RH */}
                 <div className="flex flex-col md:flex-row justify-between items-stretch md:items-center border-b border-gray-300 mb-4 gap-4 md:gap-0">
                     
                     <div className="flex flex-wrap">
@@ -138,7 +139,7 @@ const UserManagement = () => {
                         })}
                     </div>
                     
-                    <div className="flex w-full md:w-auto items-center justify-end gap-4">
+                    <div className="flex w-full md:w-auto items-center justify-end gap-4 mb-2">
                         {activeTab === 'users' && (
                             <button 
                                 onClick={handleOpenInviteUserModal}
@@ -146,7 +147,7 @@ const UserManagement = () => {
                             >
                                 <UserPlus size={18} />
                                 <span className="hidden sm:inline whitespace-nowrap">Convidar Usuário</span>
-                                <span className="sm:hidden">Convidar</span>
+                                <span className="sm:hidden text-xs">Convidar Usuário</span>
                             </button>
                         )}
 
