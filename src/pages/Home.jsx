@@ -1,28 +1,28 @@
-// Dashboard.jsx
+// Home.jsx
 import React from "react";
 import Card from "../components/ui/Card.jsx";
-import DashboardLayout from "../layouts/DashboardLayout.jsx";
+import HomeLayout from "../layouts/HomeLayout.jsx";
 import { usePermissions } from "../context/PermissionContext.jsx";
-import PermissionRedirect from "../components/dashboard/PermissionRedirect.jsx";
+import PermissionRedirect from "../components/home/PermissionRedirect.jsx";
 
-function Dashboard() {
+function Home() {
   const { availableModules, userRole, hasAnyModuleAccess, loading } =
     usePermissions();
 
   // Mostra loading enquanto verifica permissões
   if (loading) {
     return (
-      <DashboardLayout
+      <HomeLayout
         title="Carregando..."
         subtitle="Verificando suas permissões"
       >
         <div className="flex items-center justify-center min-h-64">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Carregando seu dashboard...</p>
+            <p className="mt-4 text-gray-600">Carregando seu Home...</p>
           </div>
         </div>
-      </DashboardLayout>
+      </HomeLayout>
     );
   }
 
@@ -31,7 +31,7 @@ function Dashboard() {
   }
 
   return (
-    <DashboardLayout
+    <HomeLayout
       title="Gestão corporativa"
       subtitle="Gerencie documentos e assinaturas de forma segura e eficiente"
     >
@@ -41,7 +41,7 @@ function Dashboard() {
             <Card
               imgSrc="/imgs/novo-envelope.png"
               title="Nova Requisição"
-              description="Criar uma nova requisição para assinatura digital de documentos"
+              description="Crie uma nova requisição para assinatura digital de documentos"
               link="/request-form"
               enabled={true}
             />
@@ -51,7 +51,7 @@ function Dashboard() {
             <Card
               imgSrc="/imgs/carta.png"
               title="Visualizar envelope"
-              description="Criar um novo envelope para assinatura digital de documentos"
+              description="Busque por envelopes existentes e acompanhe o status das suas assinaturas."
               link="/envelope-search"
               enabled={true}
             />
@@ -72,7 +72,7 @@ function Dashboard() {
             <Card
               imgSrc="/imgs/recursos-humanos.png"
               title="Painel RH"
-              description="Criar um novo envelope para assinatura digital de documentos"
+              description="Gerencie requisições, acompanhe andamentos de RAP's e envelopes criados."
               link="/hr-panel"
               enabled={true}
             />
@@ -82,15 +82,15 @@ function Dashboard() {
             <Card
               imgSrc="/imgs/email.png"
               title="Assinaturas"
-              description="Criar e Gerenciar assinaturas de email"
+              description="Crie e Gerencie assinaturas de email"
               link="/email-signatures"
               enabled={true}
             />
           )}
         </div>
       </div>
-    </DashboardLayout>
+    </HomeLayout>
   );
 }
 
-export default Dashboard;
+export default Home;

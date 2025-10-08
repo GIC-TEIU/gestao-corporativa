@@ -4,7 +4,7 @@ import Footer from '../components/ui/Footer';
 import PageHeader from '../components/ui/PageHeader';
 import Header from '../components/ui/Header';
 
-function DashboardLayout({ children, title, subtitle }) {
+function HomeLayout({ children, title, subtitle }) {
   return (
     <div className="flex flex-col min-h-screen bg-white font-poppins">
       <Header showLinks={false} showNotifications={true}/>
@@ -21,4 +21,4 @@ function DashboardLayout({ children, title, subtitle }) {
   );
 }
 
-export default DashboardLayout;
+export default HomeLayout;
