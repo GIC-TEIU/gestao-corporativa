@@ -3,11 +3,12 @@ import React from "react";
 import Card from "../components/ui/Card.jsx";
 import HomeLayout from "../layouts/HomeLayout.jsx";
 import { usePermissions } from "../context/PermissionContext.jsx";
-import PermissionRedirect from "../components/home/PermissionRedirect.jsx";
+import { useAuth } from "../context/AuthContext.jsx";
+import AlmostThere from "../components/ui/AlmostThere.jsx";
 
 function Home() {
-  const { availableModules, userRole, hasAnyModuleAccess, loading } =
-    usePermissions();
+  const { currentUser } = useAuth();
+  const { availableModules, hasAnyModuleAccess, loading } = usePermissions();
 
   // Mostra loading enquanto verifica permissões
   if (loading) {
@@ -27,7 +28,7 @@ function Home() {
   }
 
   if (!hasAnyModuleAccess) {
-    return <PermissionRedirect />;
+    return <AlmostThere />;
   }
 
   return (
@@ -57,7 +58,7 @@ function Home() {
             />
           )}
 
-          {availableModules.settings && (
+          {availableModules.userManagement && (
             <Card
               imgSrc="/imgs/gerenciador.png"
               title="Gerenciador de Usuários"
@@ -78,7 +79,7 @@ function Home() {
             />
           )}
 
-          {availableModules.settings && (
+          {availableModules.signatureManagement && (
             <Card
               imgSrc="/imgs/email.png"
               title="Assinaturas"

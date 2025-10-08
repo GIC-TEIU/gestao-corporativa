@@ -10,24 +10,23 @@ export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-
-
-useEffect(() => {
-  const savedUser = localStorage.getItem('currentUser');
-  if (savedUser) {
-    setCurrentUser(JSON.parse(savedUser));
-  }
-
-const initializeTestUsers = () => {
+  useEffect(() => {
+    const initializeTestUsers = () => {
       const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
-      
+
       const testUsers = [
         {
           id: 1,
           name: "Administrador Geral",
           email: "admin@empresa.com",
           password: "123456",
-          role: "admin",
+          permissions: [
+            'request_create',
+            'request_view',
+            'hr_panel',
+            'user_management',
+            'signature_management'
+          ],
           cpf: "123.456.789-00",
           matricula: "001",
           centroCusto: "TI",
@@ -35,10 +34,10 @@ const initializeTestUsers = () => {
         },
         {
           id: 2,
-          name: "Criador de Requesição", 
+          name: "Criador de Requisição",
           email: "criador@empresa.com",
           password: "123456",
-          role: "request_creator",
+          permissions: ['request_create'],
           cpf: "234.567.890-11",
           matricula: "002",
           centroCusto: "RH",
@@ -49,7 +48,7 @@ const initializeTestUsers = () => {
           name: "Gestor de RH",
           email: "rh@empresa.com",
           password: "123456",
-          role: "rh_manager", 
+          permissions: ['request_create', 'hr_panel'],
           cpf: "345.678.901-22",
           matricula: "003",
           centroCusto: "RH",
@@ -57,10 +56,10 @@ const initializeTestUsers = () => {
         },
         {
           id: 4,
-          name: "Consultor de Requesição",
+          name: "Consultor de Requisição",
           email: "consultor@empresa.com",
           password: "123456",
-          role: "request_viewer",
+          permissions: ['request_view'],
           cpf: "456.789.012-33",
           matricula: "004",
           centroCusto: "RH",
@@ -69,9 +68,9 @@ const initializeTestUsers = () => {
         {
           id: 5,
           name: "Usuário Sem Acesso",
-          email: "semacesso@empresa.com", 
+          email: "semacesso@empresa.com",
           password: "123456",
-          role: "no_access", // Novo perfil sem permissões
+          permissions: [],
           cpf: "567.890.123-44",
           matricula: "005",
           centroCusto: "RH",
@@ -79,27 +78,68 @@ const initializeTestUsers = () => {
         }
       ];
 
-      // Adiciona apenas usuários que não existem
       let usersUpdated = false;
+
       testUsers.forEach(testUser => {
-        const userExists = existingUsers.find(user => user.email === testUser.email);
-        if (!userExists) {
+        const existingUserIndex = existingUsers.findIndex(user => user.email === testUser.email);
+        if (existingUserIndex === -1) {
           existingUsers.push(testUser);
           usersUpdated = true;
+        } else {
+          const existingUser = existingUsers[existingUserIndex];
+          if (!existingUser.permissions || !Array.isArray(existingUser.permissions)) {
+            existingUsers[existingUserIndex] = {
+              ...existingUser,
+              permissions: testUser.permissions
+            };
+            usersUpdated = true;
+          }
         }
       });
 
       if (usersUpdated) {
         localStorage.setItem('users', JSON.stringify(existingUsers));
-        console.log('✅ Usuários de teste criados/atualizados!');
       }
+
+      return existingUsers;
     };
 
-    initializeTestUsers();
+    const allUsers = initializeTestUsers();
+    let userToSet = null;
+    const savedUser = localStorage.getItem('currentUser');
+
+    if (savedUser) {
+      try {
+        const parsedUser = JSON.parse(savedUser);
+        const completeUser = allUsers.find(u =>
+          u.id === parsedUser.id || u.email === parsedUser.email
+        );
+
+        if (completeUser) {
+          userToSet = completeUser;
+          localStorage.setItem('currentUser', JSON.stringify(completeUser));
+        } else {
+          userToSet = parsedUser;
+        }
+      } catch {
+        localStorage.removeItem('currentUser');
+      }
+    } else {
+      const adminUser = allUsers.find(u => u.email === 'admin@empresa.com');
+      if (adminUser) {
+        userToSet = adminUser;
+        localStorage.setItem('currentUser', JSON.stringify(adminUser));
+      }
+    }
+
+    if (userToSet && (!userToSet.permissions || !Array.isArray(userToSet.permissions))) {
+      userToSet.permissions = [];
+      localStorage.setItem('currentUser', JSON.stringify(userToSet));
+    }
+
+    setCurrentUser(userToSet);
     setLoading(false);
   }, []);
-
-
 
   const register = (userData) => {
     const users = JSON.parse(localStorage.getItem('users') || '[]');
@@ -108,7 +148,7 @@ const initializeTestUsers = () => {
     }
     const newUser = {
       id: Date.now(),
-      role: userData.role || 'no_access',
+      permissions: userData.permissions || [],
       ...userData,
       createdAt: new Date().toISOString()
     };
@@ -119,21 +159,19 @@ const initializeTestUsers = () => {
     return newUser;
   };
 
-  const updateUserRole = (userId, newRole) =>{
+  const updateUserPermissions = (userId, newPermissions) => {
     const users = JSON.parse(localStorage.getItem('users') || '[]');
     const updatedUsers = users.map(user =>
-      user.id === userId ? {...user, role: newRole } : user
+      user.id === userId ? { ...user, permissions: newPermissions } : user
     );
     localStorage.setItem('users', JSON.stringify(updatedUsers));
 
-    if(currentUser && currentUser.id === userId){
-      const updatedUser = { ...currentUser, role: newRole };
+    if (currentUser && currentUser.id === userId) {
+      const updatedUser = { ...currentUser, permissions: newPermissions };
       setCurrentUser(updatedUser);
       localStorage.setItem('currentUser', JSON.stringify(updatedUser));
-      
     }
-  }
-
+  };
 
   const login = (email, password) => {
     const users = JSON.parse(localStorage.getItem('users') || '[]');
@@ -146,16 +184,14 @@ const initializeTestUsers = () => {
     return user;
   };
 
-
   const logout = () => {
     setCurrentUser(null);
     localStorage.removeItem('currentUser');
   };
 
-
   const updateProfile = (updatedData) => {
     const users = JSON.parse(localStorage.getItem('users') || '[]');
-    const updatedUsers = users.map(user => 
+    const updatedUsers = users.map(user =>
       user.id === currentUser.id ? { ...user, ...updatedData } : user
     );
     localStorage.setItem('users', JSON.stringify(updatedUsers));
@@ -165,25 +201,20 @@ const initializeTestUsers = () => {
     return updatedUser;
   };
 
-
-
   const verifyPassword = async (password) => {
-    if (!currentUser) {
-      return false;
-    }
-  
-  
+    if (!currentUser) return false;
     return currentUser.password === password;
   };
 
   const value = {
     currentUser,
+    loading,
     register,
     login,
     logout,
     updateProfile,
     verifyPassword,
-    updateUserRole
+    updateUserPermissions,
   };
 
   return (

@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { usePermissions } from "../../context/PermissionContext";
 import { LogOut, UserCircle2, Bell, Menu, X } from "lucide-react";
 import NotificationsModal from "./NotificationsModal";
 
 function Header({ showLinks = true, showNotifications = true }) {
   const { currentUser, logout } = useAuth();
+  const { availableModules, loading: permissionsLoading } = usePermissions();
   const navigate = useNavigate();
   const [unreadCount, setUnreadCount] = useState(0);
   const [showNotificationsModal, setShowNotificationsModal] = useState(false);
@@ -48,23 +50,60 @@ function Header({ showLinks = true, showNotifications = true }) {
 
   const firstName = getFirstName(currentUser?.nome);
 
+  // Se ainda está carregando as permissões, mostra um header básico
+  if (permissionsLoading) {
+    return (
+      <div className="px-4 sm:px-6 lg:px-8 bg-[#0D6578] flex justify-between items-center w-full shadow-lg">
+        <Link to="/home">
+          <img
+            src="/imgs/logo-marinho-white.png"
+            alt="Logo"
+            className="p-2 w-[120px] md:w-[150px] transition-all hover:opacity-80 cursor-pointer"
+          />
+        </Link>
+        
+        <div className="flex items-center gap-4">
+          <div className="text-white text-sm">Carregando...</div>
+        </div>
+      </div>
+    );
+  }
+
   const DesktopNavLinks = () => (
     <>
       <Link to="/home" className="hover:opacity-80">
         Inicio
       </Link>
-      <Link to="/request-form" className="hover:opacity-80">
-        Nova Requisição
-      </Link>
-      <Link to="/email-signatures" className="hover:opacity-80">
-        Funcionários
-      </Link>
-      <Link to="/envelope-search" className="hover:opacity-80">
-        Consulta Envelopes
-      </Link>
-      <Link to="/hr-panel" className="hover:opacity-80">
-        Painel RH
-      </Link>
+      
+      {availableModules.requestCreate && (
+        <Link to="/request-form" className="hover:opacity-80">
+          Nova Requisição
+        </Link>
+      )}
+      
+      {availableModules.signatureManagement && (
+        <Link to="/email-signatures" className="hover:opacity-80">
+          Funcionários
+        </Link>
+      )}
+      
+      {availableModules.requestView && (
+        <Link to="/envelope-search" className="hover:opacity-80">
+          Consulta Envelopes
+        </Link>
+      )}
+      
+      {availableModules.rhPanel && (
+        <Link to="/hr-panel" className="hover:opacity-80">
+          Painel RH
+        </Link>
+      )}
+      
+      {availableModules.userManagement && (
+        <Link to="/user-management" className="hover:opacity-80">
+          Gerenciar Usuários
+        </Link>
+      )}
     </>
   );
 
@@ -73,6 +112,7 @@ function Header({ showLinks = true, showNotifications = true }) {
       <div className="text-xl font-bold mb-4 border-b border-white/20 pb-2 text-blue-200">
         Olá, {firstName}
       </div>
+      
       <Link
         to="/profile"
         className={`hover:opacity-80 ${className}`}
@@ -81,6 +121,7 @@ function Header({ showLinks = true, showNotifications = true }) {
         <UserCircle2 className="inline mr-2 w-5 h-5" />
         Perfil
       </Link>
+      
       <Link
         to="/home"
         className={`hover:opacity-80 ${className}`}
@@ -88,34 +129,57 @@ function Header({ showLinks = true, showNotifications = true }) {
       >
         Inicio
       </Link>
-      <Link
-        to="/request-form"
-        className={`hover:opacity-80 font-regular ${className}`}
-        onClick={onClick}
-      >
-        Nova Requisição
-      </Link>
-      <Link
-        to="/funcionario"
-        className={`hover:opacity-80 ${className}`}
-        onClick={onClick}
-      >
-        Funcionários
-      </Link>
-      <Link
-        to="/envelope-search"
-        className={`hover:opacity-80 ${className}`}
-        onClick={onClick}
-      >
-        Consulta Envelopes
-      </Link>
-      <Link
-        to="/hr-panel"
-        className={`hover:opacity-80 ${className}`}
-        onClick={onClick}
-      >
-        Painel RH
-      </Link>
+      
+      {availableModules.requestCreate && (
+        <Link
+          to="/request-form"
+          className={`hover:opacity-80 font-regular ${className}`}
+          onClick={onClick}
+        >
+          Nova Requisição
+        </Link>
+      )}
+      
+      {availableModules.signatureManagement && (
+        <Link
+          to="/email-signatures"
+          className={`hover:opacity-80 ${className}`}
+          onClick={onClick}
+        >
+          Funcionários
+        </Link>
+      )}
+      
+      {availableModules.requestView && (
+        <Link
+          to="/envelope-search"
+          className={`hover:opacity-80 ${className}`}
+          onClick={onClick}
+        >
+          Consulta Envelopes
+        </Link>
+      )}
+      
+      {availableModules.rhPanel && (
+        <Link
+          to="/hr-panel"
+          className={`hover:opacity-80 ${className}`}
+          onClick={onClick}
+        >
+          Painel RH
+        </Link>
+      )}
+      
+      {availableModules.userManagement && (
+        <Link
+          to="/user-management"
+          className={`hover:opacity-80 ${className}`}
+          onClick={onClick}
+        >
+          Gerenciar Usuários
+        </Link>
+      )}
+      
       <div className="pt-4 mt-auto border-t border-white/20">
         <button
           onClick={() => {

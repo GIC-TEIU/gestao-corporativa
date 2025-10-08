@@ -1,6 +1,11 @@
-import React from 'react';
-function QuaseLa() {
+import React from 'react'
+import DashboardLayout from '../../layouts/HomeLayout';
+function AlmostThere() {
   return (
+
+    <DashboardLayout
+        
+      >
 
     <div className="flex flex-col items-center justify-center text-center py-10">
       <img 
@@ -16,6 +21,8 @@ function QuaseLa() {
       </p>
 
     </div>
+    </DashboardLayout>
   );
+  
 }
-export default QuaseLa;
+export default AlmostThere;
