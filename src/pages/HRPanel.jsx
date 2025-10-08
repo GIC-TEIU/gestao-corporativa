@@ -7,6 +7,8 @@ import EnvelopeQueryTable from '../components/envelope-search/EnvelopeQueryTable
 import AnalysisModal from '../components/hr-panel/AnalysisModal';
 import ConfirmationViewModal from '../components/pdf-preview-for-signature/ConfirmationViewModal';
 import GroupingModal from '../components/hr-panel/GroupingModal';
+// NOVO: Importando o AlertModal
+import AlertModal from '../components/hr-panel/AlertModal';
 
 import { ClipboardList, ArrowRightLeft, MailSearch, FolderPlus, Filter } from 'lucide-react';
 
@@ -22,10 +24,16 @@ function HRPanel() {
 
   const [envelopeConfirmado, setEnvelopeConfirmado] = useState(null);
 
-  // NOVO: Estado para armazenar os envelopes selecionados
+  // Estado para armazenar os envelopes selecionados
   const [selectedRequisitions, setSelectedRequisitions] = useState([]);
-  // NOVO: Estado para controlar a visibilidade do GroupingModal
+  // Estado para controlar a visibilidade do GroupingModal
   const [isGroupingModalOpen, setIsGroupingModalOpen] = useState(false);
+
+  // NOVO: Estados para o AlertModal
+  const [showAlertModal, setShowAlertModal] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertType, setAlertType] = useState('info');
+  const [alertOnConfirm, setAlertOnConfirm] = useState(null);
 
   const tabs = [
     { id: 'requisicoes', label: 'Requisições', icon: ClipboardList },
@@ -33,15 +41,17 @@ function HRPanel() {
     { id: 'consulta-envelopes', label: 'Consulta de Envelopes', icon: MailSearch },
   ];
   
-  // NOVO: Callback para receber os itens selecionados da tabela
+  // Callback para receber os itens selecionados da tabela
   const handleSelectedItemsChange = useCallback((items) => {
     setSelectedRequisitions(items);
   }, []);
 
-  // MODIFICADO: Agora abre o GroupingModal em vez de navegar diretamente
+  // MODIFICADO: Agora usando AlertModal em vez de alert nativo
   const handleAgruparEnvelopesClick = () => {
     if (selectedRequisitions.length === 0) {
-      alert("Nenhum envelope selecionado. Selecione pelo menos um para agrupar.");
+      setAlertMessage("Nenhum envelope selecionado. Selecione pelo menos um para agrupar.");
+      setAlertType('warning');
+      setShowAlertModal(true);
       return;
     }
 
@@ -49,7 +59,9 @@ function HRPanel() {
     const allAnalyzed = selectedRequisitions.every(req => req.status.text === 'Analisado');
     
     if (!allAnalyzed) {
-      alert("Não é possível agrupar envelopes não analisados! Analise todos os envelopes primeiro.");
+      setAlertMessage("Não é possível agrupar requisições não analisadas! Analise todas as requisições primeiro.");
+      setAlertType('warning');
+      setShowAlertModal(true);
       return;
     }
 
@@ -57,24 +69,27 @@ function HRPanel() {
     setIsGroupingModalOpen(true);
   };
 
-  // NOVO: Função para confirmar o agrupamento (chamada pelo GroupingModal)
+  // Função para confirmar o agrupamento (chamada pelo GroupingModal)
   const handleConfirmGrouping = () => {
     console.log("Agrupamento confirmado para os envelopes:", selectedRequisitions.map(r => r.rap));
     setIsGroupingModalOpen(false);
     
     // Navega para a próxima tela
-    navigate('/envelope/destinatario', { 
+    navigate('/envelope/recipient-flow', { 
       state: { groupedEnvelopes: selectedRequisitions } 
     });
   };
 
-  // NOVO: Função para fechar o GroupingModal
+  // Função para fechar o GroupingModal
   const handleCloseGroupingModal = () => {
     setIsGroupingModalOpen(false);
   };
   
+  // MODIFICADO: Substituindo alert nativo por AlertModal
   const handleFilterClick = () => {
-    alert("Funcionalidade de filtro a ser implementada!");
+    setAlertMessage("Funcionalidade de filtro a ser implementada!");
+    setAlertType('info');
+    setShowAlertModal(true);
   };
 
   const handleOpenAnalysisModal = (data) => {
@@ -84,6 +99,14 @@ function HRPanel() {
   const handleCloseAnalysisModal = () => {
     setIsAnalysisModalOpen(false);
     setSelectedEnvelopeData(null);
+  };
+
+  // NOVO: Função para solicitação de alteração usando AlertModal
+  const handleRequestChange = () => {
+    setAlertMessage('Solicitação de Alteração enviada!');
+    setAlertType('success');
+    setShowAlertModal(true);
+    handleCloseAnalysisModal();
   };
 
   const handleOpenViewModal = (item) => {
@@ -111,7 +134,6 @@ function HRPanel() {
         return (
           <RequestTable 
             onAnalyzeClick={handleOpenAnalysisModal} 
-            // NOVO: Passando a prop para capturar os itens selecionados
             onSelectedItemsChange={handleSelectedItemsChange}
           />
         );
@@ -130,7 +152,7 @@ function HRPanel() {
     }
   };
 
-  // NOVO: Desabilita o botão se não houver seleção ou não estiver na tab correta
+  // Desabilita o botão se não houver seleção ou não estiver na tab correta
   const isGroupingDisabled = selectedRequisitions.length === 0 || activeTab !== 'requisicoes';
 
   return (
@@ -156,7 +178,6 @@ function HRPanel() {
                     }`}
                 >
                   <Icon size={18} />
-                  {/* ALTERAÇÃO APLICADA AQUI */}
                   <span className={
                     activeTab === tab.id ? 'inline' : 'hidden sm:inline'
                   }>
@@ -172,7 +193,6 @@ function HRPanel() {
               <button
                 onClick={handleAgruparEnvelopesClick}
                 disabled={isGroupingDisabled}
-                // NOVO: Estilo condicional para botão desabilitado
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-all whitespace-nowrap
                     ${isGroupingDisabled 
                         ? 'bg-gray-300 text-gray-500 border border-gray-400 cursor-not-allowed' 
@@ -181,7 +201,6 @@ function HRPanel() {
                 `}
               >
                 <FolderPlus size={18} />
-                {/* NOVO: Mostra o número de envelopes selecionados */}
                 <span className="hidden sm:inline whitespace-nowrap">
                   Agrupar Envelopes ({selectedRequisitions.length})
                 </span>
@@ -209,12 +228,8 @@ function HRPanel() {
         data={selectedEnvelopeData}
         onConfirm={() => {
           handleCloseAnalysisModal();
-          
         }}
-        onRequestChange={() => {
-          alert('Solicitação de Alteração enviada!');
-          handleCloseAnalysisModal();
-        }}
+        onRequestChange={handleRequestChange} // MODIFICADO: Agora usando a nova função
       />
       <ConfirmationViewModal
         isOpen={isViewModalOpen}
@@ -228,6 +243,16 @@ function HRPanel() {
         onClose={handleCloseGroupingModal}
         selectedRequisitions={selectedRequisitions}
         onConfirmGrouping={handleConfirmGrouping}
+      />
+
+      {/* NOVO: AlertModal para substituir todos os alerts nativos */}
+      <AlertModal 
+        isOpen={showAlertModal}
+        onClose={() => setShowAlertModal(false)}
+        title="Atenção"
+        message={alertMessage}
+        type={alertType}
+        onConfirm={alertOnConfirm}
       />
     </MainLayout>
   );
