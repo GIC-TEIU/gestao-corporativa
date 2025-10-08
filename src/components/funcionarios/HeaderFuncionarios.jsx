@@ -15,13 +15,11 @@ const HeaderFuncionarios = ({
         {/* Título e contador */}
         <div className="flex-1">
         </div>
-
-        {/* SEÇÃO DE PESQUISA E FILTROS */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:max-w-md">
           <div className="relative flex-grow">
             <input
               type="text"
-              placeholder="Pesquisar funcionários..."
+              placeholder="Digite o Nome ou N° de Protocolo"
               value={searchTerm}
               onChange={(e) => onSearchChange(e.target.value)}
               className="w-full bg-white border border-gray-300 text-gray-800 placeholder:text-gray-400 rounded-xl py-3 pl-4 pr-10 focus:outline-none focus:ring-2 focus:ring-[#33748B] focus:border-transparent text-sm shadow-sm"

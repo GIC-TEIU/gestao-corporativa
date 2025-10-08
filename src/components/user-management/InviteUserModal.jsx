@@ -37,7 +37,7 @@ const InviteUserModal = ({ isOpen, onClose, onInvite }) => {
       <div className="bg-white rounded-2xl w-full max-w-md">
         <div className="flex items-center justify-between p-4 border-b border-gray-200 px-6">
           <Send size={20} className="text-brand-blue-dark" />
-          <h2 className="text-lg font-bold text-brand-blue-dark mr-10">Convidar Novo Usuário</h2>
+          <h2 className="md:text-xl font-bold text-brand-blue-dark mr-20">Convidar Novo Usuário</h2>
           <button
             onClick={onClose}
             className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
@@ -78,9 +78,9 @@ const InviteUserModal = ({ isOpen, onClose, onInvite }) => {
               />
             </div>
           </div>
-          <hr className="mb-2 border-gray-300" />
+          <hr className="mb-4 border-gray-300" />
 
-          <div className="mb-2">
+          <div className="mb-4">
             <div className="flex items-center justify-between mb-2">
             
             </div>
