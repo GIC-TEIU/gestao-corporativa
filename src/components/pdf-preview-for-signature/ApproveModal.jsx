@@ -1,9 +1,9 @@
-import { Lock, X, Eye, EyeOff, FileText, CheckCircle } from 'lucide-react';
+import { Lock, X, Eye, EyeOff, FileText, PenTool } from 'lucide-react';
 import { useEnvelope } from '../../context/EnvelopeContext';
 import { useAuth } from '../../context/AuthContext';
 import Swal from 'sweetalert2';
 
-export const SignatureModal = () => {
+export const ApproveModal = () => {
   
   const {
     showSignatureModal,
@@ -79,7 +79,7 @@ export const SignatureModal = () => {
           <div className="mx-auto w-16 h-16 bg-green-200 rounded-full flex items-center justify-center mb-4">
             <Lock className="w-8 h-8 text-green-600" />
           </div>
-          <h2 className="text-xl font-semibold text-gray-800">Confirmar Assinatura</h2>
+          <h2 className="text-xl font-semibold text-gray-800">Confirmar Aprovação</h2>
         </div>
 
         {/* Lista de documentos */}
@@ -151,8 +151,8 @@ export const SignatureModal = () => {
               </>
             ) : (
               <>
-                <CheckCircle size={18} />
-                Confirmar Análise
+                <PenTool size={18} />
+                Assinar
               </>
             )}
           </button>

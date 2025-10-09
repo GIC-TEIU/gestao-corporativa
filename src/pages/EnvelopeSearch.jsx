@@ -1,7 +1,7 @@
 import { EnvelopeProvider, useEnvelope } from '../context/EnvelopeContext';
 import { Sidebar } from '../components/pdf-preview-for-signature/Sidebar';
 import { EnvelopeList } from '../components/envelope-search/EnvelopeList';
-import { SignatureModal } from '../components/pdf-preview-for-signature/SignatureModal';
+import { ApproveModal } from '../components/pdf-preview-for-signature/ApproveModal';
 import { RejectModal } from '../components/pdf-preview-for-signature/RejectModal';
 import MainLayout from '../layouts/MainLayout';
 
@@ -10,7 +10,7 @@ function EnvelopeViewerContent() {
     currentView, 
     sidebarOpen, 
     toggleSidebar,
-    showSignatureModal,
+    showApproveModal,
     showRejectModal
   } = useEnvelope();
 
@@ -21,7 +21,7 @@ function EnvelopeViewerContent() {
         {currentView === 'list' && <EnvelopeList />}
         {currentView === 'detail' && <EnvelopeDetail />}
       </main>
-      {showSignatureModal && <SignatureModal />}
+      {showApproveModal && <ApproveModal />}
       {showRejectModal && <RejectModal />}
     </MainLayout>
   );

@@ -1,18 +1,16 @@
-import { FilePlus, Eye, Send, CheckCircle, XCircle, Ban } from 'lucide-react';
+// src/components/pdf-preview-for-signature/StatusTimeline.jsx
+
+import { FilePlus, Eye, Send, CheckCircle, XCircle } from 'lucide-react';
 import { useEnvelope } from '../../context/EnvelopeContext';
 import { useAuth } from '../../context/AuthContext';
 
 export const StatusTimeline = () => {
-  const { envelopeStatus, setShowSignatureModal, setShowRejectModal } = useEnvelope();
+  const { envelopeStatus } = useEnvelope();
   const { currentUser } = useAuth();
-
-  const userRole = currentUser?.cargo?.toLowerCase() || 'diretor';
-  const isDirector = userRole.includes('diretor');
 
   const steps = [
     {
       key: "Iniciado",
-      
       title: "Envelope iniciado",
       description: "Fluxo do envelope iniciado por Adriana Mármore",
       icon: <FilePlus className="w-5 h-5 text-[#7BB0B4]" />,
@@ -23,7 +21,7 @@ export const StatusTimeline = () => {
       title: "Gerente visualizou",
       description: "Joabe Andrade visualizou e está analisando",
       icon: <Eye className="w-5 h-5 text-[#F59E0B]" />,
-      color: "bg-orange-100  ",
+      color: "bg-orange-100",
     },
     {
       key: "Encaminhado",
@@ -37,7 +35,7 @@ export const StatusTimeline = () => {
       title: `Visualizado por ${currentUser?.nome || 'Diretor'}`,
       description: `${currentUser?.nome || 'Diretor'} visualizou e está analisando`,
       icon: <Eye className="w-5 h-5 text-[#F59E0B]" />,
-      color: "bg-orange-100  ",
+      color: "bg-orange-100",
     },
     {
       key: "Assinado",
@@ -57,61 +55,39 @@ export const StatusTimeline = () => {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto bg-white rounded-2xl shadow-sm p-6">
-      
-
-      <ol className="relative border-s border-gray-300">
-        {steps.slice(0, envelopeStatus.timelineStatus + 1).map((step) => (
-          <li key={step.key} className="mb-10 ms-7">
-            <span
-              className={`absolute flex items-center justify-center w-8 h-8 rounded-full -start-4 ring-4 ring-white ${step.color}`}
-            >
-              {step.icon}
-            </span>
-            <h3 className="font-semibold text-gray-900">
-              {step.title}
-            </h3>
-            <p className="text-sm text-gray-600">
-              {step.description}
-            </p>
-          </li>
-        ))}
-
-        {envelopeStatus.isRejected && (
-          <li key={ReprovadoStep.key} className="mb-10 ms-7">
-            <span
-              className={`absolute flex items-center justify-center w-8 h-8 rounded-full -start-4 ring-4 ring-white ${ReprovadoStep.color}`}
-            >
-              {ReprovadoStep.icon}
-            </span>
-            <h3 className="font-semibold text-gray-900">
-              {ReprovadoStep.title}
-            </h3>
-            <p className="text-sm text-gray-600">
-              {ReprovadoStep.description}
-            </p>
-          </li>
-        )}
-      </ol>
-
-      {isDirector && envelopeStatus.timelineStatus === 3 && !envelopeStatus.isRejected && (
-        <div className="flex gap-3 mt-6">
-          <button
-            onClick={() => setShowSignatureModal(true)}
-            className="flex-1 flex items-center justify-center gap-2 bg-emerald-600 hover:bg-green-200 text-white py-2 px-4 rounded-xl font-medium transition"
+    // Removi o div container que tinha antes para o componente ficar mais flexível
+    <ol className="relative border-s border-gray-300">
+      {steps.slice(0, envelopeStatus.timelineStatus + 1).map((step) => (
+        <li key={step.key} className="mb-10 ms-7">
+          <span
+            className={`absolute flex items-center justify-center w-8 h-8 rounded-full -start-4 ring-4 ring-white ${step.color}`}
           >
-            <CheckCircle className="w-4 h-4" />
-            Assinar e Aprovar
-          </button>
-          <button
-            onClick={() => setShowRejectModal(true)}
-            className="flex-1 flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-xl font-medium transition"
+            {step.icon}
+          </span>
+          <h3 className="font-semibold text-gray-900">
+            {step.title}
+          </h3>
+          <p className="text-sm text-gray-600">
+            {step.description}
+          </p>
+        </li>
+      ))}
+
+      {envelopeStatus.isRejected && (
+        <li key={ReprovadoStep.key} className="mb-10 ms-7">
+          <span
+            className={`absolute flex items-center justify-center w-8 h-8 rounded-full -start-4 ring-4 ring-white ${ReprovadoStep.color}`}
           >
-            <Ban className="w-4 h-4" />
-            Reprovar
-          </button>
-        </div>
+            {ReprovadoStep.icon}
+          </span>
+          <h3 className="font-semibold text-gray-900">
+            {ReprovadoStep.title}
+          </h3>
+          <p className="text-sm text-gray-600">
+            {ReprovadoStep.description}
+          </p>
+        </li>
       )}
-    </div>
+    </ol>
   );
 };

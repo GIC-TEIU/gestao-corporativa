@@ -16,15 +16,15 @@ export function useBlockScreenshot() {
         (event.ctrlKey && event.shiftKey && ['I', 'J', 'C'].includes(event.key.toUpperCase())) ||
         (event.ctrlKey && ['p', 's', 'c'].includes(event.key.toLowerCase()))
       ) {
-        event.preventDefault();
-        alert('Esta ação não é permitida para proteger o conteúdo.');
+        // event.preventDefault();
+        // alert('1Esta ação não é permitida para proteger o conteúdo.');
       }
     };
 
     // Bloqueia o menu de contexto (botão direito)
     const handleContextMenu = (event) => {
-      event.preventDefault();
-      alert('Esta ação não é permitida para proteger o conteúdo.');
+      // event.preventDefault();
+      // alert('2Esta ação não é permitida para proteger o conteúdo.');
     };
     
     // Bloqueia impressão
