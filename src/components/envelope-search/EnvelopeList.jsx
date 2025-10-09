@@ -35,7 +35,7 @@ export const EnvelopeList = () => {
   
 
   const handleNavigateToRecipients = (envelope) => {
-    navigate(`/envelope-search/envelope-detail`);
+    navigate(`/envelope-search/pdf-preview-for-signature`);
   };
 
 

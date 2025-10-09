@@ -6,6 +6,7 @@ import { EnvelopeProvider, useEnvelope } from "../context/EnvelopeContext";
 import MainLayout from "../layouts/MainLayout";
 import { SignatureModal } from "../components/pdf-preview-for-signature/SignatureModal";
 import { RejectModal } from "../components/pdf-preview-for-signature/RejectModal";
+import { useBlockScreenshot } from "../hooks/seBlockScreenshot"; // Importando o hook
 
 const statusConfig = {
   Concluído: {
@@ -27,22 +28,17 @@ const InfoEnvio = ({ info }) => {
           Informações do Envio
         </h3>
       </div>
-
       <div className="grid grid-cols-2 gap-y-4 text-sm">
         <span className="text-gray-600 font-medium">Enviado por</span>
         <span className="text-[#0F3B57] font-semibold">{info.enviadoPor}</span>
-
         <span className="text-gray-600 font-medium">Data de Envio</span>
         <span className="text-[#0F3B57] font-semibold">{info.dataEnvio}</span>
-
         <span className="text-gray-600 font-medium">Destinatários</span>
         <span className="text-[#0F3B57] font-semibold">
           {info.destinatarios.join(", ")}
         </span>
-
         <span className="text-gray-600 font-medium">Protocolo</span>
         <span className="text-[#0F3B57] font-semibold">{info.protocolo}</span>
-
         <span className="text-gray-600 font-medium">Observações</span>
         <span className="text-gray-700">{info.observacoes}</span>
       </div>
@@ -51,6 +47,9 @@ const InfoEnvio = ({ info }) => {
 };
 
 function EnvelopeDetailContent() {
+  // Ativa a proteção contra captura de tela para esta página
+  useBlockScreenshot();
+
   const {
     documents,
     selectedDocs,
@@ -79,7 +78,6 @@ function EnvelopeDetailContent() {
       <div className="flex-1 flex flex-col p-8 bg-gray-50 rounded-xl overflow-y-auto">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
-         
           <span
             className={`flex items-center gap-2 px-3 py-1 text-sm font-medium rounded-full ${statusConfig[currentStatus].classes}`}
           >
@@ -169,9 +167,8 @@ function EnvelopeDetailContent() {
           </div>
         </div>
         <SignatureModal />
-      <RejectModal />
+        <RejectModal />
       </div>
-     
     </MainLayout>
   );
 }
