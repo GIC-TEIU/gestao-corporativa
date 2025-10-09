@@ -56,7 +56,7 @@ function Header({ showLinks = true, showNotifications = true }) {
       <div className="px-4 sm:px-6 lg:px-8 bg-[#0D6578] flex justify-between items-center w-full shadow-lg">
         <Link to="/home">
           <img
-            src="/imgs/logo-marinho-white.png"
+            src="imgs/logo-marinho-white.png"
             alt="Logo"
             className="p-2 w-[120px] md:w-[150px] transition-all hover:opacity-80 cursor-pointer"
           />
