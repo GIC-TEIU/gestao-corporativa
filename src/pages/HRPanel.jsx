@@ -125,7 +125,7 @@ function HRPanel() {
   };
 
   const handleNavigateToRecipients = (envelope) => {
-    navigate(`/envelope-search/envelope-detail`);
+    navigate(`/envelope-search/pdf-preview-for-signature`);
   };
 
   const renderActiveTabContent = () => {
@@ -202,7 +202,7 @@ function HRPanel() {
               >
                 <FolderPlus size={18} />
                 <span className="hidden sm:inline whitespace-nowrap">
-                  Agrupar Envelopes ({selectedRequisitions.length})
+                  Criar Envelope ({selectedRequisitions.length})
                 </span>
               </button>
             )}

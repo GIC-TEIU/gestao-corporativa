@@ -3,8 +3,8 @@ import { X, FileText, Repeat, CheckCircle } from 'lucide-react';
 
 const DataItem = ({ label, value }) => (
     <div className="flex items-baseline gap-2">
-        <p className="text-sm font-semibold text-[#0F3B57] uppercase tracking-wider whitespace-nowrap">{label}:</p>
-        <p className="text-sm text-gray-800 font-normal">{value || 'Não informado'}</p>
+        <p className="text-sm font-semibold text-[#0F3B57] uppercase tracking-wider whitespace-nowrap min-w-[120px]">{label}:</p>
+        <p className="text-sm text-gray-800 font-normal break-words">{value || 'Não informado'}</p>
     </div>
 );
 
@@ -113,21 +113,29 @@ export default function AnalysisModal({ isOpen, onClose, data, onConfirm, onRequ
     };
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl shadow-xl max-w-5xl w-full relative max-h-[90vh] overflow-hidden">
-                <button onClick={onClose} className="absolute top-6 right-6 text-gray-500 hover:text-gray-800 z-10">
-                    <X size={24} />
-                </button>
-                <div className="h-full overflow-y-auto p-8">
-                    <h1 className="text-3xl font-bold text-[#0F3B57] mb-6">Análise Envelope</h1>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2">
+            <div className="bg-white rounded-2xl shadow-xl w-full max-w-[95vw] mx-2 max-h-[95vh] overflow-y-auto">
+                {/* Cabeçalho */}
+                <div className="flex justify-between items-center px-4 py-4 border-b">
+                    <h2 className="text-xl font-bold text-[#0F3B57]">Análise Envelope</h2>
+                    <button
+                        onClick={onClose}
+                        className="text-gray-400 hover:text-gray-600 transition"
+                    >
+                        <X size={24} />
+                    </button>
+                </div>
 
-                    <div className="bg-[#D6E3E8] rounded-lg p-6 mb-6">
+                {/* Conteúdo */}
+                <div className="p-4 space-y-6">
+                    {/* Resumo do Envelope */}
+                    <div className="bg-[#D6E3E8] rounded-lg p-4">
                         <div className="flex items-center gap-2 mb-4">
                             <FileText size={20} className="text-[#0F3B57]" />
                             <h2 className="text-lg font-semibold text-[#0F3B57]">Resumo do Envelope</h2>
                         </div>
                         <hr className="border-t-2 border-white my-4" />
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
+                        <div className="space-y-4">
                             <div>
                                 <h3 className="font-bold text-[#0F3B57] mb-2">DADOS DO REQUISITANTE</h3>
                                 <div className="space-y-1">
@@ -154,23 +162,24 @@ export default function AnalysisModal({ isOpen, onClose, data, onConfirm, onRequ
                         <hr className="border-t border-gray-300 mb-4" />
                         <SpecificDataRenderer envelope={envelope} especificos={especificos} />
                     </div>
+                </div>
 
-                    <div className="flex justify-center items-center gap-6 mt-8 pt-6 border-t">
-                        <button
-                            onClick={onRequestChange}
-                            className="flex items-center gap-2 px-6 py-3 border-2 border-[#0D6578] text-[#0D6578] font-semibold rounded-lg hover:bg-teal-50 transition"
-                        >
-                            <Repeat size={18} />
-                            Solicitar Alteração
-                        </button>
-                        <button
-                            onClick={handleConfirm}
-                            className="flex items-center gap-2 px-6 py-3 bg-[#2F7429] text-white font-semibold rounded-lg shadow-md hover:bg-[#0a4b58] transition"
-                        >
-                            <CheckCircle size={18} />
-                            Confirmar Análise
-                        </button>
-                    </div>
+                {/* Rodapé */}
+                <div className="flex flex-col gap-3 px-4 py-4 border-t bg-gray-50 rounded-b-2xl">
+                    <button
+                        onClick={onRequestChange}
+                        className="flex items-center justify-center gap-2 px-6 py-3 border-2 border-[#0D6578] text-[#0D6578] font-semibold rounded-lg hover:bg-teal-50 transition w-full"
+                    >
+                        <Repeat size={18} />
+                        Solicitar Alteração
+                    </button>
+                    <button
+                        onClick={handleConfirm}
+                        className="flex items-center justify-center gap-2 px-6 py-3 bg-[#2F7429] text-white font-semibold rounded-lg shadow-md hover:bg-[#0a4b58] transition w-full"
+                    >
+                        <CheckCircle size={18} />
+                        Confirmar Análise
+                    </button>
                 </div>
             </div>
         </div>

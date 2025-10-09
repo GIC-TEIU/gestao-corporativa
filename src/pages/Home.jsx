@@ -36,8 +36,10 @@ function Home() {
       title="Gestão corporativa"
       subtitle="Gerencie documentos e assinaturas de forma segura e eficiente"
     >
-      <div className="flex flex-col items-center overflow-hidden w-full">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8 mx-auto">
+      {/* Contêiner principal para centralizar o grid */}
+      <div className="flex justify-center w-full">
+        {/* Grid ÚNICO para TODOS os cartões */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {availableModules.requestCreate && (
             <Card
               imgSrc="/imgs/novo-envelope.png"
@@ -67,8 +69,7 @@ function Home() {
               enabled={true}
             />
           )}
-        </div>
-        <div className="flex flex-wrap justify-center gap-4">
+
           {availableModules.rhPanel && (
             <Card
               imgSrc="/imgs/recursos-humanos.png"

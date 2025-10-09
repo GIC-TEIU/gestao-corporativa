@@ -1,15 +1,19 @@
+// components/ProtectedRoute.jsx
 import { useAuth } from '../context/AuthContext';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 
 export default function ProtectedRoute({ children }) {
   const { currentUser, loading } = useAuth();
-  
-  console.log('ProtectedRoute - currentUser:', currentUser);
-  console.log('ProtectedRoute - loading:', loading);
-  
+  const location = useLocation();
+
   if (loading) {
-    return <div>Carregando...</div>;
+    return null; 
   }
-  
-  return currentUser ? children : <Navigate to="/login" replace />;
+
+ 
+  if (!currentUser) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  return children;
 }

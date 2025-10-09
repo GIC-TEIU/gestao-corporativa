@@ -75,7 +75,22 @@ export function AuthProvider({ children }) {
           matricula: "005",
           centroCusto: "RH",
           createdAt: new Date().toISOString()
-        }
+        },
+           {
+          id: 6,
+          name: "Coordenador",
+          email: "Coordenador@empresa.com",
+          password: "123456",
+          permissions: [
+            'request_create',
+            'user_management',
+            'signature_management'
+          ],
+          cpf: "123.456.789-00",
+          matricula: "001",
+          centroCusto: "TI",
+          createdAt: new Date().toISOString()
+        },
       ];
 
       let usersUpdated = false;
@@ -119,18 +134,16 @@ export function AuthProvider({ children }) {
           userToSet = completeUser;
           localStorage.setItem('currentUser', JSON.stringify(completeUser));
         } else {
-          userToSet = parsedUser;
+          // Usuário não encontrado - remove do localStorage
+          localStorage.removeItem('currentUser');
         }
       } catch {
+       
         localStorage.removeItem('currentUser');
       }
-    } else {
-      const adminUser = allUsers.find(u => u.email === 'admin@empresa.com');
-      if (adminUser) {
-        userToSet = adminUser;
-        localStorage.setItem('currentUser', JSON.stringify(adminUser));
-      }
     }
+
+    
 
     if (userToSet && (!userToSet.permissions || !Array.isArray(userToSet.permissions))) {
       userToSet.permissions = [];
@@ -219,7 +232,7 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider value={value}>
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 }
