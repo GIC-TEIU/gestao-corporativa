@@ -11,12 +11,17 @@ const statusColors = {
   green: 'bg-green-200 text-green-800 border border-green-500',
 };
 
+const statusBorderColors = {
+  purple: 'border-purple-500',
+  green: 'border-green-500',
+};
+
 export const RequestCard = ({ item, isSelected, isIncompatible, onSelectItem, onAnalyzeClick }) => {
     
+    const borderColorClass = statusBorderColors[item.status.color] || 'border-gray-400';
+
     return (
-        
-        <div className={`bg-white rounded-xl shadow-lg mb-4 overflow-hidden transition-opacity ${isIncompatible ? 'opacity-60 grayscale' : ''}`}>
-            
+        <div className={`bg-white rounded-xl shadow-lg mb-4 overflow-hidden transition-opacity border-l-4 ${borderColorClass} ${isIncompatible ? 'opacity-60 grayscale' : ''}`}>
             
             <div className="p-4 flex items-start gap-4 border-b border-gray-200">
                 <input
@@ -43,19 +48,17 @@ export const RequestCard = ({ item, isSelected, isIncompatible, onSelectItem, on
                 </div>
             </div>
 
-            
             <div className="p-4">
-                 <div>
+                <div>
                     <p className="text-xs font-semibold uppercase tracking-wider text-gray-500">Requisitante</p>
-                    <p className="text-base font-medium text-gray-800">{item.requisitante}</p>
+                    <p className="text-base font-semibold text-[#33748B]">{item.requisitante}</p>
                 </div>
-                 <div className="mt-2">
+                <div className="mt-2">
                     <p className="text-xs font-semibold uppercase tracking-wider text-gray-500">Cargo</p>
-                    <p className="text-base font-medium text-gray-600">{item.cargo}</p>
+                    <p className="text-base font-medium text-[#33748B]">{item.cargo}</p>
                 </div>
             </div>
 
-            
             <div className="px-4 py-3 bg-gray-50 flex justify-between items-center">
                 <span className={`px-3 py-1 text-xs font-semibold rounded-full flex items-center gap-2 border ${statusColors[item.status.color]}`}>
                     <Search size={14} /> {item.status.text}
