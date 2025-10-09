@@ -1,6 +1,5 @@
 import React from 'react';
-import { User } from 'lucide-react';
-
+import { User, X } from 'lucide-react';
 
 const mockPermissions = [
   {
@@ -23,22 +22,33 @@ const PermissionsModal = ({ isOpen, onClose, userName, permissionsData = mockPer
   }
 
   return (
-    
     <div
       className="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50"
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-2xl shadow-2xl p-8 max-w-lg w-full"
+        className="bg-white rounded-2xl shadow-2xl sm:shadow-2xl p-4 sm:p-6 w-full max-w-sm sm:max-w-sm md:max-w-sm mx-auto my-auto relative"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center gap-3 mb-8 text-[#275667]">
-          <User size={32} />
-          <h2 className="text-2xl font-bold">
-            Permissões do Usuário
+        {/* Botão X para fechar */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 p-1 hover:bg-gray-100 rounded-lg transition-colors"
+        >
+          <X size={24} className="text-gray-500" />
+        </button>
 
-            <span className="ml-2 font-normal text-gray-500 text-xl">• {userName || 'Bruno Henrique'}</span>
-          </h2>
+        {/* Cabeçalho otimizado */}
+        <div className="flex items-start gap-3 mb-8 text-[#275667] pr-10">
+          <User size={32} className="flex-shrink-0 mt-1" />
+          <div className="min-w-0">
+            <h2 className="text-xl font-bold text-gray-900">
+              Permissões do Usuário
+            </h2>
+            <p className="text-lg text-gray-600 font-normal mt-1">
+              • {userName || 'Bruno Henrique'}
+            </p>
+          </div>
         </div>
 
         <div className="space-y-4">

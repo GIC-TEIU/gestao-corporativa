@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
-
-import { Settings, CheckCircle } from 'lucide-react';
+import { Settings, CheckCircle, X } from 'lucide-react';
 
 const ManagementPermissionsModal = ({ isOpen, onClose }) => {
-
   const [permissions, setPermissions] = useState({
     assinarDocumento: true,
     visualizarDocumento: true,
@@ -35,12 +33,19 @@ const ManagementPermissionsModal = ({ isOpen, onClose }) => {
       onClick={onClose}
     >
       <div 
-        className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full"
+        className="bg-white rounded-2xl shadow-2xl sm:shadow-2xl p-4 sm:p-6 w-full max-w-xs sm:max-w-sm md:max-w-md mx-auto my-auto relative"
         onClick={(e) => e.stopPropagation()}
       >
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 p-1 hover:bg-gray-100 rounded-lg transition-colors"
+        >
+          <X size={24} className="text-gray-500" />
+        </button>
+
         <div className="flex items-center gap-4 mb-8">
-          <Settings size={32} className="text-[#0D6578]" />
-          <h2 className="text-2xl font-bold text-[#275667]">
+          <Settings size={32} className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-[#0D6578]" />
+          <h2 className="text-xl sm:text-2xl md:text-2xl font-bold text-[#275667]">
             Gerenciar Permissões
           </h2>
         </div>
@@ -62,19 +67,17 @@ const ManagementPermissionsModal = ({ isOpen, onClose }) => {
           ))}
         </div>
 
-        <div className="flex justify-center mt-10">
+        <div className="flex justify-center mt-6 sm:mt-8">
           <button 
-            className="flex items-center gap-4 bg-[#3E8E41] text-white font-bold px-6 py-3 rounded-xl hover:bg-[#327234] transition-transform transform hover:scale-105"
+            className="flex items-center gap-2 bg-[#3E8E41] text-white font-semibold px-3 py-3 rounded-xl hover:bg-[#327234] transition-transform transform hover:scale-105"
             onClick={() => {
               console.log('Permissões salvas:', permissions);
               onClose();
             }}
           >
-        
-            <CheckCircle size={36} />
+            <CheckCircle size={30} />
             <div className="text-left leading-tight">
-              <span>Confirmar</span><br/>
-              <span>Permissões</span>
+              <span>Confirmar Permissões</span>
             </div>
           </button>
         </div>

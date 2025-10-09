@@ -15,13 +15,13 @@ const ConfirmDeletionModal = ({ isOpen, onClose, onConfirm, userName }) => {
     >
       
       <div
-        className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full text-center"
+        className="bg-white rounded-2xl shadow-2xl text-centerw-full max-w-xs  p-8 sm:p-6 sm:max-w-md md:max-w-lg "
         onClick={(e) => e.stopPropagation()} 
       >
         
         <div className="flex items-center justify-center gap-3 mb-6">
           <Trash2 size={28} className="text-[#275667]" />
-          <h2 className="text-2xl font-bold text-[#275667]">
+          <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-[#275667]">
             Confirmar Exclusão
           </h2>
         </div>
