@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Search, ExternalLink } from 'lucide-react';
+import { useWindowSize } from '../../hooks/useWindowSize';
+import { RequestCard } from './RequestCard';
 
 import IncompatibleModal from './IncompatibleModal'; 
-
 import AlertModal from './AlertModal';
 
 const mockData = [
@@ -135,9 +136,11 @@ function RequestTable({ onAnalyzeClick, onSelectedItemsChange }) {
   const [selectionType, setSelectionType] = useState(null);
   const [data, setData] = useState(mockData);
   const [showIncompatibleModal, setShowIncompatibleModal] = useState(false);
-  // NOVO: Estado para controlar o alert modal
   const [showAlertModal, setShowAlertModal] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
+
+  const { width } = useWindowSize();
+  const isMobile = width < 768;
 
   const getSelectedRequisitions = useCallback(() => {
     return data.filter(item => selectedItems.includes(item.id));
@@ -162,7 +165,6 @@ function RequestTable({ onAnalyzeClick, onSelectedItemsChange }) {
     if (isSelected) {
       const newSelectedItems = selectedItems.filter(itemId => itemId !== id);
       setSelectedItems(newSelectedItems);
-      
       if (newSelectedItems.length === 0) {
         setSelectionType(null);
       }
@@ -181,118 +183,135 @@ function RequestTable({ onAnalyzeClick, onSelectedItemsChange }) {
   const updateItemStatus = (itemId, newStatus) => {
     setData(prevData => 
       prevData.map(item => 
-        item.id === itemId 
-          ? { ...item, status: newStatus }
-          : item
+        item.id === itemId ? { ...item, status: newStatus } : item
       )
     );
   };
 
-  const handleAnalyzeClickWithUpdate = (itemDetails) => {
+  const handleAnalyzeClickWithUpdate = (item) => {
     onAnalyzeClick({
-      ...itemDetails,
-      onStatusUpdate: (itemId) => updateItemStatus(itemId, { text: 'Analisado', color: 'green' })
+      ...item.details,
+      id: item.id,
+      onStatusUpdate: () => updateItemStatus(item.id, { text: 'Analisado', color: 'green' })
     });
   };
 
-  return (
-    <div className="overflow-x-auto rounded-[18px] overflow-hidden">
-      <table className="w-full text-sm text-left">
-        <thead className="bg-[#33748B3B] text-[#275667] font-semibold">
-          <tr>
-            <th className="p-3 w-4"></th>
-            <th className="p-3 text-center">Protocolo</th>
-            <th className="p-3 text-center">Requisitante</th>
-            <th className="p-3 text-center">Cargo</th>
-            <th className="p-3 text-center">Tipo de Envelope</th>
-            <th className="p-3 text-center">Unidade</th>
-            <th className="p-3 text-center">Status</th>
-            <th className="p-3 text-center"></th>
-          </tr>
-        </thead>
-        <tbody className="bg-[#EEF1F1]">
-          {data.map((item) => {
-            const isIncompatible = selectionType !== null && item.tipoEnvelope.text !== selectionType;
+return (
+        <div className="w-full">
+            {isMobile ? (
+              
+                <div className="p-2 sm:p-4">
+                    {data.map((item) => {
+                        const isIncompatible = selectionType !== null && item.tipoEnvelope.text !== selectionType;
+                        const isSelected = selectedItems.includes(item.id);
+                        
+                        return (
+                            <RequestCard 
+                                key={item.id}
+                                item={item}
+                                isSelected={isSelected}
+                                isIncompatible={isIncompatible}
+                                onSelectItem={handleSelectItem}
+                                onAnalyzeClick={handleAnalyzeClickWithUpdate}
+                            />
+                        );
+                    })}
+                </div>
+            ) : (
+              
+                <div className="overflow-x-auto rounded-[18px] overflow-hidden">
+                    <table className="w-full text-sm text-left">
+                        <thead className="bg-[#33748B3B] text-[#275667] font-semibold">
+                            <tr>
+                                <th className="p-3 w-4"></th>
+                                <th className="p-3 text-center">Protocolo</th>
+                                <th className="p-3 text-center">Requisitante</th>
+                                <th className="p-3 text-center">Cargo</th>
+                                <th className="p-3 text-center">Tipo de Envelope</th>
+                                <th className="p-3 text-center">Unidade</th>
+                                <th className="p-3 text-center">Status</th>
+                                <th className="p-3 text-center"></th>
+                            </tr>
+                        </thead>
+                        <tbody className="bg-[#EEF1F1]">
+                            {data.map((item) => {
+                                const isIncompatible = selectionType !== null && item.tipoEnvelope.text !== selectionType;
+                                return (
+                                    <tr key={item.id} className="border-b border-[#D9D9D9]">
+                                        <td className="p-2 text-center">
+                                            <input
+                                                type="checkbox"
+                                                className={`form-checkbox h-5 w-5 rounded transition-all ${
+                                                    isIncompatible 
+                                                    ? 'bg-gray-200 border-gray-300 opacity-70 cursor-pointer' 
+                                                    : selectedItems.includes(item.id)
+                                                    ? 'text-sky-600 border-sky-600 bg-sky-100'
+                                                    : 'text-gray-600 border-gray-400'
+                                                }`}
+                                                onChange={() => handleSelectItem(item)}
+                                                checked={selectedItems.includes(item.id)}
+                                            />
+                                        </td>
+                                        <td className="p-2">
+                                            <div className="bg-[#D9D9D9] text-gray-800 font-medium rounded-md px-3 h-12 flex items-center justify-center text-center">{item.rap}</div>
+                                        </td>
+                                        <td className="p-2">
+                                            <div className="bg-[#D9D9D9] text-gray-800 rounded-md px-3 h-12 flex items-center justify-center text-center">{item.requisitante}</div>
+                                        </td>
+                                        <td className="p-2">
+                                            <div className="bg-[#D9D9D9] text-gray-800 rounded-md px-3 h-12 flex items-center justify-center text-center">{item.cargo}</div>
+                                        </td>
+                                        <td className="p-2">
+                                            <div className="flex items-center justify-center h-12">
+                                                <span className={`px-4 py-1.5 text-sm font-bold rounded-full ${typeColors[item.tipoEnvelope.color]}`}>
+                                                    {item.tipoEnvelope.text}
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td className="p-2">
+                                            <div className="bg-[#D9D9D9] text-gray-800 rounded-md px-3 h-12 flex items-center justify-center text-center">{item.unidade}</div>
+                                        </td>
+                                        <td className="p-2">
+                                            <div className="flex justify-center">
+                                                <span className={`px-3 py-1 text-xs font-semibold rounded-full flex items-center gap-2 border ${statusColors[item.status.color]}`}>
+                                                    <Search size={14} /> {item.status.text}
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td className="p-2">
+                                            <div className="flex justify-center">
+                                                <button
+                                                    onClick={() => handleAnalyzeClickWithUpdate(item)}
+                                                    className="flex items-center justify-center w-9 h-9 rounded-lg bg-[#4EA64754] border border-[#2F7429] text-[#2F7429] hover:opacity-80 transition"
+                                                >
+                                                    <ExternalLink size={20} />
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                </div>
+            )}
 
-            return (
-              <tr 
-                key={item.id} 
-                className="border-b border-[#D9D9D9]"
-              >
-                <td className="p-2 text-center">
-                  <input
-                    type="checkbox"
-                    className={`form-checkbox h-5 w-5 rounded transition-all ${
-                      isIncompatible 
-                        ? 'bg-gray-200 border-gray-300 opacity-70 cursor-pointer' 
-                        : selectedItems.includes(item.id)
-                          ? 'text-sky-600 border-sky-600 bg-sky-100'
-                          : 'text-gray-600 border-gray-400'
-                    }`}
-                    onChange={() => handleSelectItem(item)}
-                    checked={selectedItems.includes(item.id)}
-                  />
-                </td>
-                <td className="p-2">
-                  <div className="bg-[#D9D9D9] text-gray-800 font-medium rounded-md px-3 h-12 flex items-center justify-center text-center">{item.rap}</div>
-                </td>
-                <td className="p-2">
-                  <div className="bg-[#D9D9D9] text-gray-800 rounded-md px-3 h-12 flex items-center justify-center text-center">{item.requisitante}</div>
-                </td>
-                <td className="p-2">
-                  <div className="bg-[#D9D9D9] text-gray-800 rounded-md px-3 h-12 flex items-center justify-center text-center">{item.cargo}</div>
-                </td>
-                <td className="p-2">
-                  <div className="flex items-center justify-center h-12">
-                    <span className={`px-4 py-1.5 text-sm font-bold rounded-full ${typeColors[item.tipoEnvelope.color]}`}>
-                      {item.tipoEnvelope.text}
-                    </span>
-                  </div>
-                </td>
-                <td className="p-2">
-                  <div className="bg-[#D9D9D9] text-gray-800 rounded-md px-3 h-12 flex items-center justify-center text-center">{item.unidade}</div>
-                </td>
-                <td className="p-2">
-                  <div className="flex justify-center">
-                    <span className={`px-3 py-1 text-xs font-semibold rounded-full flex items-center gap-2 border ${statusColors[item.status.color]}`}>
-                      <Search size={14} /> {item.status.text}
-                    </span>
-                  </div>
-                </td>
-                <td className="p-2">
-                  <div className="flex justify-center">
-                    <button
-                      onClick={() => handleAnalyzeClickWithUpdate({
-                        ...item.details,
-                        id: item.id
-                      })}
-                      className="flex items-center justify-center w-9 h-9 rounded-lg bg-[#4EA64754] border border-[#2F7429] text-[#2F7429] hover:opacity-80 transition"
-                    >
-                      <ExternalLink size={20} />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-
-      <IncompatibleModal 
-        show={showIncompatibleModal} 
-        onClose={closeIncompatibleModal} 
-      />
-      
-      {/* NOVO: AlertModal para substituir os alerts nativos */}
-      <AlertModal 
-        isOpen={showAlertModal}
-        onClose={() => setShowAlertModal(false)}
-        title="Atenção"
-        message={alertMessage}
-        type="warning"
-      />
-    </div>
-  );
+            
+            <IncompatibleModal 
+                show={showIncompatibleModal} 
+                onClose={closeIncompatibleModal} 
+            />
+            
+            <AlertModal 
+                isOpen={showAlertModal}
+                onClose={() => setShowAlertModal(false)}
+                title="Atenção"
+                message={alertMessage}
+                type="warning"
+            />
+        </div>
+    );
 }
+
 
 export default RequestTable;
