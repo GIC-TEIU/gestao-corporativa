@@ -1,4 +1,4 @@
-// src/components/pdf-preview-for-signature/StatusTimeline.jsx
+
 
 import { FilePlus, Eye, Send, CheckCircle, XCircle } from 'lucide-react';
 import { useEnvelope } from '../../context/EnvelopeContext';
@@ -55,7 +55,7 @@ export const StatusTimeline = () => {
   };
 
   return (
-    // Removi o div container que tinha antes para o componente ficar mais flexível
+  
     <ol className="relative border-s border-gray-300">
       {steps.slice(0, envelopeStatus.timelineStatus + 1).map((step) => (
         <li key={step.key} className="mb-10 ms-7">

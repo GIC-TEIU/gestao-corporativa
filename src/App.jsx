@@ -57,7 +57,9 @@ function AppContent() {
 
         <Route path="/envelope-search/pdf-preview-for-signature" element={
           <ProtectedRoute>
-            <PdfPreviewForSignature />
+            <EnvelopeProvider>
+              <PdfPreviewForSignature />
+            </EnvelopeProvider>
           </ProtectedRoute>
         } />
 
