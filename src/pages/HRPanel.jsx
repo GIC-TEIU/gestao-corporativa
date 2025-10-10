@@ -35,7 +35,7 @@ function HRPanel() {
   const [alertType, setAlertType] = useState('info');
   const [alertOnConfirm, setAlertOnConfirm] = useState(null);
 
-  const tabs = [
+  const tabs = [    
     { id: 'requisicoes', label: 'Requisições', icon: ClipboardList },
     { id: 'movimentacao-rap', label: 'Movimentação de RAP', icon: ArrowRightLeft },
     { id: 'consulta-envelopes', label: 'Consulta de Envelopes', icon: MailSearch },
