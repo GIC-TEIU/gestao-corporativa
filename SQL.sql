@@ -162,7 +162,7 @@ CREATE TABLE `envelope_update` (
 -- Tabela central (supertipo) que representa uma requisição/processo dentro de um envelope.
 CREATE TABLE `request` (
     `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    `envelope_id` BIGINT UNSIGNED NOT NULL,
+    `envelope_id` BIGINT UNSIGNED NULL,
     `requester_user_id` BIGINT UNSIGNED NOT NULL,
     `manager_id` BIGINT UNSIGNED,
     `director_id` BIGINT UNSIGNED,
@@ -320,7 +320,7 @@ ALTER TABLE `notification_recipient` ADD CONSTRAINT `fk_recipient_notification` 
 ALTER TABLE `notification_recipient` ADD CONSTRAINT `fk_recipient_user` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE;
 
 -- Relações do núcleo da Requisição (Polimorfismo)
-ALTER TABLE `request` ADD CONSTRAINT `fk_request_envelope` FOREIGN KEY (`envelope_id`) REFERENCES `envelope`(`id`) ON DELETE CASCADE;
+ALTER TABLE `request` ADD CONSTRAINT `fk_request_envelope` FOREIGN KEY (`envelope_id`) REFERENCES `envelope`(`id`) ON DELETE SET NULL;
 ALTER TABLE `request` ADD CONSTRAINT `fk_request_requester` FOREIGN KEY (`requester_user_id`) REFERENCES `user`(`id`) ON DELETE RESTRICT;
 ALTER TABLE `request` ADD CONSTRAINT `fk_request_manager` FOREIGN KEY (`manager_id`) REFERENCES `manager`(`id`) ON DELETE SET NULL;
 ALTER TABLE `request` ADD CONSTRAINT `fk_request_director` FOREIGN KEY (`director_id`) REFERENCES `director`(`id`) ON DELETE SET NULL;
