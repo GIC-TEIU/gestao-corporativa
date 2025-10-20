@@ -94,7 +94,7 @@ CREATE TABLE `email_signature` (
     `name` VARCHAR(255) NOT NULL,
     `email` VARCHAR(255) NOT NULL,
     `employee_id` VARCHAR(100) COMMENT 'matrícula do colaborador',
-    `html_content` TEXT,
+    `metadata` JSON, 
     `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
@@ -108,8 +108,8 @@ CREATE TABLE `workflow_action` (
 -- Etapas possíveis que podem compor uma rota de fluxo.
 CREATE TABLE `workflow_step` (
     `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    `title` VARCHAR(255) NOT NULL, -- CORRIGIDO: Adicionei o título que estava faltando.
-    `description` TEXT, -- CORRIGIDO: Adicionei a descrição que estava faltando.
+    `title` VARCHAR(255) NOT NULL,
+    `description` TEXT,
     `step_order` INT NOT NULL DEFAULT 0
 ) ENGINE=InnoDB;
 
@@ -131,7 +131,7 @@ CREATE TABLE `envelope` (
     `workflow_route_id` BIGINT UNSIGNED NOT NULL,
     `title` VARCHAR(255) NOT NULL,
     `description` TEXT,
-    `status` ENUM('PENDENTE', 'CONCLUIDO', 'CANCELADO') NOT NULL DEFAULT 'PENDENTE',
+    `status` ENUM('PENDENTE', 'CONCLUIDO', 'EM ANDAMENTO', 'ARQUIVADO') NOT NULL DEFAULT 'PENDENTE',
     `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
@@ -168,7 +168,7 @@ CREATE TABLE `request` (
     `director_id` BIGINT UNSIGNED,
     `title` VARCHAR(255) NOT NULL,
     `observations` TEXT,
-    `operational_unit` ENUM('Teu Matriz', 'Kaioka', 'Votre', 'IT Faber', 'Holding', 'Teiu Filial', 'Revani'),
+    `operational_unit` ENUM('Teiú Matriz', 'Kaioka', 'Votre', 'IT Faber', 'Holding', 'Teiú Filial', 'Revani'),
     `category` ENUM('ADMISSAO', 'MOVIMENTACAO_PESSOAL', 'DOCUMENTO_SIMPLES') NOT NULL,
     -- Colunas para a relação polimórfica. Sem FK.
     `detail_type` VARCHAR(100) NOT NULL COMMENT 'Ex: "admission_detail", "personnel_movement_detail"',
@@ -287,7 +287,7 @@ CREATE TABLE `salary_change_detail` (
     `previous_value` DECIMAL(10, 2) NOT NULL,
     `new_value` DECIMAL(10, 2) NOT NULL,
     `movement_type` ENUM('AJUSTE_SALARIAL', 'INSALUBRIDADE', 'PERICULOSIDADE', 'PROMOCAO') NOT NULL,
-    `new_job_title` VARCHAR(255) COMMENT 'Preenchido apenas para promoção'
+    `new_job_title` VARCHAR(255) COMMENT 'Preenchido apenas para promoção de cargo'
 ) ENGINE=InnoDB;
 
 -- ====================================================================================
