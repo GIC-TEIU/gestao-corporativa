@@ -36,13 +36,13 @@ function Home() {
       title="Gestão corporativa"
       subtitle="Gerencie documentos e assinaturas de forma segura e eficiente"
     >
-      {/* Contêiner principal para centralizar o grid */}
+      {/* Contêiner principal */}
       <div className="flex justify-center w-full">
         {/* Grid ÚNICO para TODOS os cartões */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {availableModules.requestCreate && (
             <Card
-              imgSrc="/imgs/novo-envelope.png"
+              imgSrc="/imgs/nova-requisicao.png"
               title="Nova Requisição"
               description="Crie uma nova requisição para assinatura digital de documentos"
               link="/request-form"
@@ -52,7 +52,7 @@ function Home() {
 
           {availableModules.requestView && (
             <Card
-              imgSrc="/imgs/carta.png"
+              imgSrc="/imgs/visualizar-envelope.png"
               title="Visualizar envelope"
               description="Busque por envelopes existentes e acompanhe o status das suas assinaturas."
               link="/envelope-search"
@@ -72,7 +72,7 @@ function Home() {
 
           {availableModules.rhPanel && (
             <Card
-              imgSrc="/imgs/recursos-humanos.png"
+              imgSrc="/imgs/painel.png"
               title="Painel RH"
               description="Gerencie requisições, acompanhe andamentos de RAP's e envelopes criados."
               link="/hr-panel"
