@@ -3,7 +3,6 @@ import { useWindowSize } from '../../hooks/useWindowSize';
 import { FuncionarioCard } from './FuncionarioCard';
 
 const mockFuncionarios = [
-    // Seus dados de mockFuncionarios aqui...
     { id: 1, nome: 'Adriana mármore', email: 'adrianamarmore@gmail.com', cargo: 'Analista de RH', celular: '77 3423-9423', matricula: '10307-0', status: 'Ativo', assinatura: true, centroCusto: 'Recursos Humanos', cpf: '123.456.789-01', empresa: 'Teiú' },
     { id: 2, nome: 'Ricardo Almeida', email: 'ricardo.almeida@gmail.com', cargo: 'Diretor de Operações', celular: '77 3423-9423', matricula: '10808-0', status: 'Ativo', assinatura: true, centroCusto: 'Operacional', cpf: '234.567.890-12', empresa: 'Teiú' },
     { id: 3, nome: 'Maria Pereira', email: 'maria.pereira@gmail.com', cargo: 'Designer', celular: '77 3423-9423', matricula: '10505-0', status: 'Inativo', assinatura: true, centroCusto: 'Marketing', cpf: '345.678.901-23', empresa: 'Teiú' },
@@ -25,11 +24,8 @@ const EmailSignaturesTable = ({ onVerDetalhes, totalFuncionarios }) => {
     const { width } = useWindowSize();
     const isMobile = width < 768;
 
-    const handleToggleExpand = (id) => {
-        setExpandedId(currentId => (currentId === id ? null : id));
-    };
-
     if (isMobile) {
+
         return (
             <div className="p-2 sm:p-4 bg-slate-50 rounded-lg">
                 {funcionarios.length > 0 ? (
@@ -55,8 +51,7 @@ const EmailSignaturesTable = ({ onVerDetalhes, totalFuncionarios }) => {
     }
 
     return (
-        // --- VISUALIZAÇÃO DESKTOP (TABELA ORIGINAL) ---
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto rounded-lg overflow-hidden">
             <table className="w-full border-collapse">
                 <thead className="bg-[#33748B3B] text-[#2A454E] text-sm font-semibold">
                     <tr>
@@ -73,7 +68,8 @@ const EmailSignaturesTable = ({ onVerDetalhes, totalFuncionarios }) => {
                         funcionarios.map((funcionario) => {
                             const statusColor = funcionario.status === 'Ativo' ? 'bg-[#165507]' : 'bg-[#B00909]';
                             return (
-                                <tr key={funcionario.id} className="border-b-2 border-gray-300">
+                        
+                                <tr key={funcionario.id} className="border-b-2 border-gray-300 last:border-b-0">
                                     <td className="p-2" colSpan={2}>
                                         <div className="bg-[#E9E9E9] text-gray-800 font-medium rounded-md h-12 flex items-center relative overflow-hidden">
                                             <div className={`absolute left-0 top-0 h-full w-2 ${statusColor}`}></div>

@@ -1,17 +1,13 @@
 import React from "react";
 import { XCircle } from "lucide-react";
 
-// A prop "funcionario" foi renomeada para "item" para ser genérica.
 const DetailsModal = ({ item, onClose }) => {
   if (!item) return null;
 
-  // Lógica para lidar com os dois formatos de status
   const getStatusInfo = () => {
     if (typeof item.status === 'object' && item.status !== null) {
-      // Formato do RapMovementTable: { text: '...', color: '...' }
       return { text: item.status.text, colorClass: 'text-blue-600' };
     }
-    // Formato do TabelaFuncionarios: 'Ativo' ou 'Inativo'
     return {
       text: item.status,
       colorClass: item.status?.toLowerCase() === "ativo" ? "text-green-600" : "text-red-600"
@@ -20,8 +16,14 @@ const DetailsModal = ({ item, onClose }) => {
   const statusInfo = getStatusInfo();
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 font-poppins">
-      <div className="relative w-full max-w-2xl rounded-2xl bg-white shadow-xl p-8 max-h-[90vh] overflow-y-auto">
+    <div 
+      onClick={onClose} 
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 font-poppins"
+    >
+      <div 
+        onClick={(e) => e.stopPropagation()} 
+        className="relative w-full max-w-2xl rounded-2xl bg-white shadow-xl p-8 max-h-[90vh] overflow-y-auto"
+      >
         <button onClick={onClose} aria-label="Fechar" className="absolute right-4 top-4 text-gray-500 hover:text-gray-800">
           <XCircle size={30} />
         </button>
@@ -31,19 +33,14 @@ const DetailsModal = ({ item, onClose }) => {
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-5 gap-x-10 text-base">
-          {/* Campos do Funcionário */}
           {item.nome && <div><p className="font-semibold text-[#2A454E]">Nome:</p><p className="text-black">{item.nome}</p></div>}
           {item.matricula && <div><p className="font-semibold text-[#2A454E]">Matrícula:</p><p className="text-black">{item.matricula}</p></div>}
           {item.cargo && <div><p className="font-semibold text-[#2A454E]">Cargo:</p><p className="text-black">{item.cargo}</p></div>}
           {item.cpf && <div><p className="font-semibold text-[#2A454E]">CPF:</p><p className="text-black">{item.cpf}</p></div>}
           {item.empresa && <div><p className="font-semibold text-[#2A454E]">Empresa:</p><p className="text-black">{item.empresa}</p></div>}
           {item.centroCusto && <div><p className="font-semibold text-[#2A454E]">Centro de custo:</p><p className="text-black">{item.centroCusto}</p></div>}
-          
-          {/* Campos do Painel RH */}
           {item.rap && <div><p className="font-semibold text-[#2A454E]">Protocolo (RAP):</p><p className="text-black">{item.rap}</p></div>}
           {item.unidade && <div><p className="font-semibold text-[#2A454E]">Unidade:</p><p className="text-black">{item.unidade}</p></div>}
-
-          {/* Status Genérico */}
           {statusInfo.text && (
             <div>
               <p className="font-semibold text-[#2A454E]">Situação:</p>
