@@ -37,7 +37,7 @@ function HRPanel() {
 
   const tabs = [    
     { id: 'requisicoes', label: 'Requisições', icon: ClipboardList },
-    { id: 'movimentacao-rap', label: 'Movimentação de RAP', icon: ArrowRightLeft },
+    { id: 'movimentacao-rap', label: 'Processo de Admissão', icon: ArrowRightLeft },
     { id: 'consulta-envelopes', label: 'Consulta de Envelopes', icon: MailSearch },
   ];
   
