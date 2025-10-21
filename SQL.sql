@@ -170,6 +170,7 @@ CREATE TABLE `request` (
     `observations` TEXT,
     `operational_unit` ENUM('Teiú Matriz', 'Kaioka', 'Votre', 'IT Faber', 'Holding', 'Teiú Filial', 'Revani'),
     `category` ENUM('ADMISSAO', 'MOVIMENTACAO_PESSOAL', 'DOCUMENTO_SIMPLES') NOT NULL,
+    `status` ENUM ('PENDENTE', 'ANALISADO', 'EXPEDIDO'),
     -- Colunas para a relação polimórfica. Sem FK.
     `detail_type` VARCHAR(100) NOT NULL COMMENT 'Ex: "admission_detail", "personnel_movement_detail"',
     `detail_id` BIGINT UNSIGNED NOT NULL
