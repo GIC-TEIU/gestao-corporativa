@@ -1,0 +1,17 @@
+ 
+{
+    "name": "stefani/gestao-corporativa",
+    "description": "Sistema de Gestão Corporativa",
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Stéfani Soares Freire",
+            "email": "techlead@teiu.com.br"
+        }
+    ],
+    "require": {}
+}
