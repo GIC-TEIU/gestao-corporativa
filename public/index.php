@@ -1,7 +1,42 @@
- <?php
+<?php
 
-//  Inicia o session_start() para que a superglobal $_SESSION esteja disponível em toda a aplicação.
+header("Access-Control-Allow-Origin: http://localhost:5173"); 
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Access-Control-Allow-Credentials: true");
+
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
+
+use App\Core\Router;
 
 session_start();
+
 require_once __DIR__ . '/../vendor/autoload.php';
-require_once __DIR__ . '/../routes/api.php';
+
+header('Content-Type: application/json');
+
+try {
+
+    require_once __DIR__ . '/../routes/api.php';
+
+
+    Router::dispatch();
+
+} catch (Exception $e) {
+
+    
+
+    $errorCode = ($e->getCode() == 404) ? 404 : 500;
+    http_response_code($errorCode); 
+    
+    echo json_encode([
+        'success' => false,
+        'message' => $e->getMessage(),
+        'file' => $e->getFile(),
+        'line' => $e->getLine(),
+    ]);
+}
+
