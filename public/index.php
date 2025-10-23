@@ -10,7 +10,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     exit;
 }
 
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+
 use App\Core\Router;
+use Throwable;
 
 session_start();
 
@@ -22,12 +26,9 @@ try {
 
     require_once __DIR__ . '/../routes/api.php';
 
-
     Router::dispatch();
 
-} catch (Exception $e) {
-
-    
+} catch (Throwable $e) {
 
     $errorCode = ($e->getCode() == 404) ? 404 : 500;
     http_response_code($errorCode); 
