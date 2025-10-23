@@ -57,7 +57,7 @@ class Database
         }
     }
 
-    private static function buildDsn(array $config): string
+   private static function buildDsn(array $config): string
     {
         $driver = $config['driver'];
 
@@ -66,7 +66,8 @@ class Database
         }
 
         if ($driver === 'sqlsrv') {
-            return "sqlsrv:Server={$config['host']},{$config['port']};Database={$config['database']}";
+            // Adiciona a opção diretamente na string
+            return "sqlsrv:Server={$config['host']},{$config['port']};Database={$config['database']};TrustServerCertificate=yes";
         }
         
         throw new Exception("Driver de banco de dados '{$driver}' não suportado.");
