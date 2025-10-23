@@ -1,7 +1,7 @@
 <?php
 // Mapeia as URLs /register, /login e /logout para os métodos de um novo controller de autenticação.
 // aqui ficarão as rotas de todas as apis
-
+use App\Core\Router;
 use App\Controllers\AuthController;
 
 // rotas de autenticação

@@ -6,6 +6,8 @@ use Exception;
 
 class Router
 {
+    private static $routes = [];
+
     public static function get(string $uri, array $handler)
     {
         self::addRoute('GET', $uri, $handler);
@@ -30,28 +32,30 @@ class Router
 
     public static function dispatch()
     {
-
         $requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
         $requestMethod = $_SERVER['REQUEST_METHOD'];
+
         $basePath = '/gestao-corporativa/public';
         if (strpos($requestUri, $basePath) === 0) {
             $requestUri = substr($requestUri, strlen($basePath));
         }
-
         if (empty($requestUri)) {
             $requestUri = '/';
         }
 
         foreach (self::$routes as $route) {
-
             if ($route['method'] === $requestMethod && preg_match($route['pattern'], $requestUri, $matches)) {
-
+                
                 array_shift($matches);
-
+                
                 $handler = $route['handler'];
                 $controllerClass = $handler[0];
                 $controllerMethod = $handler[1];
-
+    
+                if (!class_exists($controllerClass)) {
+                    $controllerClass = 'App\\Controllers\\' . $controllerClass;
+                }
+    
                 if (!class_exists($controllerClass)) {
                     throw new Exception("Controller '{$controllerClass}' não encontrado.");
                 }
@@ -66,8 +70,8 @@ class Router
                 return;
             }
         }
-        
-        throw new Exception("Erro 404: Rota não encontrada para '{$requestUri}'", 404);
+
+        throw new Exception("Erro 404: Rota não encontrada para '{$requestUri}'");
     }
 }
 
