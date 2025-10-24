@@ -1,229 +1,198 @@
 import { AlertTriangle, Send } from "lucide-react";
 
+const FormField = ({ label, name, type = "text", value, onChange, options = null, rows = 1, optionValueKey, optionLabelKey, placeholder = "" }) => {
+  const commonClasses = "w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan transition duration-150 ease-in-out";
+  const fieldId = `field-step3-${name}`;
+
+  return (
+    <div>
+      <label htmlFor={fieldId} className="block text-brand-teal-dark font-semibold mb-1">
+        {label}
+      </label>
+      {options ? (
+        <select
+          id={fieldId}
+          name={name}
+          value={value || ""}
+          onChange={onChange}
+          className={commonClasses}
+        >
+          <option value="">Selecione</option>
+          {options.map((option, index) => {
+            if (typeof option === 'string') {
+              return <option key={option} value={option}>{option}</option>;
+            }
+          
+            const displayValue = option[optionValueKey];
+            const displayLabel = option[optionLabelKey];
+            return <option key={displayValue || index} value={displayValue}>{displayLabel}</option>;
+          })}
+        </select>
+      ) : type === "textarea" ? (
+        <textarea
+          id={fieldId}
+          name={name}
+          rows={rows}
+          value={value || ""}
+          onChange={onChange}
+          placeholder={placeholder}
+          className={`${commonClasses} resize-y`}
+        />
+      ) : (
+        <input
+          id={fieldId}
+          name={name}
+          type={type}
+          value={value || ""}
+          onChange={onChange}
+          placeholder={placeholder}
+          className={commonClasses}
+        />
+      )}
+    </div>
+  );
+};
+
 const AdmissionForm = ({
   tipoEnvelope,
   handleContinue,
   updateFormValues,
   formValues,
-  handleBack, // 
+  handleBack,
+  lookupData,
 }) => {
+
+  if (!lookupData) {
+    return <div className="p-4 text-center">Carregando dados do formulário...</div>;
+  }
+
   const handleInputChange = (field, value) => {
     updateFormValues("step3", field, value);
   };
 
-  const inputClass =
-    "w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan";
-  const labelClass = "block text-brand-teal-dark font-semibold mb-1";
+  const handleChange = (e) => {
+    handleInputChange(e.target.name, e.target.value);
+  };
 
   const renderForm = () => {
+  
     switch (tipoEnvelope) {
       case "admissao":
         return (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              
               <div className="space-y-4 bg-brand-ice-blue p-6 rounded-xl md:rounded-r-none md:rounded-l-3xl">
-                         <div>
-                  <label className={labelClass}>Cargo *</label>
-                  <input
-                    type="text"
-                    name="cargo"
-                    value={formValues.step3.cargo || ""}
-                    onChange={(e) => handleInputChange("cargo", e.target.value)}
-                    className={inputClass}
-                  />
-                </div>
+                
+                <FormField
+                  label="Cargo *"
+                  name="cargo"
+                  value={formValues.step3.cargo}
+                  onChange={handleChange}
+                  options={lookupData.jobTitles}
+                  optionValueKey="id"
+                  optionLabelKey="description"
+                />
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                  <label className={labelClass}>Categoria *</label>
-                  <select
+                  <FormField
+                    label="Categoria *"
                     name="categoria"
-                    value={formValues.step3.categoria || ""}
-                    onChange={(e) =>
-                      handleInputChange("categoria", e.target.value)
-                    }
-                    className={inputClass}
-                  >
-                    <option value="">Selecione</option>
-                    <option>Celetista</option>
-                    <option>Estagiário</option>
-                    <option>Jovem Aprendiz</option>
-                    <option>Temporário</option>
-                  </select>
-                  </div>
-                  <div>
-                    <label className={labelClass}>Horário de trabalho *</label>
-                    <select
-                      name="horario_trabalho"
-                      value={formValues.step3.horario_trabalho || ""}
-                      onChange={(e) =>
-                        handleInputChange("horario_trabalho", e.target.value)
-                      }
-                      className={inputClass}
-                    >
-                      <option value="">Selecione</option>
-                      <option>08h às 18h</option>
-                      <option>08h às 14h</option>
-                      <option>12h às 18h</option>
-                      <option>Escala 12x36</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div>
-                  <label className={labelClass}>Setor *</label>
-                  <select
-                    name="setor"
-                    value={formValues.step3.setor || ""}
-                    onChange={(e) => handleInputChange("setor", e.target.value)}
-                    className={inputClass}
-                  >
-                    <option value="">Selecione</option>
-                    <option>Recursos Humanos</option>
-                    <option>Financeiro</option>
-                    <option>Comercial</option>
-                    <option>Produção</option>
-                    <option>Logística</option>
-                    <option>Marketing</option>
-                    <option>TI</option>
-                  </select>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className={labelClass}>Motivo *</label>
-                    <select
-                      name="motivo"
-                      value={formValues.step3.motivo || ""}
-                      onChange={(e) =>
-                        handleInputChange("motivo", e.target.value)
-                      }
-                      className={inputClass}
-                    >
-                      <option value="">Selecione</option>
-                      <option>Reposição</option>
-                      <option>Nova posição</option>
-                      <option>Ampliação de equipe</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className={labelClass}>Sexo *</label>
-                    <select
-                      name="sexo"
-                      value={formValues.step3.sexo || ""}
-                      onChange={(e) =>
-                        handleInputChange("sexo", e.target.value)
-                      }
-                      className={inputClass}
-                    >
-                      <option value="">Selecione</option>
-                      <option>Feminino</option>
-                      <option>Masculino</option>
-                      <option>Ambos</option>
-                    </select>
-                  </div>
-                </div>
-    
-                <div>
-                  <label className={labelClass}>Salário Inicial *</label>
-                  <input
-                    type="number"
-                    name="salario"
-                    value={formValues.step3.salario || ""}
-                    onChange={(e) =>
-                      handleInputChange("salario", e.target.value)
-                    }
-                    placeholder="Digite o valor em R$"
-                    className={inputClass}
+                    value={formValues.step3.categoria}
+                    onChange={handleChange}
+                    options={lookupData.categorias} 
+                  />
+                  <FormField
+                    label="Horário de trabalho *"
+                    name="horario_trabalho"
+                    value={formValues.step3.horario_trabalho}
+                    onChange={handleChange}
+                    options={lookupData.horarios_trabalho} 
                   />
                 </div>
+
+                <FormField
+                  label="Setor *"
+                  name="setor"
+                  value={formValues.step3.setor}
+                  onChange={handleChange}
+                  options={lookupData.setores} 
+                />
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <FormField
+                    label="Motivo *"
+                    name="motivo"
+                    value={formValues.step3.motivo}
+                    onChange={handleChange}
+                    options={lookupData.motivos} 
+                  />
+                  <FormField
+                    label="Sexo *"
+                    name="sexo"
+                    value={formValues.step3.sexo}
+                    onChange={handleChange}
+                    options={lookupData.sexo} 
+                  />
+                </div>
+        
+                <FormField
+                  label="Salário Inicial *"
+                  name="salario"
+                  type="number"
+                  value={formValues.step3.salario}
+                  onChange={handleChange}
+                  placeholder="Digite o valor em R$"
+                />
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className={labelClass}>Tipo de Seleção *</label>
-                    <select
-                      name="tipo_selecao"
-                      value={formValues.step3.tipo_selecao || ""}
-                      onChange={(e) =>
-                        handleInputChange("tipo_selecao", e.target.value)
-                      }
-                      className={inputClass}
-                    >
-                      <option value="">Selecione</option>
-                      <option>Processo Interno</option>
-                      <option>Processo Externo</option>
-                      <option>Indicação</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className={labelClass}>Unidade</label>
-                    <select
-                      name="unidade"
-                      value={formValues.step3.unidade || ""}
-                      onChange={(e) =>
-                        handleInputChange("unidade", e.target.value)
-                      }
-                      className={inputClass}
-                    >
-                      <option value="">Selecione</option>
-                      <option>Teiú - Matriz</option>
-                      <option>Teiú Filial - Feira de Santana</option>
-                      <option>Teiú - Cosméticos</option>
-                      <option>Holding</option>
-                      <option>Votre</option>
-                      <option>Kaioka</option>
-                    </select>
-                  </div>
+                  <FormField
+                    label="Tipo de Seleção *"
+                    name="tipo_selecao"
+                    value={formValues.step3.tipo_selecao}
+                    onChange={handleChange}
+                    options={lookupData.tipos_selecao} 
+                  />
+                  <FormField
+                    label="Unidade"
+                    name="unidade"
+                    value={formValues.step3.unidade}
+                    onChange={handleChange}
+                    options={lookupData.unidades} 
+                  />
                 </div>
               </div>
 
               <div className="space-y-4 p-6 border border-brand-ice-blue rounded-xl md:rounded-l-none md:rounded-r-3xl">
-                                <div>
-                  <label className={labelClass}>
-                    Justificativa para Contratação *
-                  </label>
-                  <textarea
-                    name="justificativa"
-                    value={formValues.step3.justificativa || ""}
-                    onChange={(e) =>
-                      handleInputChange("justificativa", e.target.value)
-                    }
-                    className={inputClass}
-                    rows={2}
-                  />
-                </div>
+                <FormField
+                  label="Justificativa para Contratação *"
+                  name="justificativa"
+                  type="textarea"
+                  rows={2}
+                  value={formValues.step3.justificativa}
+                  onChange={handleChange}
+                />
+                <FormField
+                  label="Descrição das Atividades *"
+                  name="descricao_atividades"
+                  type="textarea"
+                  rows={3}
+                  value={formValues.step3.descricao_atividades}
+                  onChange={handleChange}
+                />
+                <FormField
+                  label="Observações"
+                  name="observacoes"
+                  type="textarea"
+                  rows={2}
+                  value={formValues.step3.observacoes}
+                  onChange={handleChange}
+                />
 
-                <div>
-                  <label className={labelClass}>
-                    Descrição das Atividades *
-                  </label>
-                  <textarea
-                    name="descricao_atividades"
-                    value={formValues.step3.descricao_atividades || ""}
-                    onChange={(e) =>
-                      handleInputChange("descricao_atividades", e.target.value)
-                    }
-                    className={inputClass}
-                    rows={3}
-                  />
-                </div>
-                <div>
-                  <label className={labelClass}>Observações</label>
-                  <textarea
-                    name="observacoes"
-                    value={formValues.step3.observacoes || ""}
-                    onChange={(e) =>
-                      handleInputChange("observacoes", e.target.value)
-                    }
-                    className={inputClass}
-                    rows={2}
-                  />
-                </div>
                 <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-3 rounded-md text-sm">
                   <div className="flex items-center">
                     <AlertTriangle className="w-5 h-5 mr-2 text-yellow-700" />
-                    <span>
-                      Importante: Revise as informações antes de enviar
-                    </span>
+                    <span>Importante: Revise as informações antes de enviar</span>
                   </div>
                 </div>
 
@@ -264,3 +233,4 @@ const AdmissionForm = ({
 };
 
 export default AdmissionForm;
+
