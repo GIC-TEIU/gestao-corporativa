@@ -2,6 +2,7 @@ import { Lock, X, Eye, EyeOff, FileText, PenTool } from 'lucide-react';
 import { useEnvelope } from '../../context/EnvelopeContext';
 import { useAuth } from '../../context/AuthContext';
 import Swal from 'sweetalert2';
+import { useState } from 'react'; // Adicione esta importação
 
 export const ApproveModal = () => {
   
@@ -24,6 +25,9 @@ export const ApproveModal = () => {
 
   const { currentUser, login } = useAuth();
 
+  // Estado para as observações
+  const [observations, setObservations] = useState('');
+
   const handleConfirmSignature = async () => {
     if (!password) {
       setSignatureError('Por favor, insira sua senha');
@@ -43,7 +47,8 @@ export const ApproveModal = () => {
         signedBy: validatedUser.name,
         signedAt: new Date().toISOString(),
         rejectedBy: null,
-        rejectedReason: ''
+        rejectedReason: '',
+        observations: observations // Adicione as observações aqui
       };
 
       setEnvelopeStatus(newStatus);
@@ -57,6 +62,7 @@ export const ApproveModal = () => {
         if (result.isConfirmed) {
           setShowSignatureModal(false);
           setPassword('');
+          setObservations(''); // Limpa as observações
           setSelectedDocs([]);
         }
       });
@@ -100,6 +106,25 @@ export const ApproveModal = () => {
           </div>
         </div>
 
+        {/* Caixa de texto para observações */}
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Observações (opcional)
+          </label>
+          <textarea
+            value={observations}
+            onChange={(e) => setObservations(e.target.value)}
+            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent placeholder-gray-400 resize-none"
+            placeholder="Adicione observações sobre esta assinatura..."
+            rows={3}
+            maxLength={200}
+          />
+          <div className="flex justify-between text-xs text-gray-500 mt-1">
+            <span>Máximo de 200 caracteres</span>
+            <span>{observations.length}/200</span>
+          </div>
+        </div>
+
         {/* Campo senha */}
         <div className="mb-6">
           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -133,6 +158,7 @@ export const ApproveModal = () => {
             onClick={() => {
               setShowSignatureModal(false);
               setPassword('');
+              setObservations('');
               setSignatureError('');
             }}
             className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-2 rounded-lg font-medium transition"
