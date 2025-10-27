@@ -7,14 +7,14 @@ import EnvelopeQueryTable from '../components/envelope-search/EnvelopeQueryTable
 import AnalysisModal from '../components/hr-panel/AnalysisModal';
 import ConfirmationViewModal from '../components/pdf-preview-for-signature/ConfirmationViewModal';
 import GroupingModal from '../components/hr-panel/GroupingModal';
-// NOVO: Importando o AlertModal
 import AlertModal from '../components/hr-panel/AlertModal';
 
-import { ClipboardList, ArrowRightLeft, MailSearch, FolderPlus, Filter } from 'lucide-react';
+import { ClipboardList, ArrowRightLeft, MailSearch, FolderPlus, Filter, Search } from 'lucide-react';
 
 function HRPanel() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('requisicoes');
+  const [searchTerm, setSearchTerm] = useState('');
 
   const [isAnalysisModalOpen, setIsAnalysisModalOpen] = useState(false);
   const [selectedEnvelopeData, setSelectedEnvelopeData] = useState(null);
@@ -24,12 +24,9 @@ function HRPanel() {
 
   const [envelopeConfirmado, setEnvelopeConfirmado] = useState(null);
 
-  // Estado para armazenar os envelopes selecionados
   const [selectedRequisitions, setSelectedRequisitions] = useState([]);
-  // Estado para controlar a visibilidade do GroupingModal
   const [isGroupingModalOpen, setIsGroupingModalOpen] = useState(false);
 
-  // NOVO: Estados para o AlertModal
   const [showAlertModal, setShowAlertModal] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
   const [alertType, setAlertType] = useState('info');
@@ -41,12 +38,14 @@ function HRPanel() {
     { id: 'consulta-envelopes', label: 'Consulta de Envelopes', icon: MailSearch },
   ];
   
-  // Callback para receber os itens selecionados da tabela
   const handleSelectedItemsChange = useCallback((items) => {
     setSelectedRequisitions(items);
   }, []);
 
-  // MODIFICADO: Agora usando AlertModal em vez de alert nativo
+  const handleSearchChange = (term) => {
+    setSearchTerm(term);
+  };
+
   const handleAgruparEnvelopesClick = () => {
     if (selectedRequisitions.length === 0) {
       setAlertMessage("Nenhum envelope selecionado. Selecione pelo menos um para agrupar.");
@@ -55,7 +54,6 @@ function HRPanel() {
       return;
     }
 
-    // Verifica se todos os envelopes selecionados estão analisados
     const allAnalyzed = selectedRequisitions.every(req => req.status.text === 'Analisado');
     
     if (!allAnalyzed) {
@@ -65,27 +63,22 @@ function HRPanel() {
       return;
     }
 
-    // Se chegou aqui, todos estão analisados - abre o modal
     setIsGroupingModalOpen(true);
   };
 
-  // Função para confirmar o agrupamento (chamada pelo GroupingModal)
   const handleConfirmGrouping = () => {
     console.log("Agrupamento confirmado para os envelopes:", selectedRequisitions.map(r => r.rap));
     setIsGroupingModalOpen(false);
     
-    // Navega para a próxima tela
     navigate('/envelope/recipient-flow', { 
       state: { groupedEnvelopes: selectedRequisitions } 
     });
   };
 
-  // Função para fechar o GroupingModal
   const handleCloseGroupingModal = () => {
     setIsGroupingModalOpen(false);
   };
   
-  // MODIFICADO: Substituindo alert nativo por AlertModal
   const handleFilterClick = () => {
     setAlertMessage("Funcionalidade de filtro a ser implementada!");
     setAlertType('info');
@@ -96,12 +89,12 @@ function HRPanel() {
     setSelectedEnvelopeData(data);
     setIsAnalysisModalOpen(true);
   };
+  
   const handleCloseAnalysisModal = () => {
     setIsAnalysisModalOpen(false);
     setSelectedEnvelopeData(null);
   };
 
-  // NOVO: Função para solicitação de alteração usando AlertModal
   const handleRequestChange = () => {
     setAlertMessage('Solicitação de Alteração enviada!');
     setAlertType('success');
@@ -113,6 +106,7 @@ function HRPanel() {
     setItemToView(item);
     setIsViewModalOpen(true);
   };
+  
   const handleCloseViewModal = () => {
     setIsViewModalOpen(false);
     setItemToView(null);
@@ -135,16 +129,23 @@ function HRPanel() {
           <RequestTable 
             onAnalyzeClick={handleOpenAnalysisModal} 
             onSelectedItemsChange={handleSelectedItemsChange}
+            searchTerm={searchTerm}
           />
         );
       case 'movimentacao-rap':
-        return <RapMovementTable onAnalyzeClick={handleOpenAnalysisModal} />;
+        return (
+          <RapMovementTable 
+            onAnalyzeClick={handleOpenAnalysisModal} 
+            searchTerm={searchTerm}
+          />
+        );
       case 'consulta-envelopes':
         return (
           <EnvelopeQueryTable
             onOpenViewModal={handleOpenViewModal}
             onViewClick={handleNavigateToRecipients}
             envelopeParaAtualizar={envelopeConfirmado}
+            searchTerm={searchTerm}
           />
         );
       default:
@@ -152,7 +153,6 @@ function HRPanel() {
     }
   };
 
-  // Desabilita o botão se não houver seleção ou não estiver na tab correta
   const isGroupingDisabled = selectedRequisitions.length === 0 || activeTab !== 'requisicoes';
 
   return (
@@ -188,31 +188,48 @@ function HRPanel() {
             })}
           </div>
           
-          <div className="flex w-full md:w-auto items-center justify-end gap-4">
-            {activeTab === 'requisicoes' && (
+          {/* Searchbar ajustada */}
+          <div className="flex flex-col sm:flex-row w-full md:w-auto items-stretch sm:items-center justify-end gap-3">
+            <div className="relative flex-grow md:flex-grow-0 md:min-w-[280px]">
+              <input
+                type="text"
+                placeholder="Pesquisar..."
+                value={searchTerm}
+                onChange={(e) => handleSearchChange(e.target.value)}
+                className="w-full bg-[#EEF1F1] border border-[#767676] text-gray-800 placeholder:text-[#9E9E9E] rounded-lg py-2 pl-3 pr-9 focus:outline-none focus:ring-2 focus:ring-[#33748B] text-sm"
+              />
+              <div className="absolute inset-y-0 right-0 pr-2 flex items-center pointer-events-none">
+                <Search size={18} className="text-gray-400" />
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              {activeTab === 'requisicoes' && (
+                <button
+                  onClick={handleAgruparEnvelopesClick}
+                  disabled={isGroupingDisabled}
+                  className={`flex items-center gap-2 px-3 py-2 rounded-lg font-semibold transition-all whitespace-nowrap text-sm
+                      ${isGroupingDisabled 
+                          ? 'bg-gray-300 text-gray-500 border border-gray-400 cursor-not-allowed' 
+                          : 'bg-[#A855F7]/[0.23] text-[#9D56B0] border border-[#A855F7] hover:bg-[#A855F7]/[0.35]'
+                      }
+                  `}
+                >
+                  <FolderPlus size={16} />
+                  <span className="hidden sm:inline whitespace-nowrap">
+                    Criar Envelope ({selectedRequisitions.length})
+                  </span>
+                </button>
+              )}
+              
               <button
-                onClick={handleAgruparEnvelopesClick}
-                disabled={isGroupingDisabled}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-all whitespace-nowrap
-                    ${isGroupingDisabled 
-                        ? 'bg-gray-300 text-gray-500 border border-gray-400 cursor-not-allowed' 
-                        : 'bg-[#A855F7]/[0.23] text-[#9D56B0] border border-[#A855F7] hover:bg-[#A855F7]/[0.35]'
-                    }
-                `}
-              >
-                <FolderPlus size={18} />
-                <span className="hidden sm:inline whitespace-nowrap">
-                  Criar Envelope ({selectedRequisitions.length})
-                </span>
-              </button>
-            )}
-            <button
                 onClick={handleFilterClick}
-                className="flex items-center gap-2 bg-[#33748B] text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition"
-            >
-                <Filter size={18} />
-                <span className="hidden sm:inline font-semibold">Filtrar</span>
-            </button>
+                className="flex items-center gap-2 bg-[#33748B] text-white px-3 py-2 rounded-lg hover:bg-opacity-90 transition shrink-0 text-sm"
+              >
+                <Filter size={16} />
+                <span className="font-semibold hidden sm:inline">Filtrar</span>
+              </button>
+            </div>
           </div>
 
         </div>
@@ -229,15 +246,15 @@ function HRPanel() {
         onConfirm={() => {
           handleCloseAnalysisModal();
         }}
-        onRequestChange={handleRequestChange} // MODIFICADO: Agora usando a nova função
+        onRequestChange={handleRequestChange}
       />
+      
       <ConfirmationViewModal
         isOpen={isViewModalOpen}
         onClose={handleCloseViewModal}
         onConfirm={handleConfirmView}
       />
 
-      
       <GroupingModal
         isOpen={isGroupingModalOpen}
         onClose={handleCloseGroupingModal}
@@ -245,7 +262,6 @@ function HRPanel() {
         onConfirmGrouping={handleConfirmGrouping}
       />
 
-      {/* NOVO: AlertModal para substituir todos os alerts nativos */}
       <AlertModal 
         isOpen={showAlertModal}
         onClose={() => setShowAlertModal(false)}
