@@ -34,10 +34,21 @@ class LookupController
         "TI"
     ];
 
-    private static $motivos = [
+    // Renomeado de $motivos para $motivos_rap
+    private static $motivos_rap = [
         "Reposição",
         "Nova posição",
         "Ampliação de equipe"
+    ];
+
+    // Nova lista de motivos para RMP
+    private static $motivos_rmp = [
+        "Promoção",
+        "Transferência (Setor/Unidade)",
+        "Alteração Salarial",
+        "Alteração de Cargo",
+        "Alteração de Horário",
+        "Reenquadramento"
     ];
 
     private static $sexo = [
@@ -61,6 +72,9 @@ class LookupController
         "Kaioka"
     ];
 
+    /**
+     * Retorna dados para o formulário de Requisição de Admissão (RAP)
+     */
     public function getRapFormData()
     {
         
@@ -72,14 +86,43 @@ class LookupController
             
             'managers' => $managers,
             'directors' => $directors,
-            'jobTitles' => $jobTitles,         
+            'jobTitles' => $jobTitles,
             'categorias' => self::$categorias,
             'horarios_trabalho' => self::$horarios_trabalho,
             'setores' => self::$setores,
-            'motivos' => self::$motivos,
+            'motivos' => self::$motivos_rap, // Atualizado para usar a lista de RAP
             'sexo' => self::$sexo,
             'tipos_selecao' => self::$tipos_selecao,
-            'unidades' => self::$unidades,       
+            'unidades' => self::$unidades,
+        ];
+
+        Response::json([
+            'success' => true,
+            'data' => $data
+        ]);
+    }
+
+    /**
+     * (NOVO) Retorna dados para o formulário de Requisição de Movimentação (RMP)
+     */
+    public function getRmpFormData()
+    {
+        // RMP geralmente precisa dos mesmos lookups que RAP (novos gestores, novos cargos)
+        $managers = Manager::getAll();
+        $directors = Director::getAll();
+        $jobTitles = ProtheusJobTitle::getAll(); 
+
+        $data = [
+            // Dados dinâmicos (para onde o funcionário vai)
+            'managers' => $managers,
+            'directors' => $directors,
+            'jobTitles' => $jobTitles, 
+            
+            // Listas estáticas relevantes para movimentação
+            'horarios_trabalho' => self::$horarios_trabalho,
+            'setores' => self::$setores,
+            'unidades' => self::$unidades,
+            'motivos' => self::$motivos_rmp, // Usando a nova lista de motivos RMP
         ];
 
         Response::json([
@@ -88,4 +131,3 @@ class LookupController
         ]);
     }
 }
-

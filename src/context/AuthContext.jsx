@@ -29,7 +29,7 @@ export function AuthProvider({ children }) {
           ],
           cpf: "123.456.789-00",
           matricula: "001",
-          centroCusto: "TI",
+          centroCusto: "301017",
           createdAt: new Date().toISOString()
         },
         {
@@ -88,7 +88,7 @@ export function AuthProvider({ children }) {
           ],
           cpf: "123.456.789-00",
           matricula: "001",
-          centroCusto: "TI",
+          centroCusto: "301017",
           createdAt: new Date().toISOString()
         },
       ];
@@ -134,7 +134,6 @@ export function AuthProvider({ children }) {
           userToSet = completeUser;
           localStorage.setItem('currentUser', JSON.stringify(completeUser));
         } else {
-          // Usuário não encontrado - remove do localStorage
           localStorage.removeItem('currentUser');
         }
       } catch {

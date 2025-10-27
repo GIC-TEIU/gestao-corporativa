@@ -59,14 +59,14 @@ export function AppProvider({ children }) {
       celular: "77 9876-5432",
       status: "ativo",
       matricula: "123456.7",
-      centroCusto: "TI",
+      centroCusto: "301017",
       cpf: "987.654.321-00",
       empresa: "Teiú - Filial",
       industria: "Tecnologia",
       assinatura: "/assets/signature.png",
     },
     {
-      id: 5, // CORRIGIDO: era 3
+      id: 5, 
       nome: "Andersen",
       email: "eletri.andersen@gmail.com",
       cargo: "Tec de eletronica",
@@ -80,7 +80,7 @@ export function AppProvider({ children }) {
       assinatura: "/assets/signature.png",
     },
     {
-      id: 6, // CORRIGIDO: era 3
+      id: 6, 
       nome: "Ikaro",
       email: "web.igor@gmail.com",
       cargo: "Desenvolvedor web",
@@ -95,7 +95,7 @@ export function AppProvider({ children }) {
     },
   ]);
 
-  // Estado para envelopes
+  
   const [envelopes, setEnvelopes] = useState([
     { 
       id: 1, 
@@ -116,7 +116,7 @@ export function AppProvider({ children }) {
     },
   ]);
 
-  // Funções para gerenciar funcionários
+  
   const addFuncionario = (novoFuncionario) => {
     setFuncionarios([...funcionarios, { ...novoFuncionario, id: Date.now() }]);
   };
@@ -127,7 +127,7 @@ export function AppProvider({ children }) {
     ));
   };
 
-  // Funções para gerenciar envelopes
+  
   const addEnvelope = (novoEnvelope) => {
     setEnvelopes([...envelopes, { 
       ...novoEnvelope, 
