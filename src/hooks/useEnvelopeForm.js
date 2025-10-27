@@ -75,7 +75,7 @@ export const useEnvelopeForm = () => {
       return;
     }
 
-    // CORREÇÃO: Para movimento de RH (step 2)
+    
     if (step === 2 && setorEnvelope === "RMP") {
     const currentFormValues = formValues.step2;
     
@@ -91,7 +91,7 @@ export const useEnvelopeForm = () => {
     return;
   }
 
-  // Para admissão (RAP) no step 3
+  
   if (step === 3) {
     const form = e.target;
     const formElements = form.elements;
@@ -141,15 +141,40 @@ export const useEnvelopeForm = () => {
     });
   };
 
-  const handleConfirm = async () => {
-    setShowConfirmation(false);
-    setEnviando(true);
-    
-    await new Promise(resolve => setTimeout(resolve, 2000));
+const handleConfirm = async () => {
+  setShowConfirmation(false);
+  setEnviando(true);
+
+  try { 
+    const payload = {
+        step1: formValues.step1,
+        step3: formValues.step3 
+    };
+
+    const response = await fetch('http://localhost/gestao-corporativa/public/api/requisicao/rap', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload)
+    });
+
+    const result = await response.json();
+
+    if (!response.ok || !result.success) {
+        throw new Error(result.message || 'Falha ao salvar a requisição.');
+    }
+
     
     setEnviando(false);
     setEnviado(true);
-  };
+
+  } catch (error) {
+    console.error("Erro ao confirmar:", error);
+    alert(`Erro: ${error.message}`); 
+    setEnviando(false);
+  }
+};
 
   const handleEdit = () => {
     setShowConfirmation(false);

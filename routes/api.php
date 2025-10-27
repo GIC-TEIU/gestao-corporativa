@@ -10,6 +10,7 @@ Router::post('/api/login', [AuthController::class, 'login']);
 Router::post('/api/logout', [AuthController::class, 'logout']);
 
 Router::get('/api/lookups/rap-form', [LookupController::class, 'getRapFormData']);
+Router::post('/api/requisicao/rap', [RapController::class, 'store']);
 
 
 
