@@ -17,7 +17,7 @@ export function AuthProvider({ children }) {
       const testUsers = [
         {
           id: 1,
-          name: "Administrador Geral",
+          name: "Stéfani Soares Freire",
           email: "admin@empresa.com",
           password: "123456",
           permissions: [
@@ -28,7 +28,7 @@ export function AuthProvider({ children }) {
             'signature_management'
           ],
           cpf: "123.456.789-00",
-          matricula: "001",
+          matricula: "018104",
           centroCusto: "301017",
           createdAt: new Date().toISOString()
         },

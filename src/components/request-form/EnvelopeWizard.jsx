@@ -120,15 +120,16 @@ export default function EnvelopeWizard() {
     };
 
     switch (step) {
-      case 1:
-        return (
-          <FormHeader
-            {...commonProps} 
-            handleContinue={handleContinueFromHeader} 
-            formValues={formValues.step1}
-            handleBack={handleBack}
-          />
-        );
+case 1:
+  return (
+    <FormHeader
+      {...commonProps}
+      handleContinue={handleContinueFromHeader}
+      formValues={formValues}
+      handleBack={handleBack}
+    />
+  );
+
       
       case 2:
         return (
