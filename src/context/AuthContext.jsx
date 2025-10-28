@@ -11,149 +11,110 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const initializeTestUsers = () => {
-      const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
-
-      const testUsers = [
-        {
-          id: 1,
-          name: "Administrador Geral",
-          email: "admin@empresa.com",
-          password: "123456",
-          permissions: [
-            'request_create',
-            'request_view',
-            'hr_panel',
-            'user_management',
-            'signature_management'
-          ],
-          cpf: "123.456.789-00",
-          matricula: "001",
-          centroCusto: "TI",
-          createdAt: new Date().toISOString()
-        },
-        {
-          id: 2,
-          name: "Criador de Requisição",
-          email: "criador@empresa.com",
-          password: "123456",
-          permissions: ['request_create'],
-          cpf: "234.567.890-11",
-          matricula: "002",
-          centroCusto: "RH",
-          createdAt: new Date().toISOString()
-        },
-        {
-          id: 3,
-          name: "Gestor de RH",
-          email: "rh@empresa.com",
-          password: "123456",
-          permissions: ['request_create', 'hr_panel'],
-          cpf: "345.678.901-22",
-          matricula: "003",
-          centroCusto: "RH",
-          createdAt: new Date().toISOString()
-        },
-        {
-          id: 4,
-          name: "Consultor de Requisição",
-          email: "consultor@empresa.com",
-          password: "123456",
-          permissions: ['request_view'],
-          cpf: "456.789.012-33",
-          matricula: "004",
-          centroCusto: "RH",
-          createdAt: new Date().toISOString()
-        },
-        {
-          id: 5,
-          name: "Usuário Sem Acesso",
-          email: "semacesso@empresa.com",
-          password: "123456",
-          permissions: [],
-          cpf: "567.890.123-44",
-          matricula: "005",
-          centroCusto: "RH",
-          createdAt: new Date().toISOString()
-        },
-           {
-          id: 6,
-          name: "Coordenador",
-          email: "Coordenador@empresa.com",
-          password: "123456",
-          permissions: [
-            'request_create',
-            'user_management',
-            'signature_management'
-          ],
-          cpf: "123.456.789-00",
-          matricula: "001",
-          centroCusto: "TI",
-          createdAt: new Date().toISOString()
-        },
-      ];
-
-      let usersUpdated = false;
-
-      testUsers.forEach(testUser => {
-        const existingUserIndex = existingUsers.findIndex(user => user.email === testUser.email);
-        if (existingUserIndex === -1) {
-          existingUsers.push(testUser);
-          usersUpdated = true;
-        } else {
-          const existingUser = existingUsers[existingUserIndex];
-          if (!existingUser.permissions || !Array.isArray(existingUser.permissions)) {
-            existingUsers[existingUserIndex] = {
-              ...existingUser,
-              permissions: testUser.permissions
-            };
-            usersUpdated = true;
-          }
-        }
-      });
-
-      if (usersUpdated) {
-        localStorage.setItem('users', JSON.stringify(existingUsers));
-      }
-
-      return existingUsers;
-    };
-
-    const allUsers = initializeTestUsers();
-    let userToSet = null;
-    const savedUser = localStorage.getItem('currentUser');
-
-    if (savedUser) {
-      try {
-        const parsedUser = JSON.parse(savedUser);
-        const completeUser = allUsers.find(u =>
-          u.id === parsedUser.id || u.email === parsedUser.email
-        );
-
-        if (completeUser) {
-          userToSet = completeUser;
-          localStorage.setItem('currentUser', JSON.stringify(completeUser));
-        } else {
-          // Usuário não encontrado - remove do localStorage
-          localStorage.removeItem('currentUser');
-        }
-      } catch {
-       
-        localStorage.removeItem('currentUser');
-      }
-    }
-
-    
-
-    if (userToSet && (!userToSet.permissions || !Array.isArray(userToSet.permissions))) {
-      userToSet.permissions = [];
-      localStorage.setItem('currentUser', JSON.stringify(userToSet));
-    }
-
-    setCurrentUser(userToSet);
-    setLoading(false);
+    checkCurrentUser();
   }, []);
 
+  const checkCurrentUser = async () => {
+    try {
+      const response = await fetch('/api/current-user', {
+        method: 'GET',
+        credentials: 'include'
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.status === 200) {
+          const userData = {
+            id: data.data.user_id,
+            name: data.data.full_name,
+            email: data.data.email,
+            full_name: data.data.full_name,
+            job_title: data.data.job_title,
+            employee_id: data.data.employee_id,
+            permissions: data.data.permissions || []
+          };
+          
+          setCurrentUser(userData);
+          localStorage.setItem('currentUser', JSON.stringify(userData));
+        }
+      } else {
+        // Se não autenticado, limpa dados locais
+        localStorage.removeItem('currentUser');
+      }
+    } catch (error) {
+      console.log('Erro ao verificar usuário atual:', error.message);
+      // Fallback para usuário salvo localmente (apenas desenvolvimento)
+      if (process.env.NODE_ENV === 'development') {
+        const savedUser = localStorage.getItem('currentUser');
+        if (savedUser) {
+          try {
+            setCurrentUser(JSON.parse(savedUser));
+          } catch {
+            localStorage.removeItem('currentUser');
+          }
+        }
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const login = async (email, password) => {
+    try {
+      console.log('🔄 Tentando login no backend...');
+      
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+        credentials: 'include'
+      });
+
+      const data = await response.json();
+      console.log('📡 Resposta do backend:', data);
+
+      if (response.ok && data.status === 200) {
+        console.log('✅ Login backend bem-sucedido');
+        
+        const userData = {
+          id: data.data.user_id,
+          name: data.data.full_name,
+          email: data.data.email,
+          full_name: data.data.full_name,
+          job_title: data.data.job_title,
+          employee_id: data.data.employee_id,
+          permissions: data.data.permissions || []
+        };
+
+        setCurrentUser(userData);
+        localStorage.setItem('currentUser', JSON.stringify(userData));
+        return userData;
+      } else {
+        throw new Error(data.message || 'Erro no login');
+      }
+    } catch (error) {
+      console.log('❌ Erro no login backend:', error.message);
+      throw error;
+    }
+  };
+
+  const logout = async () => {
+    try {
+      await fetch('/api/logout', {
+        method: 'POST',
+        credentials: 'include'
+      });
+    } catch (error) {
+      console.log('Erro no logout backend:', error);
+    } finally {
+      setCurrentUser(null);
+      localStorage.removeItem('currentUser');
+    }
+  };
+
+  // Funções auxiliares para desenvolvimento
   const register = (userData) => {
     const users = JSON.parse(localStorage.getItem('users') || '[]');
     if (users.find(user => user.email === userData.email)) {
@@ -172,36 +133,6 @@ export function AuthProvider({ children }) {
     return newUser;
   };
 
-  const updateUserPermissions = (userId, newPermissions) => {
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
-    const updatedUsers = users.map(user =>
-      user.id === userId ? { ...user, permissions: newPermissions } : user
-    );
-    localStorage.setItem('users', JSON.stringify(updatedUsers));
-
-    if (currentUser && currentUser.id === userId) {
-      const updatedUser = { ...currentUser, permissions: newPermissions };
-      setCurrentUser(updatedUser);
-      localStorage.setItem('currentUser', JSON.stringify(updatedUser));
-    }
-  };
-
-  const login = (email, password) => {
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
-    const user = users.find(u => u.email === email && u.password === password);
-    if (!user) {
-      throw new Error('Email ou senha incorretos');
-    }
-    setCurrentUser(user);
-    localStorage.setItem('currentUser', JSON.stringify(user));
-    return user;
-  };
-
-  const logout = () => {
-    setCurrentUser(null);
-    localStorage.removeItem('currentUser');
-  };
-
   const updateProfile = (updatedData) => {
     const users = JSON.parse(localStorage.getItem('users') || '[]');
     const updatedUsers = users.map(user =>
@@ -214,20 +145,17 @@ export function AuthProvider({ children }) {
     return updatedUser;
   };
 
-  const verifyPassword = async (password) => {
-    if (!currentUser) return false;
-    return currentUser.password === password;
-  };
-
   const value = {
     currentUser,
     loading,
-    register,
     login,
     logout,
+    register,
     updateProfile,
-    verifyPassword,
-    updateUserPermissions,
+    checkCurrentUser,
+    hasPermission: (permission) => {
+      return currentUser?.permissions?.includes(permission) || false;
+    }
   };
 
   return (

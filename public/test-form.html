@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teste Login API</title>
+</head>
+<body>
+    <h2>Teste de Login API</h2>
+    <form id="loginForm">
+        <input type="email" name="email" placeholder="Email" value="joao.silva@empresa.com" required>
+        <input type="password" name="password" placeholder="Senha" value="password" required>
+        <button type="submit">Testar Login</button>
+    </form>
+
+    <button id="getUserBtn">Buscar Usuário Atual</button>
+    <button id="logoutBtn">Logout</button>
+    
+    <div id="result"></div>
+
+    <script>
+        const baseUrl = '/gestao-corporativa/public';
+
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = {
+                email: formData.get('email'),
+                password: formData.get('password')
+            };
+            
+            try {
+                const response = await fetch(`${baseUrl}/api/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                document.getElementById('result').innerHTML = 
+                    '<h3>Status: ' + response.status + '</h3>' +
+                    '<pre>' + JSON.stringify(result, null, 2) + '</pre>';
+            } catch (error) {
+                document.getElementById('result').innerHTML = 'Erro: ' + error;
+            }
+        });
+
+        document.getElementById('getUserBtn').addEventListener('click', async function() {
+            try {
+                const response = await fetch(`${baseUrl}/api/user`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                const result = await response.json();
+                document.getElementById('result').innerHTML = 
+                    '<h3>Status: ' + response.status + '</h3>' +
+                    '<pre>' + JSON.stringify(result, null, 2) + '</pre>';
+            } catch (error) {
+                document.getElementById('result').innerHTML = 'Erro: ' + error;
+            }
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', async function() {
+            try {
+                const response = await fetch(`${baseUrl}/api/logout`, {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                
+                const result = await response.json();
+                document.getElementById('result').innerHTML = 
+                    '<h3>Status: ' + response.status + '</h3>' +
+                    '<pre>' + JSON.stringify(result, null, 2) + '</pre>';
+            } catch (error) {
+                document.getElementById('result').innerHTML = 'Erro: ' + error;
+            }
+        });
+    </script>
+</body>
+</html>
