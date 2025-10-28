@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { AlertTriangle, Send } from "lucide-react";const FormField = ({ label, name, type = "text", value, onChange, options = null, rows = 1, optionValueKey, optionLabelKey, placeholder = "" }) => {
+import { AlertTriangle, Send } from "lucide-react"; const FormField = ({ label, name, type = "text", value, onChange, options = null, rows = 1, optionValueKey, optionLabelKey, placeholder = "" }) => {
   const commonClasses = "w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan transition duration-150 ease-in-out";
   const fieldId = `field-step3-${name}`;
 
@@ -24,7 +24,7 @@ import { AlertTriangle, Send } from "lucide-react";const FormField = ({ label, n
 
             const displayValue = option[optionValueKey];
             const displayLabel = option[optionLabelKey];
-                      return <option key={displayValue || index} value={displayValue}>{displayLabel || displayValue}</option>;
+            return <option key={displayValue || index} value={displayValue}>{displayLabel || displayValue}</option>;
           })}
         </select>
       ) : type === "textarea" ? (
@@ -56,55 +56,63 @@ const AdmissionForm = ({
   tipoEnvelope,
   handleContinue,
   updateFormValues,
-  formValues = { step3: {} },  handleBack,
-  lookupData,}) => {
+  formValues = { step3: {} }, handleBack,
+  lookupData, }) => {
 
-  const [cargoSearch, setCargoSearch] = useState("");  const [cargoSuggestions, setCargoSuggestions] = useState([]);
+  const [cargoSearch, setCargoSearch] = useState(""); const [cargoSuggestions, setCargoSuggestions] = useState([]);
   const [showCargoSuggestions, setShowCargoSuggestions] = useState(false);
   const [isCargoLoading, setIsCargoLoading] = useState(false);
 
-  const [setorSearch, setSetorSearch] = useState("");  const [setorSuggestions, setSetorSuggestions] = useState([]);
+  const [setorSearch, setSetorSearch] = useState(""); const [setorSuggestions, setSetorSuggestions] = useState([]);
   const [showSetorSuggestions, setShowSetorSuggestions] = useState(false);
   const [isSetorLoading, setIsSetorLoading] = useState(false);
 
 
   useEffect(() => {
-      if (formValues.step3?.cargo && !cargoSearch) {
-       fetchCargoDescription(formValues.step3.cargo);
+    if (formValues.step3?.cargo && !cargoSearch) {
+      fetchCargoDescription(formValues.step3.cargo);
     }
-        if (formValues.step3?.setor && !setorSearch) {
-       fetchSetorDescription(formValues.step3.setor);
+    if (formValues.step3?.setor && !setorSearch) {
+      fetchSetorDescription(formValues.step3.setor);
     }
   }, [formValues.step3?.cargo, formValues.step3?.setor]);
-   const fetchCargoDescription = async (code) => {
-        if (!code) return;
-        try {
-            const res = await fetch(`/api/lookups/cargo/${code}`);
-            if (res.ok) {
-                const result = await res.json();
-                if (result.success) {
-                    setCargoSearch(result.data.description);                } else {
-                    setCargoSearch(code);                }
-            } else {
-                 setCargoSearch(code);            }
-        } catch (e) {
-             setCargoSearch(code);        }
-   };
+  const fetchCargoDescription = async (code) => {
+    if (!code) return;
+    try {
+      const res = await fetch(`/api/lookups/cargo/${code}`);
+      if (res.ok) {
+        const result = await res.json();
+        if (result.success) {
+          setCargoSearch(result.data.description);
+        } else {
+          setCargoSearch(code);
+        }
+      } else {
+        setCargoSearch(code);
+      }
+    } catch (e) {
+      setCargoSearch(code);
+    }
+  };
 
-     const fetchSetorDescription = async (code) => {
-        if (!code) return;
-        try {
-            const res = await fetch(`/api/lookups/cc/${code}`);
-            if (res.ok) {
-                const result = await res.json();
-                if (result.success) {
-                    setSetorSearch(result.data.description);                } else {
-                    setSetorSearch(code);                }
-            } else {
-                 setSetorSearch(code);            }
-        } catch (e) {
-             setSetorSearch(code);        }
-   };
+  const fetchSetorDescription = async (code) => {
+    if (!code) return;
+    try {
+      const res = await fetch(`/api/lookups/cc/${code}`);
+      if (res.ok) {
+        const result = await res.json();
+        if (result.success) {
+          setSetorSearch(result.data.description);
+        } else {
+          setSetorSearch(code);
+        }
+      } else {
+        setSetorSearch(code);
+      }
+    } catch (e) {
+      setSetorSearch(code);
+    }
+  };
 
 
   if (!lookupData) {
@@ -120,11 +128,11 @@ const AdmissionForm = ({
     const value = e.target.value;
     setCargoSearch(value);
     setIsCargoLoading(true);
-      updateFormValues("step3", "cargo", "");
+    updateFormValues("step3", "cargo", "");
   };
 
   const handleCargoSelect = (suggestion) => {
-    setCargoSearch(suggestion.description);    updateFormValues("step3", "cargo", suggestion.code);    setCargoSuggestions([]);
+    setCargoSearch(suggestion.description); updateFormValues("step3", "cargo", suggestion.code); setCargoSuggestions([]);
     setShowCargoSuggestions(false);
   };
 
@@ -151,10 +159,10 @@ const AdmissionForm = ({
   };
 
   useEffect(() => {
-      const handler = setTimeout(() => {
+    const handler = setTimeout(() => {
       fetchJobTitles(cargoSearch);
     }, 300);
-      return () => {
+    return () => {
       clearTimeout(handler);
     };
   }, [cargoSearch]);
@@ -163,11 +171,11 @@ const AdmissionForm = ({
     const value = e.target.value;
     setSetorSearch(value);
     setIsSetorLoading(true);
-      updateFormValues("step3", "setor", "");
+    updateFormValues("step3", "setor", "");
   };
 
   const handleSetorSelect = (suggestion) => {
-    setSetorSearch(suggestion.desc);    updateFormValues("step3", "setor", suggestion.code);    setSetorSuggestions([]);
+    setSetorSearch(suggestion.desc); updateFormValues("step3", "setor", suggestion.code); setSetorSuggestions([]);
     setShowSetorSuggestions(false);
   };
 
@@ -194,10 +202,10 @@ const AdmissionForm = ({
   };
 
   useEffect(() => {
-      const handler = setTimeout(() => {
+    const handler = setTimeout(() => {
       fetchCostCenters(setorSearch);
     }, 300);
-      return () => {
+    return () => {
       clearTimeout(handler);
     };
   }, [setorSearch]);
@@ -266,7 +274,7 @@ const AdmissionForm = ({
 
 
                 <div className="relative">
-                   <label htmlFor="field-step3-setor" className="block text-brand-teal-dark font-semibold mb-1">
+                  <label htmlFor="field-step3-setor" className="block text-brand-teal-dark font-semibold mb-1">
                     Setor *
                   </label>
                   <input
@@ -289,7 +297,7 @@ const AdmissionForm = ({
                           onClick={() => handleSetorSelect(cc)}
                           className="px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
                         >
-                           <span className="font-bold">{cc.code}</span> - <span>{cc.desc}</span>
+                          <span className="font-bold">{cc.code}</span> - <span>{cc.desc}</span>
                         </div>
                       ))}
                     </div>
@@ -384,7 +392,7 @@ const AdmissionForm = ({
                     Anterior
                   </button>
                   <button
-                    type="submit"                    className="flex items-center bg-brand-cyan text-white px-6 py-2 rounded-md hover:bg-brand-blue-dark/90"
+                    type="submit" className="flex items-center bg-brand-cyan text-white px-6 py-2 rounded-md hover:bg-brand-blue-dark/90"
                   >
                     <Send size={14} className="mr-2" />
                     Enviar
@@ -401,9 +409,10 @@ const AdmissionForm = ({
   };
 
   return (
-      <form
+    <form
       onSubmit={(e) => {
-        e.preventDefault();        handleContinue();      }}
+        handleContinue(e);
+      }}
       className="space-y-4 p-2 rounded-md "
     >
       {renderForm()}
