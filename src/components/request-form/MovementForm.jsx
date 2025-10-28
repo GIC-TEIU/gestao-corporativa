@@ -1,4 +1,3 @@
-import Button from "../ui/Button";
 import { useEmployees } from "../../context/EmployeeContext";
 import { useAuth } from "../../context/AuthContext";
 import { useState, useEffect } from "react";
@@ -23,23 +22,29 @@ const MovementForm = ({
   const [positionSearch, setPositionSearch] = useState(formValues?.cargoAtual || "");
   const [positionSuggestions, setPositionSuggestions] = useState([]);
   const [showPositionSuggestions, setShowPositionSuggestions] = useState(false);
+  const [focusedPositionInput, setFocusedPositionInput] = useState(null);
   const [salaryLoading, setSalaryLoading] = useState(false);
+  const [novoCcSearch, setNovoCcSearch] = useState("");
+  const [novoCcSuggestions, setNovoCcSuggestions] = useState([]);
+  const [showNovoCcSuggestions, setShowNovoCcSuggestions] = useState(false);
+  const [isNovoCcLoading, setIsNovoCcLoading] = useState(false);
+
+  const [cargoAtualDesc, setCargoAtualDesc] = useState("");
+  const [centroCustoDesc, setCentroCustoDesc] = useState("");
+  const [isLoadingDescriptions, setIsLoadingDescriptions] = useState(false);
 
   if (!lookupData) {
     return <div className="p-8 text-center">Carregando dados do formulário...</div>;
   }
-
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!tipoEnvelope) {
       alert("Por favor, selecione um tipo de movimentação.");
       return;
     }
-
     if (employeeSearch && !selectedEmployee) {
       const userCentroCusto = currentUser?.centroCusto || '301017';
       const employee = findEmployee(employeeSearch, userCentroCusto);
-
       if (!employee) {
         setEmployeeError("Este funcionário não existe ou não pertence ao seu centro de custo.");
         return;
@@ -48,7 +53,6 @@ const MovementForm = ({
         return;
       }
     }
-
     handleContinue(e);
   };
 
@@ -65,18 +69,14 @@ const MovementForm = ({
     }
 
     const fetchEmployees = async () => {
-
       const userCentroCusto = currentUser?.centroCusto || '301017';
       const suggestions = await searchEmployees(employeeSearch, userCentroCusto);
       setEmployeeSuggestions(suggestions || []);
       setShowSuggestions(true);
     };
-
-
     fetchEmployees();
 
   }, [employeeSearch, searchEmployees, currentUser]);
-
   useEffect(() => {
 
     if (!lookupData || !lookupData.jobTitles || !Array.isArray(lookupData.jobTitles)) {
@@ -98,28 +98,51 @@ const MovementForm = ({
     setShowPositionSuggestions(suggestions.length > 0);
   }, [positionSearch, lookupData]);
 
+  useEffect(() => {
+    if (novoCcSearch.trim().length < 2) {
+      setNovoCcSuggestions([]);
+      setShowNovoCcSuggestions(false);
+      setIsNovoCcLoading(false);
+      return;
+    }
+  
+    const delayDebounceFn = setTimeout(async () => {
+      setIsNovoCcLoading(true);
+      try {
+        const response = await fetch(`/api/lookups/search-cc?term=${novoCcSearch}`);
+        const result = await response.json();
+        if (result.success) {
+          setNovoCcSuggestions(result.data);
+          setShowNovoCcSuggestions(result.data.length > 0);
+        } else {
+          console.error("Erro ao buscar CC:", result.message);
+          setNovoCcSuggestions([]);
+          setShowNovoCcSuggestions(false);
+        }
+      } catch (error) {
+        console.error("Erro de rede ao buscar CC:", error);
+      } finally {
+        setIsNovoCcLoading(false);
+      }
+    }, 300);
+    return () => clearTimeout(delayDebounceFn);
+  }, [novoCcSearch]);
+
   const fetchEmployeeData = async (matricula) => {
     if (!matricula) return;
-
     setSalaryLoading(true);
     updateFormValues("step2", "valorAnterior", "");
 
     try {
-
       const response = await fetch(`/api/employee/data/${matricula}`);
-
       if (!response.ok) {
         const err = await response.json();
         console.error("Dados não encontrados:", err.message);
         return;
       }
-
       const result = await response.json();
-
       if (result.success && result.data) {
-
         updateFormValues("step2", "valorAnterior", result.data.salario_atual);
-
         updateFormValues("step2", "nomeColaborador", result.data.nome);
       }
     } catch (error) {
@@ -134,38 +157,62 @@ const MovementForm = ({
       setEmployeeError("Este funcionário não pertence ao seu centro de custo.");
       return;
     }
-
     setEmployeeSearch(employee.name);
     setSelectedEmployee(employee);
     setEmployeeSuggestions([]);
     setShowSuggestions(false);
     setEmployeeError("");
-
-
+    const cargoCode = employee.cargo;
+    const ccCode = employee.centroCusto.trim();
     updateFormValues("step2", "matricula", employee.matricula);
-    updateFormValues("step2", "cargoAtual", employee.cargo);
+    updateFormValues("step2", "cargoAtual", cargoCode);
     updateFormValues("step2", "nomeColaborador", employee.name);
     updateFormValues("step2", "employeeId", employee.id);
-    updateFormValues("step2", "centroCusto", employee.centroCusto.trim());
+    updateFormValues("step2", "centroCusto", ccCode);
+    setCargoAtualDesc("");
+    setCentroCustoDesc("");
+    setIsLoadingDescriptions(true);
+    const fetchDescriptions = async () => {
+      try {
+        const [cargoRes, ccRes] = await Promise.all([
+          fetch(`/api/lookups/cargo/${cargoCode}`),
+          fetch(`/api/lookups/cc/${ccCode}`)
+        ]);
+
+        if (cargoRes.ok) {
+          const cargoResult = await cargoRes.json();
+          if (cargoResult.success) {
+            setCargoAtualDesc(cargoResult.data.description);
+          }
+        }
+        if (ccRes.ok) {
+          const ccResult = await ccRes.json();
+          if (ccResult.success) {
+            setCentroCustoDesc(ccResult.data.description);
+          }
+        }
+      } catch (error) {
+        console.error("Erro ao buscar descrições:", error);
+      
+      } finally {
+        setIsLoadingDescriptions(false);
+      }
+    };
+    fetchDescriptions();
     fetchEmployeeData(employee.matricula);
   };
-
   const handlePositionSelect = (position) => {
     setPositionSearch(position);
     updateFormValues("step2", "cargoAtual", position);
     setPositionSuggestions([]);
     setShowPositionSuggestions(false);
   };
-
   const handleNewPositionSelect = (position) => {
-
     setPositionSearch(position);
-
     updateFormValues("step2", "novoCargo", position);
     setPositionSuggestions([]);
     setShowPositionSuggestions(false);
   };
-
   const handleEmployeeSearchChange = (e) => {
     const value = e.target.value;
     setEmployeeSearch(value);
@@ -180,34 +227,43 @@ const MovementForm = ({
       updateFormValues("step2", "centroCusto", "");
     }
   };
-
-
   const handlePositionSearchChange = (e) => {
     const value = e.target.value;
     setPositionSearch(value);
-
-
     if (tipoEnvelope === "promocao/cargo" || tipoEnvelope === "movimentacao") {
       updateFormValues("step2", "novoCargo", value);
     } else {
       updateFormValues("step2", "cargoAtual", value);
     }
   };
-
-
   const handleCargoAtualChange = (e) => {
     const value = e.target.value;
     setPositionSearch(value);
     updateFormValues("step2", "cargoAtual", value);
   }
-
-
   const handleNovoCargoChange = (e) => {
     const value = e.target.value;
     setPositionSearch(value);
     updateFormValues("step2", "novoCargo", value);
   }
-
+  const handleNovoCcChange = (e) => {
+    const value = e.target.value;
+    setNovoCcSearch(value);
+    setIsNovoCcLoading(true);
+    updateFormValues("step2", "novoCentroCusto", "");
+  };
+  const handleNovoCcSelect = (suggestion) => {
+    setNovoCcSearch(suggestion.desc);
+    updateFormValues("step2", "novoCentroCusto", suggestion.code);
+    setNovoCcSuggestions([]);
+    setShowNovoCcSuggestions(false);
+  };
+  const handleNovoCcFocus = () => {
+    if (formValues.novoCentroCusto && novoCcSearch === "") {
+      setNovoCcSearch("");
+    }
+    setShowNovoCcSuggestions(true);
+  };
   const renderConteudoDireito = () => {
     switch (tipoEnvelope) {
       case "promocao/cargo":
@@ -216,25 +272,26 @@ const MovementForm = ({
             <h2 className="text-lg font-semibold text-brand-teal-dark">
               Mudança de Cargo e Promoção Salarial
             </h2>
-
             <div className="relative">
               <label className="text-brand-teal-dark font-semibold mb-1">
                 Nome do Novo Cargo *
               </label>
               <input
                 type="text"
-                placeholder="Digite o novo cargo"
+                placeholder="Digite para pesquisar cargos"
                 onChange={handleNovoCargoChange}
                 value={formValues.novoCargo || ""}
-                onBlur={() => setTimeout(() => setShowPositionSuggestions(false), 200)}
+                onBlur={() => setTimeout(() => setFocusedPositionInput(null), 200)}
                 onFocus={() => {
                   setPositionSearch(formValues.novoCargo || "");
                   setShowPositionSuggestions(true);
+                  setFocusedPositionInput('novo');
                 }}
-                className="w-full border border-gray-300 py-2 text-sm focus:ring-2 focus:ring-brand-teal-dark focus:outline-none"
+                className="w-full text-gray-700 border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-brand-teal-dark focus:outline-none"
               />
-              {showPositionSuggestions && positionSuggestions.length > 0 && (
-                <div className="absolute z-20 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto">
+
+              {showPositionSuggestions && positionSuggestions.length > 0 && focusedPositionInput === 'novo' && (
+                <div className="absolute z-20 w-full mt-1 bg-white border border-gray-300 shadow-lg max-h-60 overflow-y-auto">
                   {positionSuggestions.map((position, index) => (
                     <div
                       key={index}
@@ -272,6 +329,7 @@ const MovementForm = ({
                 onChange={(e) =>
                   updateFormValues("step2", "valorFinal", e.target.value)
                 }
+                value={formValues.valorFinal || ""}
                 className="w-full border border-gray-700 py-2 text-sm focus:ring-2 focus:ring-brand-teal-dark focus:outline-none"
               />
             </div>
@@ -406,30 +464,42 @@ const MovementForm = ({
             </div>
           </div>
         );
-
       case "movimentacao":
         return (
           <div className="bg-white rounded-xl p-6 space-y-6 font-poppins">
             <h2 className="text-lg font-semibold text-brand-teal-dark">
               Movimentação do Colaborador
             </h2>
-
-            <div className="mb-4">
+            <div className="mb-4 relative">
               <label className={labelBase}>Novo Centro de Custo</label>
-              <select
-                onChange={(e) =>
-                  updateFormValues("step2", "novoCentroCusto", e.target.value)
-                }
+              <input
+                type="text"
+                placeholder="Digite o código ou nome do CC"
+                value={novoCcSearch}
+                onChange={handleNovoCcChange}
+                onBlur={() => setTimeout(() => setShowNovoCcSuggestions(false), 200)}
+                onFocus={handleNovoCcFocus}
                 className={`${inputBase} appearance-none cursor-pointer`}
-              >
-                <option value="" disabled hidden>Selecione o centro de custo</option>
-
-                {lookupData?.setores?.map((setor) => (
-                  <option key={setor} value={setor}>{setor}</option>
-                ))}
-              </select>
+              />
+              {isNovoCcLoading && (
+                <div className="absolute z-10 w-full p-2 text-sm text-gray-500 bg-white border border-t-0 border-gray-300">
+                  Buscando...
+                </div>
+              )}
+              {showNovoCcSuggestions && novoCcSuggestions.length > 0 && !isNovoCcLoading && (
+                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300  shadow-lg max-h-60 overflow-y-auto">
+                  {novoCcSuggestions.map((cc) => (
+                    <div
+                      key={cc.code}
+                      onClick={() => handleNovoCcSelect(cc)}
+                      className="px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                    >
+                      <span className="font-bold">{cc.code}</span> - <span>{cc.desc}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
-
             <div className="mb-4">
               <label className={labelBase}>Nova Unidade Operacional</label>
               <select
@@ -445,7 +515,6 @@ const MovementForm = ({
                 ))}
               </select>
             </div>
-
             <div className="mb-4 relative">
               <label className={labelBase}>Novo Cargo</label>
               <input
@@ -453,15 +522,16 @@ const MovementForm = ({
                 placeholder="Digite para pesquisar cargos"
                 value={formValues.novoCargo || ""}
                 onChange={handleNovoCargoChange}
-                onBlur={() => setTimeout(() => setShowPositionSuggestions(false), 200)}
+                onBlur={() => setTimeout(() => setFocusedPositionInput(null), 200)}
                 onFocus={() => {
                   setPositionSearch(formValues.novoCargo || "");
                   setShowPositionSuggestions(true);
+                  setFocusedPositionInput('novo');
                 }}
-                className={`${inputBase} appearance-none cursor-pointer`}
-              />
-              {showPositionSuggestions && positionSuggestions.length > 0 && (
-                <div className="absolute z-20 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto">
+                className="w-full text-gray-700 border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-brand-teal-dark focus:outline-none"
+              />          
+              {showPositionSuggestions && positionSuggestions.length > 0 && focusedPositionInput === 'novo' && (
+                <div className="absolute z-20 w-full mt-1 bg-white border border-gray-300  shadow-lg max-h-60 overflow-y-auto">
                   {positionSuggestions.map((position, index) => (
                     <div
                       key={index}
@@ -477,18 +547,15 @@ const MovementForm = ({
 
             <div className="mb-4">
               <label className={labelBase}>Motivo da Movimentação</label>
-              <select
+              <input
+                type="text"
+                placeholder="Digite o motivo da movimentação"
+                value={formValues.motivoMovimentacao || ""}
                 onChange={(e) =>
                   updateFormValues("step2", "motivoMovimentacao", e.target.value)
                 }
-                className={`${inputBase} appearance-none cursor-pointer`}
-              >
-                <option value="" disabled hidden>Selecione o motivo</option>
-
-                {lookupData?.motivos_rmp?.map((motivo) => (
-                  <option key={motivo} value={motivo}>{motivo}</option>
-                ))}
-              </select>
+                className={`${inputBase}`}
+              />
             </div>
           </div>
         );
@@ -686,9 +753,9 @@ const MovementForm = ({
               />
               {showSuggestions && employeeSuggestions.length > 0 && (
                 <div className="absolute z-20 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto">
-                  {employeeSuggestions.map(employee => (
+                  {employeeSuggestions.map((employee, index) => (
                     <div
-                      key={employee.id}
+                      key={`${employee.id}-${index}`}
                       onClick={() => handleEmployeeSelect(employee)}
                       className={`px-3 py-2 text-sm cursor-pointer ${employee.accessDenied
                         ? 'text-gray-400 bg-gray-100 cursor-not-allowed'
@@ -711,53 +778,49 @@ const MovementForm = ({
             </div>
             <div className="relative">
               <label className="text-brand-teal-dark font-semibold mb-1">
-                Cargo Atual *
+                Cargo Atual
               </label>
               <input
                 type="text"
-                placeholder="Digite o cargo"
-                value={formValues.cargoAtual || ""}
+                placeholder="Selecione um funcionário"
+              
+                value={
+                  isLoadingDescriptions ? "Buscando descrição..." :
+                  formValues.cargoAtual ? 
+                    `${formValues.cargoAtual} - ${cargoAtualDesc || '(não encontrado)'}` 
+                    : ""
+                }
                 readOnly
                 disabled
-                className="w-full border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-brand-teal-dark focus:outline-none bg-gray-100"
-                onChange={handleCargoAtualChange}
-                onBlur={() => setTimeout(() => setShowPositionSuggestions(false), 200)}
-                onFocus={() => {
-                  setPositionSearch(formValues.cargoAtual || "");
-                  setShowPositionSuggestions(true);
-                }}
+                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-brand-teal-dark focus:outline-none bg-gray-100"
               />
-              {showPositionSuggestions && positionSuggestions.length > 0 && (
-                <div className="absolute z-20 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto">
-                  {positionSuggestions.map((position, index) => (
-                    <div
-                      key={index}
-                      onClick={() => handlePositionSelect(position)}
-                      className="px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-                    >
-                      {position}
-                    </div>
-                  ))}
-                </div>
-              )}
             </div>
+            
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          
               <div>
                 <label className="text-brand-teal-dark font-semibold mb-1">
-                  Centro de Custo *
+                  Centro de Custo
                 </label>
                 <input
                   type="text"
                   placeholder="Selecione um funcionário"
-                  value={formValues.centroCusto || ""}
+                
+                  value={
+                    isLoadingDescriptions ? "Buscando descrição..." :
+                    formValues.centroCusto ? 
+                      `${formValues.centroCusto} - ${centroCustoDesc || '(não encontrado)'}` 
+                      : ""
+                  }
                   readOnly
                   disabled
-                  className="w-full border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-brand-teal-dark focus:outline-none bg-gray-100"
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-brand-teal-dark focus:outline-none bg-gray-100"
                 />
               </div>
+
               <div>
                 <label className="text-brand-teal-dark font-semibold mb-1">
-                  Matrícula *
+                  Matrícula
                 </label>
                 <input
                   type="text"
@@ -804,9 +867,13 @@ const MovementForm = ({
             >
               Anterior
             </button>
-            <Button type="submit" disabled={!tipoEnvelope}>
+            <button
+              type="submit"
+              disabled={!tipoEnvelope}
+              className="bg-[#0D6578] text-white px-6 py-3 rounded-lg hover:bg-[#148ca6] transition-colors"
+            >
               Enviar
-            </Button>
+            </button>
           </div>
         </div>
       </div>

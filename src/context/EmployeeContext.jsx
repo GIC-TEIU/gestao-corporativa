@@ -61,12 +61,12 @@ export const EmployeeProvider = ({ children }) => {
         const empCCTrimmed = (emp.centroCusto ? emp.centroCusto.trim() : '');
         const isDifferent = empCCTrimmed !== userCCTrimmed;
   
-        console.log("--- DEBUG searchEmployees ---");
-        console.log("Funcionário:", emp.name, `(${emp.matricula})`);
-        console.log("CC do Usuário (com trim):", `'${userCCTrimmed}'`);
-        console.log("CC do Funcionário (com trim):", `'${empCCTrimmed}'`);
-        console.log("São diferentes?", isDifferent);
-        console.log("--------------------------");
+        // console.log("--- DEBUG searchEmployees ---");
+        // console.log("Funcionário:", emp.name, `(${emp.matricula})`);
+        // console.log("CC do Usuário (com trim):", `'${userCCTrimmed}'`);
+        // console.log("CC do Funcionário (com trim):", `'${empCCTrimmed}'`);
+        // console.log("São diferentes?", isDifferent);
+        // console.log("--------------------------");
       
         return {
           ...emp,

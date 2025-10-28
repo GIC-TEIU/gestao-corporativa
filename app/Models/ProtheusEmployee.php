@@ -18,11 +18,10 @@ class ProtheusEmployee
     public function findDataByMatricula(string $matricula): ?array
     {
         
-        
         $sql = "SELECT 
                     RA_NOME,
                     RA_SALARIO,
-                    RA_CARGO, 
+                    RA_CODFUNC, 
                     RA_CC 
                 FROM " . self::TABLE_NAME . " 
                 WHERE 
@@ -38,17 +37,15 @@ class ProtheusEmployee
             return null;
         }
 
-        
         $rawSalario = $result['RA_SALARIO'];
         $rawType = gettype($rawSalario);
         $salarioString = (string) $rawSalario;
         $salarioCorrigido = str_replace(',', '.', $salarioString); 
         $salarioFinalFloat = (float) $salarioCorrigido;
         $nomeLimpo = trim($result['RA_NOME'], " \t\n\r\0\x0B");
-        $cargoLimpo = trim($result['RA_CARGO'], " \t\n\r\0\x0B");
+        $cargoLimpo = trim($result['RA_CODFUNC'], " \t\n\r\0\x0B");
         $ccLimpo = trim($result['RA_CC'], " \t\n\r\0\x0B");
 
-        
         return [
             'nome' => $nomeLimpo,
             'salario_atual' => $salarioFinalFloat,
@@ -62,33 +59,27 @@ class ProtheusEmployee
         ];
     }
 
-    public function findAllBasicData(): array
+public function findAllBasicData(): array
     {
         
-        
-        $sql = "SELECT 
+$sql = "SELECT DISTINCT 
                     RA_MAT,
                     RA_NOME,
-                    RA_CARGO, 
+                    RA_CODFUNC, 
                     RA_CC 
                 FROM " . self::TABLE_NAME . " 
                 WHERE 
                     D_E_L_E_T_ = ''
-                    AND RA_DEMISSA = ''"; 
+                    AND RA_DEMISSA = ''";
         
-        $stmt = $this->pdo->query($sql);
+        $stmt = $this->pdo->query($sql); 
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        if (!$results) {
-            return [];
-        }
-
         return array_map(function($row) {
-            
             $matriculaLimpa = trim($row['RA_MAT'], " \t\n\r\0\x0B");
             $nomeLimpo = trim($row['RA_NOME'], " \t\n\r\0\x0B");
-            $cargoLimpo = trim($row['RA_CARGO'], " \t\n\r\0\x0B");
-            $ccLimpo = trim($row['RA_CC'], " \t\n\r\0\x0B");
+            $cargoLimpo = trim($row['RA_CODFUNC'], " \t\n\r\0\x0B"); 
+            $ccLimpo = trim($row['RA_CC'], " \t\n\r\0\x0B");      
 
             return [
                 'id' => $matriculaLimpa, 

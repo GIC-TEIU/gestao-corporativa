@@ -12,4 +12,9 @@ Router::get('/api/lookups/rap-form', [LookupController::class, 'getRapFormData']
 Router::post('/api/requisicao/rap', [RapController::class, 'store']);
 Router::get('/api/employees', [EmployeeController::class, 'getAllEmployees']);
 Router::get('/api/employee/data/{matricula}', [EmployeeController::class, 'getEmployeeDataByMatricula']);
+Router::get('/api/lookups/search-cc', [LookupController::class, 'searchCostCenters']);
+Router::get('/api/lookups/cargo/{code}', [LookupController::class, 'getCargoDescriptionByCode']);
+Router::get('/api/lookups/cc/{code}', [LookupController::class, 'getCostCenterDescriptionByCode']);
+Router::get('/api/lookups/cargo/{code}', [LookupController::class, 'getCargoDescriptionByCode']);
+Router::get('/api/lookups/cc/{code}', [LookupController::class, 'getCostCenterDescriptionByCode']);
 
