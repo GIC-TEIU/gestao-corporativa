@@ -71,4 +71,45 @@ class ProtheusJobTitle
                     return null;
         }
     }
+    public function searchByTerm(string $term): array
+    {
+        
+        $likeTerm = '%' . strtoupper($term) . '%';
+
+        
+        $sql = "SELECT DISTINCT TOP 20 
+                    RJ_FUNCAO,  
+                    RJ_DESC    
+                FROM " . self::TABLE_NAME . " 
+                WHERE 
+                    (RJ_FUNCAO LIKE :term_code OR RJ_DESC LIKE :term_desc)
+                    AND D_E_L_E_T_ = ''
+                ORDER BY 
+                    RJ_DESC"; 
+        
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([
+                ':term_code' => $likeTerm,
+                ':term_desc' => $likeTerm
+            ]);
+            
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $jobTitles = [];
+
+            if ($results) {
+                foreach ($results as $row) {
+                    $jobTitles[] = [
+                        'code' => trim($row['RJ_FUNCAO'], " \t\n\r\0\x0B"),
+                        'description' => trim($row['RJ_DESC'], " \t\n\r\0\x0B")
+                    ];
+                }
+            }
+            return $jobTitles;
+
+        } catch (Throwable $e) {
+            
+            return []; 
+        }
+    }
 }

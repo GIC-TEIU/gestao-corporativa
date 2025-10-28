@@ -17,4 +17,7 @@ Router::get('/api/lookups/cargo/{code}', [LookupController::class, 'getCargoDesc
 Router::get('/api/lookups/cc/{code}', [LookupController::class, 'getCostCenterDescriptionByCode']);
 Router::get('/api/lookups/cargo/{code}', [LookupController::class, 'getCargoDescriptionByCode']);
 Router::get('/api/lookups/cc/{code}', [LookupController::class, 'getCostCenterDescriptionByCode']);
+Router::get('/api/lookups/search-cc', [LookupController::class, 'searchCostCenters']);
+Router::get('/api/lookups/search-jobtitles', [LookupController::class, 'searchJobTitles']);
+
 

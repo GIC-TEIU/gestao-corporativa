@@ -10,9 +10,7 @@ use App\Models\ProtheusCostCenter;
 use Throwable; 
 
 class LookupController
-{
-    
-    
+{    
     private static $categorias = [
         "Celetista", "Estagiário", "Jovem Aprendiz", "Temporário"
     ];
@@ -39,8 +37,6 @@ class LookupController
     private static $motivos_rmp = [
         "Promoção", "Transferência", "Reajuste Salarial", "Mérito"
     ];
-
-
     
     public function getRapFormData()
     {
@@ -107,8 +103,6 @@ class LookupController
                 'managers' => $managers,
                 'directors' => $directors,
                 'jobTitles' => $jobTitles,         
-                
-                
                 'categorias' => self::$categorias,
                 'horarios_trabalho' => self::$horarios_trabalho,
                 'setores' => self::$setores, 
@@ -182,6 +176,24 @@ class LookupController
 
         } catch (Throwable $e) {
              return Response::json(['success' => false, 'message' => 'Erro ao buscar CC: ' . $e->getMessage()], 500);
+        }
+    }
+    public function searchJobTitles()
+    {
+        $term = $_GET['term'] ?? '';
+        if (strlen($term) < 2) {
+            return Response::json(['success' => true, 'data' => []]);
+        }
+
+        try {
+            $jobTitleModel = new ProtheusJobTitle(); 
+            $data = $jobTitleModel->searchByTerm($term);
+            return Response::json(['success' => true, 'data' => $data]);
+        } catch (Throwable $e) {
+            return Response::json([
+                'success' => false,
+                'message' => 'Erro ao buscar Cargos: ' . $e->getMessage()
+            ], 500);
         }
     }
 }
