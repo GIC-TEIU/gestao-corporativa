@@ -48,3 +48,6 @@ Router::post('/api/user-management', [UserManagementController::class, 'store'])
 Router::put('/api/user-management/{id}', [UserManagementController::class, 'update']);
 Router::delete('/api/user-management/{id}', [UserManagementController::class, 'destroy']);
 Router::get('/api/user-management/{id}/history', [UserManagementController::class, 'getPermissionHistory']);
+
+// 🔥 ADICIONE ESTA LINHA - ROTA ESPECÍFICA PARA PERMISSÕES
+Router::put('/api/user-management/{id}/permissions', [UserManagementController::class, 'updatePermissions']);

@@ -14,14 +14,8 @@ const ProtectedRoute = ({ children, requiredPermission }) => {
     path: location.pathname
   });
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-        <span className="ml-4">Verificando autenticação...</span>
-      </div>
-    );
-  }
+  // Apenas aguarda o contexto carregar, sem mostrar nada
+  if (loading) return null;
 
   if (!currentUser) {
     console.log('🔐 Redirecionando para login - usuário não autenticado');

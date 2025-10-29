@@ -20,6 +20,7 @@ const UserManagement = () => {
     const [accessChecked, setAccessChecked] = useState(false);
     const [activeTab, setActiveTab] = useState('users');
     const [searchTerm, setSearchTerm] = useState('');
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
 
     const [isViewPermissionsModalOpen, setViewPermissionsModalOpen] = useState(false);
     const [isHistoryModalOpen, setHistoryModalOpen] = useState(false);
@@ -61,6 +62,149 @@ const UserManagement = () => {
         verifyAccess();
     }, [currentUser, hasPermission, loading, checkSession, navigate]);
 
+    // Função para forçar atualização da tabela
+    const refreshUsers = () => {
+        setRefreshTrigger(prev => prev + 1);
+    };
+
+    const handleOpenPermissionsModal = (user) => {
+        setSelectedUser(user);
+        setPermissionsModalOpen(true);
+    };
+
+    const handleClosePermissionsModal = () => {
+        setPermissionsModalOpen(false);
+        setSelectedUser(null);
+        refreshUsers(); // Atualiza a lista após fechar o modal
+    };
+
+    const handleOpenDeleteModal = (user) => {
+        setUserToDelete(user);
+        setDeleteModalOpen(true);
+    };
+
+    const handleCloseDeleteModal = () => {
+        setUserToDelete(null);
+        setDeleteModalOpen(false);
+    };
+
+    const handleConfirmDeletion = async () => {
+        if (!userToDelete) return;
+
+        try {
+            const response = await fetch(`/api/user-management/${userToDelete.id}`, {
+                method: 'DELETE',
+                credentials: 'include'
+            });
+
+            if (!response.ok) {
+                throw new Error('Erro ao excluir usuário');
+            }
+
+            const result = await response.json();
+            
+            if (result.status === 200) {
+                console.log('Usuário desativado com sucesso:', userToDelete.nome);
+                refreshUsers(); // Atualiza a lista após exclusão
+            } else {
+                throw new Error(result.message || 'Erro ao excluir usuário');
+            }
+        } catch (error) {
+            console.error('Erro ao excluir usuário:', error);
+            alert('Erro ao excluir usuário: ' + error.message);
+        } finally {
+            handleCloseDeleteModal();
+        }
+    };
+
+    const handleOpenInviteUserModal = () => setInviteUserModalOpen(true);
+    const handleCloseInviteUserModal = () => setInviteUserModalOpen(false);
+
+    const handleOpenFilterSidebar = () => setIsFilterSidebarOpen(true);
+    const handleCloseFilterSidebar = () => setIsFilterSidebarOpen(false);
+
+    const handleApplyFilters = (filters) => {
+        console.log('Filtros aplicados:', filters);
+        handleCloseFilterSidebar();
+    };
+
+    const handleInviteUser = async (userData) => {
+        try {
+            const response = await fetch('/api/user-management', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify(userData)
+            });
+
+            if (!response.ok) {
+                throw new Error('Erro ao criar usuário');
+            }
+
+            const result = await response.json();
+            
+            if (result.status === 201) {
+                console.log('Usuário criado com sucesso:', userData);
+                refreshUsers(); // Atualiza a lista após criar usuário
+                handleCloseInviteUserModal();
+                alert(`Usuário ${userData.full_name} criado com sucesso!`);
+            } else {
+                throw new Error(result.message || 'Erro ao criar usuário');
+            }
+        } catch (error) {
+            console.error('Erro ao criar usuário:', error);
+            alert('Erro ao criar usuário: ' + error.message);
+        }
+    };
+
+    const tabs = [
+        { id: 'users', label: 'Usuários', icon: Users },
+        { id: 'history', label: 'Histórico e Permissões', icon: History },
+    ];
+
+    const handleOpenViewPermissionsModal = (user) => {
+        setSelectedUser(user);
+        setViewPermissionsModalOpen(true);
+    };
+    const handleCloseViewPermissionsModal = () => setViewPermissionsModalOpen(false);
+
+    const handleOpenHistoryModal = (user) => {
+        setSelectedUser(user);
+        setHistoryModalOpen(true);
+    };
+    const handleCloseHistoryModal = () => setHistoryModalOpen(false);
+
+    const renderActiveTabContent = () => {
+        switch (activeTab) {
+            case 'users':
+                return (
+                    <UsersTable
+                        onOpenPermissionsModal={handleOpenPermissionsModal}
+                        onOpenDeleteModal={handleOpenDeleteModal}
+                        refreshTrigger={refreshTrigger}
+                    />
+                );
+            case 'history':
+                return (
+                    <HistoryAndPermissionsTable
+                        onOpenViewPermissionsModal={handleOpenViewPermissionsModal}
+                        onOpenHistoryModal={handleOpenHistoryModal}
+                        refreshTrigger={refreshTrigger}
+                    />
+                );
+            default:
+                return (
+                    <UsersTable
+                        onOpenPermissionsModal={handleOpenPermissionsModal}
+                        onOpenDeleteModal={handleOpenDeleteModal}
+                        refreshTrigger={refreshTrigger}
+                    />
+                );
+        }
+    };
+
     // Se ainda está verificando ou carregando
     if (loading || !accessChecked) {
         return (
@@ -91,83 +235,6 @@ const UserManagement = () => {
         );
     }
 
-    const handleOpenPermissionsModal = () => setPermissionsModalOpen(true);
-    const handleClosePermissionsModal = () => setPermissionsModalOpen(false);
-
-    const handleOpenDeleteModal = (user) => {
-        setUserToDelete(user);
-        setDeleteModalOpen(true);
-    };
-
-    const handleCloseDeleteModal = () => {
-        setUserToDelete(null);
-        setDeleteModalOpen(false);
-    };
-
-    const handleConfirmDeletion = () => {
-        console.log("Deletando usuário:", userToDelete.nome);
-        handleCloseDeleteModal();
-    };
-
-    const handleOpenInviteUserModal = () => setInviteUserModalOpen(true);
-    const handleCloseInviteUserModal = () => setInviteUserModalOpen(false);
-
-    const handleOpenFilterSidebar = () => setIsFilterSidebarOpen(true);
-    const handleCloseFilterSidebar = () => setIsFilterSidebarOpen(false);
-
-    const handleApplyFilters = (filters) => {
-        console.log('Filtros aplicados:', filters);
-        handleCloseFilterSidebar();
-    };
-
-    const handleInviteUser = (userData) => {
-        console.log('Usuário convidado:', userData);
-        alert(`Convite enviado para ${userData.name} (${userData.email}) com permissão: ${userData.permission}`);
-    };
-
-    const tabs = [
-        { id: 'users', label: 'Usuários', icon: Users },
-        { id: 'history', label: 'Histórico e Permissões', icon: History },
-    ];
-
-    const handleOpenViewPermissionsModal = (user) => {
-        setSelectedUser(user);
-        setViewPermissionsModalOpen(true);
-    };
-    const handleCloseViewPermissionsModal = () => setViewPermissionsModalOpen(false);
-
-    const handleOpenHistoryModal = (user) => {
-        setSelectedUser(user);
-        setHistoryModalOpen(true);
-    };
-    const handleCloseHistoryModal = () => setHistoryModalOpen(false);
-
-    const renderActiveTabContent = () => {
-        switch (activeTab) {
-            case 'users':
-                return (
-                    <UsersTable
-                        onOpenPermissionsModal={handleOpenPermissionsModal}
-                        onOpenDeleteModal={handleOpenDeleteModal}
-                    />
-                );
-            case 'history':
-                return (
-                    <HistoryAndPermissionsTable
-                        onOpenViewPermissionsModal={handleOpenViewPermissionsModal}
-                        onOpenHistoryModal={handleOpenHistoryModal}
-                    />
-                );
-            default:
-                return (
-                    <UsersTable
-                        onOpenPermissionsModal={handleOpenPermissionsModal}
-                        onOpenDeleteModal={handleOpenDeleteModal}
-                    />
-                );
-        }
-    };
-
     return (
         <MainLayout
             title="Gerenciador de Usuários"
@@ -190,7 +257,6 @@ const UserManagement = () => {
                                         }`}
                                 >
                                     <Icon size={18} />
-                                    {/* Texto visível apenas quando ativo ou em telas maiores */}
                                     <span className={
                                         activeTab === tab.id ? 'inline' : 'hidden sm:inline'
                                     }>
@@ -261,18 +327,23 @@ const UserManagement = () => {
             <ManagementPermissionsModal
                 isOpen={isPermissionsModalOpen}
                 onClose={handleClosePermissionsModal}
+                user={selectedUser}
             />
+            
             <ConfirmDeletionModal
                 isOpen={isDeleteModalOpen}
                 onClose={handleCloseDeleteModal}
                 onConfirm={handleConfirmDeletion}
                 userName={userToDelete?.nome}
+                loading={false}
             />
+            
             <PermissionsModal
                 isOpen={isViewPermissionsModalOpen}
                 onClose={handleCloseViewPermissionsModal}
                 userName={selectedUser?.nome}
             />
+            
             <HistoryPermissionsModal
                 isOpen={isHistoryModalOpen}
                 onClose={handleCloseHistoryModal}

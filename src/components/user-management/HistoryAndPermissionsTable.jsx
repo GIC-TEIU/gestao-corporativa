@@ -1,65 +1,58 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Shield, History, ChevronDown } from 'lucide-react';
 
-const mockUsers = [
-  {
-    id: 1,
-    nome: 'Bruno Henrique Oliveira',
-    setor: 'Marketing e Vendas',
-    cargo: 'Analista de Mídias',
-    permissoes: 10,
-    status: 'Ativo',
-    atualizacao: '14/01/2024',
-  },
-  {
-    id: 2,
-    nome: 'Carla Regina Almeida',
-    setor: 'Recursos Humanos',
-    cargo: 'Recursos Humanos',
-    permissoes: 7,
-    status: 'Ativo',
-    atualizacao: '14/01/2024',
-  },
-   {
-    id: 3,
-    nome: 'Daniel Mendes Rocha',
-    setor: 'Financeiro',
-    cargo: 'Controller Júnior',
-    permissoes: 5,
-    status: 'Ativo',
-    atualizacao: '14/01/2024',
-  },
-  {
-    id: 4,
-    nome: 'Gabriela Souza Lima',
-    setor: 'Operações e Logística',
-    cargo: 'Gerente Suprimentos',
-    permissoes: 2,
-    status: 'Ativo',
-    atualizacao: '14/01/2024',
-  },
-  {
-    id: 5,
-    nome: 'Ana Carolina Santos',
-    setor: 'Recursos Humanos',
-    cargo: 'Psicóloga',
-    permissoes: 9,
-    status: 'Inativo',
-    atualizacao: '14/01/2024',
-  },
-  {
-    id: 6,
-    nome: 'Fernando Gomes Silva',
-    setor: 'Atendimento ao Cliente',
-    cargo: 'Supervisor Suporte',
-    permissoes: 1,
-    status: 'Ativo',
-    atualizacao: '14/01/2024',
-  },
-];
-
-const HistoryAndPermissionsTable = ({ onOpenViewPermissionsModal, onOpenHistoryModal }) => {
+const HistoryAndPermissionsTable = ({ onOpenViewPermissionsModal, onOpenHistoryModal, refreshTrigger }) => {
+  const [users, setUsers] = useState([]);
   const [expandedCard, setExpandedCard] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetchUsers();
+  }, [refreshTrigger]); // Recarrega quando refreshTrigger muda
+
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const response = await fetch('/api/user-management', {
+        credentials: 'include'
+      });
+      
+      if (!response.ok) {
+        throw new Error('Erro ao carregar usuários');
+      }
+      
+      const result = await response.json();
+      
+      if (result.status === 200 && Array.isArray(result.data)) {
+        // Adapta os dados do backend para o formato visual esperado
+        const mapped = result.data.map((u) => ({
+          id: u.id,
+          nome: u.full_name || 'Sem nome',
+          setor: u.cost_center_description || u.cost_center || 'N/A',
+          cargo: u.job_title || 'N/A',
+          permissoes: u.permissions ? Object.keys(u.permissions).length : 0,
+          status: u.is_active ? 'Ativo' : 'Inativo',
+          atualizacao: u.created_at
+            ? new Date(u.created_at).toLocaleDateString('pt-BR')
+            : 'N/A',
+          employee_id: u.employee_id,
+          // Mantém os dados originais para uso nos modais
+          originalData: u
+        }));
+        setUsers(mapped);
+      } else {
+        throw new Error(result.message || 'Erro ao carregar usuários');
+      }
+    } catch (err) {
+      console.error('Erro ao buscar usuários:', err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const StatusBadge = ({ status }) => {
     const isAtivo = status === 'Ativo';
@@ -76,7 +69,7 @@ const HistoryAndPermissionsTable = ({ onOpenViewPermissionsModal, onOpenHistoryM
     <div className={`flex items-center gap-2 ${isMobile ? 'justify-start' : 'justify-center'}`}>
       <button 
         className={`flex items-center gap-2 ${isMobile ? 'px-3 py-2 bg-black/[0.30] border border-black text-black' : 'px-3 py-2 bg-black/[0.30] text-black'} rounded-md text-sm border border-black hover:bg-black/40 transition-colors`}
-        onClick={() => onOpenViewPermissionsModal(user)}
+        onClick={() => onOpenViewPermissionsModal(user.originalData)}
       >
         <Shield size={16} />
         <span>Permissões</span>
@@ -84,9 +77,10 @@ const HistoryAndPermissionsTable = ({ onOpenViewPermissionsModal, onOpenHistoryM
       
       <button 
         className="flex items-center gap-2 px-3 py-2 bg-[#D1FBEE] text-[#1A9E83] font-semibold rounded-md text-sm border border-[#1A9E83] hover:bg-[#b9f5e2] transition-colors"
-        onClick={() => onOpenHistoryModal(user)}
+        onClick={() => onOpenHistoryModal(user.originalData)}
       >
         <History size={16} />
+        <span className={isMobile ? 'block' : 'hidden'}>Histórico</span>
       </button>
     </div>
   );
@@ -138,6 +132,12 @@ const HistoryAndPermissionsTable = ({ onOpenViewPermissionsModal, onOpenHistoryM
                 <p className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Última Atualização</p>
                 <p className="text-gray-800 font-medium">{user.atualizacao}</p>
               </div>
+              {user.employee_id && (
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Matrícula</p>
+                  <p className="text-gray-800 font-medium">{user.employee_id}</p>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -156,6 +156,43 @@ const HistoryAndPermissionsTable = ({ onOpenViewPermissionsModal, onOpenHistoryM
       </div>
     );
   };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-32">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <span className="ml-4">Carregando usuários...</span>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center h-32 text-red-600">
+        <p>Erro ao carregar usuários: {error}</p>
+        <button
+          onClick={fetchUsers}
+          className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+        >
+          Tentar Novamente
+        </button>
+      </div>
+    );
+  }
+
+  if (users.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center h-32 text-gray-500">
+        <p>Nenhum usuário encontrado.</p>
+        <button
+          onClick={fetchUsers}
+          className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+        >
+          Recarregar
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full overflow-hidden">
@@ -180,10 +217,15 @@ const HistoryAndPermissionsTable = ({ onOpenViewPermissionsModal, onOpenHistoryM
           </thead>
           
           <tbody style={{ backgroundColor: '#EEF1F1' }}>
-            {mockUsers.map((user) => (
+            {users.map((user) => (
               <tr key={user.id} className="text-[#474747]">
                 <td className="p-2">
-                  <div className="bg-[#D9D9D9] p-3 rounded-md text-center">{user.nome}</div>
+                  <div className="bg-[#D9D9D9] p-3 rounded-md text-center">
+                    {user.nome}
+                    {user.employee_id && (
+                      <div className="text-xs text-gray-600 mt-1">Mat: {user.employee_id}</div>
+                    )}
+                  </div>
                 </td>
                 <td className="p-2">
                   <div className="bg-[#D9D9D9] p-3 rounded-md text-center">{user.setor}</div>
@@ -211,7 +253,7 @@ const HistoryAndPermissionsTable = ({ onOpenViewPermissionsModal, onOpenHistoryM
 
       {/* Cards para mobile */}
       <div className="md:hidden">
-        {mockUsers.map((user) => (
+        {users.map((user) => (
           <MobileCard key={user.id} user={user} />
         ))}
       </div>
