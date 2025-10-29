@@ -1,16 +1,36 @@
-// Home.jsx
-import React from "react";
+// Home.jsx - ATUALIZADO
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Card from "../components/ui/Card.jsx";
 import HomeLayout from "../layouts/HomeLayout.jsx";
-import { usePermissions } from "../context/PermissionContext.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
 import AlmostThere from "../components/ui/AlmostThere.jsx";
 
 function Home() {
-  const { currentUser } = useAuth();
-  const { availableModules, hasAnyModuleAccess, loading } = usePermissions();
+  const { currentUser, hasPermission, loading } = useAuth();
+  const navigate = useNavigate();
 
-  // Mostra loading enquanto verifica permissões
+  // Mapear as permissões para os módulos disponíveis
+  const availableModules = {
+    requestCreate: hasPermission('request_create') || hasPermission('create_request'),
+    requestView: hasPermission('request_view') || hasPermission('view_requests'),
+    userManagement: hasPermission('user_management') || hasPermission('manage_users'),
+    rhPanel: hasPermission('hr_panel'),
+    signatureManagement: hasPermission('signature_management'),
+  };
+
+  // Verificar se o usuário tem acesso a pelo menos um módulo
+  const hasAnyModuleAccess = Object.values(availableModules).some(Boolean);
+
+  // Redirecionar se não estiver autenticado
+  useEffect(() => {
+    if (!loading && !currentUser) {
+      console.log('🚫 Usuário não autenticado, redirecionando...');
+      navigate('/login');
+    }
+  }, [loading, currentUser, navigate]);
+
+  // Mostra loading enquanto verifica autenticação e permissões
   if (loading) {
     return (
       <HomeLayout
@@ -27,6 +47,12 @@ function Home() {
     );
   }
 
+  // Se não estiver autenticado, não renderiza nada (já redirecionou)
+  if (!currentUser) {
+    return null;
+  }
+
+  // Se estiver autenticado mas não tiver permissões, mostrar AlmostThere
   if (!hasAnyModuleAccess) {
     return <AlmostThere />;
   }
@@ -35,6 +61,7 @@ function Home() {
     <HomeLayout
       title="Gestão corporativa"
       subtitle="Gerencie documentos e assinaturas de forma segura e eficiente"
+      currentUser={currentUser}
     >
       {/* Contêiner principal */}
       <div className="flex justify-center w-full">

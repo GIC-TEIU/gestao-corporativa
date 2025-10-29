@@ -10,54 +10,65 @@ export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    checkCurrentUser();
-  }, []);
-
-  const checkCurrentUser = async () => {
+  const checkSession = async () => {
     try {
-      const response = await fetch('/api/current-user', {
+      console.log('🔄 Verificando sessão no backend...');
+      const response = await fetch('/api/check-session', {
         method: 'GET',
         credentials: 'include'
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        if (data.status === 200) {
-          const userData = {
-            id: data.data.user_id,
-            name: data.data.full_name,
-            email: data.data.email,
-            full_name: data.data.full_name,
-            job_title: data.data.job_title,
-            employee_id: data.data.employee_id,
-            permissions: data.data.permissions || []
-          };
-          
-          setCurrentUser(userData);
-          localStorage.setItem('currentUser', JSON.stringify(userData));
-        }
+      console.log('📡 Status da resposta:', response.status);
+      console.log('🔐 Credenciais incluídas:', true);
+
+      const responseText = await response.text();
+      console.log('📄 Resposta bruta da sessão:', responseText);
+
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('❌ Erro ao parsear JSON da sessão:', parseError);
+        setCurrentUser(null);
+        return false;
+      }
+
+      if (response.ok && data.status === 200) {
+        console.log('✅ Sessão válida encontrada');
+        console.log('👤 Dados do usuário:', data.data);
+        
+        const userData = {
+          id: data.data.user_id,
+          name: data.data.full_name,
+          email: data.data.email,
+          full_name: data.data.full_name,
+          job_title: data.data.job_title,
+          employee_id: data.data.employee_id,
+          permissions: data.data.permissions || []
+        };
+        
+        setCurrentUser(userData);
+        return true;
       } else {
-        // Se não autenticado, limpa dados locais
-        localStorage.removeItem('currentUser');
+        console.log('❌ Sessão inválida:', data.message);
+        setCurrentUser(null);
+        return false;
       }
     } catch (error) {
-      console.log('Erro ao verificar usuário atual:', error.message);
-      // Fallback para usuário salvo localmente (apenas desenvolvimento)
-      if (process.env.NODE_ENV === 'development') {
-        const savedUser = localStorage.getItem('currentUser');
-        if (savedUser) {
-          try {
-            setCurrentUser(JSON.parse(savedUser));
-          } catch {
-            localStorage.removeItem('currentUser');
-          }
-        }
-      }
-    } finally {
-      setLoading(false);
+      console.log('❌ Erro ao verificar sessão:', error);
+      setCurrentUser(null);
+      return false;
     }
   };
+
+  // Verificação inicial
+  useEffect(() => {
+    console.log('🚀 Iniciando verificação de sessão...');
+    checkSession().finally(() => {
+      console.log('🏁 Verificação de sessão concluída');
+      setLoading(false);
+    });
+  }, []);
 
   const login = async (email, password) => {
     try {
@@ -72,8 +83,18 @@ export function AuthProvider({ children }) {
         credentials: 'include'
       });
 
-      const data = await response.json();
-      console.log('📡 Resposta do backend:', data);
+      console.log('📡 Status do login:', response.status);
+
+      const responseText = await response.text();
+      console.log('📄 Resposta bruta do login:', responseText);
+
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('❌ Erro ao parsear JSON:', parseError);
+        throw new Error('Resposta inválida do servidor. Tente novamente.');
+      }
 
       if (response.ok && data.status === 200) {
         console.log('✅ Login backend bem-sucedido');
@@ -89,7 +110,6 @@ export function AuthProvider({ children }) {
         };
 
         setCurrentUser(userData);
-        localStorage.setItem('currentUser', JSON.stringify(userData));
         return userData;
       } else {
         throw new Error(data.message || 'Erro no login');
@@ -110,39 +130,7 @@ export function AuthProvider({ children }) {
       console.log('Erro no logout backend:', error);
     } finally {
       setCurrentUser(null);
-      localStorage.removeItem('currentUser');
     }
-  };
-
-  // Funções auxiliares para desenvolvimento
-  const register = (userData) => {
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
-    if (users.find(user => user.email === userData.email)) {
-      throw new Error('Email já cadastrado');
-    }
-    const newUser = {
-      id: Date.now(),
-      permissions: userData.permissions || [],
-      ...userData,
-      createdAt: new Date().toISOString()
-    };
-    users.push(newUser);
-    localStorage.setItem('users', JSON.stringify(users));
-    setCurrentUser(newUser);
-    localStorage.setItem('currentUser', JSON.stringify(newUser));
-    return newUser;
-  };
-
-  const updateProfile = (updatedData) => {
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
-    const updatedUsers = users.map(user =>
-      user.id === currentUser.id ? { ...user, ...updatedData } : user
-    );
-    localStorage.setItem('users', JSON.stringify(updatedUsers));
-    const updatedUser = { ...currentUser, ...updatedData };
-    setCurrentUser(updatedUser);
-    localStorage.setItem('currentUser', JSON.stringify(updatedUser));
-    return updatedUser;
   };
 
   const value = {
@@ -150,11 +138,14 @@ export function AuthProvider({ children }) {
     loading,
     login,
     logout,
-    register,
-    updateProfile,
-    checkCurrentUser,
+    checkSession,
     hasPermission: (permission) => {
-      return currentUser?.permissions?.includes(permission) || false;
+        const hasPerm = currentUser?.permissions?.includes(permission) || false;
+        console.log(`🔐 Verificando permissão "${permission}":`, hasPerm);
+        return hasPerm;
+    },
+    isAuthenticated: () => {
+        return currentUser !== null;
     }
   };
 

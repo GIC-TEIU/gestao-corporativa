@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Gerenciamento de Permissões</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        button { padding: 10px 15px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        pre { background: #f5f5f5; padding: 10px; border: 1px solid #ddd; border-radius: 4px; overflow: auto; }
+        .success { color: green; }
+        .error { color: red; }
+        .section { margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Teste de Gerenciamento de Permissões</h1>
+
+    <div class="section">
+        <h3>1. Autenticação</h3>
+        <button onclick="login()">Fazer Login (admin@empresa.com)</button>
+        <button onclick="getCurrentUser()">Buscar Usuário Atual</button>
+        <pre id="authResult"></pre>
+    </div>
+
+    <div class="section">
+        <h3>2. Listar Permissões Disponíveis</h3>
+        <button onclick="getPermissions()">Listar Permissões</button>
+        <pre id="permissionsResult"></pre>
+    </div>
+
+    <div class="section">
+        <h3>3. Listar Usuários</h3>
+        <button onclick="listUsers()">Listar Usuários</button>
+        <pre id="usersResult"></pre>
+    </div>
+
+    <div class="section">
+        <h3>4. Criar Usuário de Teste</h3>
+        <button onclick="createTestUser()">Criar Usuário de Teste</button>
+        <pre id="createUserResult"></pre>
+    </div>
+
+    <div class="section">
+        <h3>5. Gerenciar Permissões do Usuário</h3>
+        <div>
+            <label for="userId">ID do Usuário:</label>
+            <input type="text" id="userId" placeholder="ID do usuário">
+        </div>
+        <div>
+            <label for="permissionsSelect">Permissões (segure Ctrl para selecionar múltiplas):</label>
+            <select id="permissionsSelect" multiple style="width: 300px; height: 150px;">
+                <!-- As permissões serão carregadas aqui -->
+            </select>
+        </div>
+        <button onclick="updateUserPermissions()">Atualizar Permissões do Usuário</button>
+        <button onclick="getUserPermissions()">Buscar Permissões do Usuário</button>
+        <button onclick="getPermissionHistory()">Histórico de Permissões</button>
+        <pre id="userPermissionsResult"></pre>
+    </div>
+
+    <script>
+        // URL base - ajuste conforme sua instalação
+        const BASE_URL = window.location.origin + '/gestao-corporativa/public';
+
+        // Variável para armazenar as permissões disponíveis
+        let availablePermissions = [];
+
+        async function login() {
+            try {
+                const response = await fetch(BASE_URL + '/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        email: 'admin@empresa.com',
+                        password: 'password' // Use a senha real do admin
+                    })
+                });
+                
+                const data = await response.json();
+                document.getElementById('authResult').innerHTML = 
+                    `<span class="${response.ok ? 'success' : 'error'}">${JSON.stringify(data, null, 2)}</span>`;
+            } catch (error) {
+                document.getElementById('authResult').innerHTML = 
+                    `<span class="error">Erro: ${error.message}</span>`;
+            }
+        }
+
+        async function getCurrentUser() {
+            try {
+                const response = await fetch(BASE_URL + '/api/user', {
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                document.getElementById('authResult').innerHTML = 
+                    `<span class="${response.ok ? 'success' : 'error'}">${JSON.stringify(data, null, 2)}</span>`;
+            } catch (error) {
+                document.getElementById('authResult').innerHTML = 
+                    `<span class="error">Erro: ${error.message}</span>`;
+            }
+        }
+
+        async function getPermissions() {
+            try {
+                const response = await fetch(BASE_URL + '/api/user-management/permissions', {
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                document.getElementById('permissionsResult').innerHTML = 
+                    `<span class="${response.ok ? 'success' : 'error'}">${JSON.stringify(data, null, 2)}</span>`;
+                
+                // Se deu certo, armazena as permissões e preenche o select
+                if (response.ok) {
+                    availablePermissions = data.data;
+                    fillPermissionsSelect();
+                }
+            } catch (error) {
+                document.getElementById('permissionsResult').innerHTML = 
+                    `<span class="error">Erro: ${error.message}</span>`;
+            }
+        }
+
+        function fillPermissionsSelect() {
+            const select = document.getElementById('permissionsSelect');
+            select.innerHTML = '';
+            
+            availablePermissions.forEach(permission => {
+                const option = document.createElement('option');
+                option.value = permission.id;
+                option.textContent = `${permission.id} - ${permission.title} (${permission.description})`;
+                select.appendChild(option);
+            });
+        }
+
+        async function listUsers() {
+            try {
+                const response = await fetch(BASE_URL + '/api/user-management', {
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                document.getElementById('usersResult').innerHTML = 
+                    `<span class="${response.ok ? 'success' : 'error'}">${JSON.stringify(data, null, 2)}</span>`;
+            } catch (error) {
+                document.getElementById('usersResult').innerHTML = 
+                    `<span class="error">Erro: ${error.message}</span>`;
+            }
+        }
+
+        async function createTestUser() {
+            try {
+                const response = await fetch(BASE_URL + '/api/user-management', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        full_name: 'Usuário Teste ' + Date.now(),
+                        email: 'teste' + Date.now() + '@empresa.com',
+                        password: 'senha123',
+                        job_title: 'Analista Teste',
+                        employee_id: 'TEST' + Date.now().toString().slice(-6),
+                        is_active: true,
+                        permissions: [1, 2, 3] // IDs básicos de permissão
+                    })
+                });
+                
+                const data = await response.json();
+                document.getElementById('createUserResult').innerHTML = 
+                    `<span class="${response.ok ? 'success' : 'error'}">${JSON.stringify(data, null, 2)}</span>`;
+                
+                // Se criou com sucesso, preenche o ID do usuário no campo
+                if (response.ok && data.data && data.data.user_id) {
+                    document.getElementById('userId').value = data.data.user_id;
+                }
+            } catch (error) {
+                document.getElementById('createUserResult').innerHTML = 
+                    `<span class="error">Erro: ${error.message}</span>`;
+            }
+        }
+
+        async function updateUserPermissions() {
+            const userId = document.getElementById('userId').value;
+            if (!userId) {
+                alert('Informe o ID do usuário');
+                return;
+            }
+
+            const select = document.getElementById('permissionsSelect');
+            const selectedPermissions = Array.from(select.selectedOptions).map(option => parseInt(option.value));
+
+            try {
+                const response = await fetch(BASE_URL + '/api/user-management/' + userId, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        permissions: selectedPermissions
+                    })
+                });
+                
+                const data = await response.json();
+                document.getElementById('userPermissionsResult').innerHTML = 
+                    `<span class="${response.ok ? 'success' : 'error'}">${JSON.stringify(data, null, 2)}</span>`;
+            } catch (error) {
+                document.getElementById('userPermissionsResult').innerHTML = 
+                    `<span class="error">Erro: ${error.message}</span>`;
+            }
+        }
+
+        async function getUserPermissions() {
+            const userId = document.getElementById('userId').value;
+            if (!userId) {
+                alert('Informe o ID do usuário');
+                return;
+            }
+
+            try {
+                const response = await fetch(BASE_URL + '/api/user-management/' + userId, {
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                document.getElementById('userPermissionsResult').innerHTML = 
+                    `<span class="${response.ok ? 'success' : 'error'}">${JSON.stringify(data, null, 2)}</span>`;
+                
+                // Se deu certo, marca as permissões no select
+                if (response.ok && data.data && data.data.permissions) {
+                    const userPermissions = Object.keys(data.data.permissions).map(key => parseInt(key));
+                    const select = document.getElementById('permissionsSelect');
+                    
+                    // Desmarca todas
+                    Array.from(select.options).forEach(option => {
+                        option.selected = false;
+                    });
+                    
+                    // Marca as permissões do usuário
+                    userPermissions.forEach(permId => {
+                        const option = select.querySelector(`option[value="${permId}"]`);
+                        if (option) {
+                            option.selected = true;
+                        }
+                    });
+                }
+            } catch (error) {
+                document.getElementById('userPermissionsResult').innerHTML = 
+                    `<span class="error">Erro: ${error.message}</span>`;
+            }
+        }
+
+        async function getPermissionHistory() {
+            const userId = document.getElementById('userId').value;
+            if (!userId) {
+                alert('Informe o ID do usuário');
+                return;
+            }
+
+            try {
+                const response = await fetch(BASE_URL + '/api/user-management/' + userId + '/history', {
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                document.getElementById('userPermissionsResult').innerHTML = 
+                    `<span class="${response.ok ? 'success' : 'error'}">${JSON.stringify(data, null, 2)}</span>`;
+            } catch (error) {
+                document.getElementById('userPermissionsResult').innerHTML = 
+                    `<span class="error">Erro: ${error.message}</span>`;
+            }
+        }
+
+        // Carregar permissões ao iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            getPermissions();
+        });
+    </script>
+</body>
+</html>

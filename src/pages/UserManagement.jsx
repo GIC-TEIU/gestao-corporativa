@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 import MainLayout from '../layouts/MainLayout';
 import UsersTable from '../components/user-management/UsersTable';
-import HistoryAndPermissionsTable from '../components/user-management/HistoryAndPermissionsTable'
+import HistoryAndPermissionsTable from '../components/user-management/HistoryAndPermissionsTable';
 import ManagementPermissionsModal from '../components/user-management/ManagementPermissionsModal';
 import ConfirmDeletionModal from '../components/user-management/ConfirmDeletionModal';
 import PermissionsModal from '../components/user-management/PermissionsModal';
@@ -15,18 +16,80 @@ import { UserPlus, Filter, Search, Users, History } from 'lucide-react';
 
 const UserManagement = () => {
     const navigate = useNavigate();
+    const { currentUser, hasPermission, loading, checkSession } = useAuth();
+    const [accessChecked, setAccessChecked] = useState(false);
     const [activeTab, setActiveTab] = useState('users');
     const [searchTerm, setSearchTerm] = useState('');
 
     const [isViewPermissionsModalOpen, setViewPermissionsModalOpen] = useState(false);
     const [isHistoryModalOpen, setHistoryModalOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
-
     const [isPermissionsModalOpen, setPermissionsModalOpen] = useState(false);
     const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
     const [userToDelete, setUserToDelete] = useState(null);
     const [isInviteUserModalOpen, setInviteUserModalOpen] = useState(false);
     const [isFilterSidebarOpen, setIsFilterSidebarOpen] = useState(false);
+
+    // Verificação de acesso
+    useEffect(() => {
+        const verifyAccess = async () => {
+            if (!loading) {
+                console.log('🔐 UserManagement - Verificando acesso...');
+                
+                if (!currentUser) {
+                    console.log('❌ UserManagement: Sem usuário, verificando sessão...');
+                    const sessionValid = await checkSession();
+                    if (!sessionValid) {
+                        console.log('❌ UserManagement: Sessão inválida, redirecionando...');
+                        navigate('/login');
+                        return;
+                    }
+                }
+
+                if (currentUser && !hasPermission('user_management')) {
+                    console.log('❌ UserManagement: Sem permissão user_management');
+                    console.log('📋 Permissões do usuário:', currentUser.permissions);
+                    navigate('/home');
+                    return;
+                }
+
+                console.log('✅ UserManagement: Acesso permitido');
+                setAccessChecked(true);
+            }
+        };
+
+        verifyAccess();
+    }, [currentUser, hasPermission, loading, checkSession, navigate]);
+
+    // Se ainda está verificando ou carregando
+    if (loading || !accessChecked) {
+        return (
+            <MainLayout title="Gerenciador de Usuários" subtitle="Verificando acesso...">
+                <div className="flex justify-center items-center h-64">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                    <span className="ml-4">Verificando permissões...</span>
+                </div>
+            </MainLayout>
+        );
+    }
+
+    // Se não tem permissão após verificação
+    if (!hasPermission('user_management')) {
+        return (
+            <MainLayout title="Acesso Negado">
+                <div className="flex flex-col items-center justify-center h-64">
+                    <h2 className="text-xl font-semibold text-red-600 mb-4">Acesso Negado</h2>
+                    <p className="text-gray-600">Você não tem permissão para acessar o Gerenciamento de Usuários.</p>
+                    <button 
+                        onClick={() => navigate('/home')}
+                        className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                    >
+                        Voltar para Home
+                    </button>
+                </div>
+            </MainLayout>
+        );
+    }
 
     const handleOpenPermissionsModal = () => setPermissionsModalOpen(true);
     const handleClosePermissionsModal = () => setPermissionsModalOpen(false);
