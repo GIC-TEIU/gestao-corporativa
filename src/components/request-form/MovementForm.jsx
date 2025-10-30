@@ -752,7 +752,7 @@ const MovementForm = ({
 
       <div>
         <label className="block text-brand-teal-dark font-medium mb-1 text-sm">
-          Salário Atual R$
+          Salário Atual R$ <span className="text-red-500">*</span>
         </label>
         <input
           type="number"
@@ -766,10 +766,11 @@ const MovementForm = ({
 
       <div>
         <label className="block text-brand-teal-dark font-medium mb-1 text-sm">
-          Novo Salário R$
+          Novo Salário R$ <span className="text-red-500">*</span>
         </label>
         <input
           type="number"
+          required
           placeholder="0,00"
           value={formValues.novo_salario || ""}
           onChange={(e) =>
