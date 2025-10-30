@@ -37,6 +37,8 @@ class ProtheusSalaryHistory
             WHERE
                 sra.RA_MAT = ?
                 AND sr3.R3_VALOR > 10
+                AND sra.D_E_L_E_T_ = ''
+                AND sra.RA_DEMISSA = ''
         ),
         HistoricoComDiferenca AS (
             SELECT
