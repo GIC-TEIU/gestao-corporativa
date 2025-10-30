@@ -334,20 +334,22 @@ const UserManagement = () => {
                 isOpen={isDeleteModalOpen}
                 onClose={handleCloseDeleteModal}
                 onConfirm={handleConfirmDeletion}
-                userName={userToDelete?.nome}
+                user={userToDelete}
                 loading={false}
             />
             
+            {/* ✅ CORREÇÃO: Passe o objeto user completo em vez de apenas o nome */}
             <PermissionsModal
                 isOpen={isViewPermissionsModalOpen}
                 onClose={handleCloseViewPermissionsModal}
-                userName={selectedUser?.nome}
+                user={selectedUser}
             />
             
+            {/* ✅ CORREÇÃO: Passe o objeto user completo em vez de apenas o nome */}
             <HistoryPermissionsModal
                 isOpen={isHistoryModalOpen}
                 onClose={handleCloseHistoryModal}
-                userName={selectedUser?.nome}
+                user={selectedUser}
             />
         </MainLayout>
     );

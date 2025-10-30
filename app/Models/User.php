@@ -5,7 +5,7 @@ use PDO;
 
 class User
 {
-    protected $table = 'user'; // Nome correto da tabela no seu BD
+    protected $table = 'user'; 
     protected $db;
     protected $whereCondition = '';
     protected $whereParams = [];
