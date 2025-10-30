@@ -28,7 +28,7 @@ const MovementForm = ({
   const [novoCcSuggestions, setNovoCcSuggestions] = useState([]);
   const [showNovoCcSuggestions, setShowNovoCcSuggestions] = useState(false);
   const [isNovoCcLoading, setIsNovoCcLoading] = useState(false);
-
+  const [novoCargoSearch, setNovoCargoSearch] = useState(formValues?.novo_cargo || "");
   const [cargoAtualDesc, setCargoAtualDesc] = useState("");
   const [centroCustoDesc, setCentroCustoDesc] = useState("");
   const [isLoadingDescriptions, setIsLoadingDescriptions] = useState(false);
@@ -77,26 +77,41 @@ const MovementForm = ({
     fetchEmployees();
 
   }, [employeeSearch, searchEmployees, currentUser]);
-  useEffect(() => {
 
+  useEffect(() => {
     if (!lookupData || !lookupData.jobTitles || !Array.isArray(lookupData.jobTitles)) {
       setPositionSuggestions([]);
       return;
     }
-    if (positionSearch.trim() === "") {
+
+    let searchTerm = "";
+
+    if (tipoEnvelope === "movimentacao" || tipoEnvelope === "promocao_cargo") {
+      searchTerm = novoCargoSearch; 
+    } else {
+      searchTerm = positionSearch; 
+    }
+
+    if (searchTerm.trim() === "") {
       setPositionSuggestions([]);
       return;
     }
 
-    const lowerSearch = positionSearch.toLowerCase();
+    const lowerSearch = searchTerm.toLowerCase();
     const suggestions = lookupData.jobTitles
       .map(job => job.description)
       .filter(desc => desc.toLowerCase().includes(lowerSearch))
       .slice(0, 5);
 
     setPositionSuggestions(suggestions);
-    setShowPositionSuggestions(suggestions.length > 0);
-  }, [positionSearch, lookupData]);
+
+    
+    if ((tipoEnvelope === "movimentacao" || tipoEnvelope === "promocao_cargo") && novoCargoSearch.trim() !== "") {
+      setShowPositionSuggestions(suggestions.length > 0);
+    } else {
+      setShowPositionSuggestions(false);
+    }
+  }, [positionSearch, novoCargoSearch, lookupData, tipoEnvelope]);
 
   useEffect(() => {
     if (novoCcSearch.trim().length < 2) {
@@ -105,7 +120,7 @@ const MovementForm = ({
       setIsNovoCcLoading(false);
       return;
     }
-  
+
     const delayDebounceFn = setTimeout(async () => {
       setIsNovoCcLoading(true);
       try {
@@ -131,7 +146,7 @@ const MovementForm = ({
   const fetchEmployeeData = async (matricula) => {
     if (!matricula) return;
     setSalaryLoading(true);
-    updateFormValues("step2", "valorAnterior", "");
+    updateFormValues("step2", "salario_atual", "");
 
     try {
       const response = await fetch(`/api/employee/data/${matricula}`);
@@ -142,7 +157,7 @@ const MovementForm = ({
       }
       const result = await response.json();
       if (result.success && result.data) {
-        updateFormValues("step2", "valorAnterior", result.data.salario_atual);
+        updateFormValues("step2", "salario_atual", result.data.salario_atual);
         updateFormValues("step2", "nomeColaborador", result.data.nome);
       }
     } catch (error) {
@@ -193,7 +208,7 @@ const MovementForm = ({
         }
       } catch (error) {
         console.error("Erro ao buscar descrições:", error);
-      
+
       } finally {
         setIsLoadingDescriptions(false);
       }
@@ -208,8 +223,8 @@ const MovementForm = ({
     setShowPositionSuggestions(false);
   };
   const handleNewPositionSelect = (position) => {
-    setPositionSearch(position);
-    updateFormValues("step2", "novoCargo", position);
+    setNovoCargoSearch(position); 
+    updateFormValues("step2", "novo_cargo", position);
     setPositionSuggestions([]);
     setShowPositionSuggestions(false);
   };
@@ -223,18 +238,19 @@ const MovementForm = ({
       updateFormValues("step2", "matricula", "");
       updateFormValues("step2", "cargoAtual", "");
       updateFormValues("step2", "employeeId", "");
-      updateFormValues("step2", "valorAnterior", "");
+      updateFormValues("step2", "salario_atual", "");
       updateFormValues("step2", "centroCusto", "");
     }
   };
   const handlePositionSearchChange = (e) => {
     const value = e.target.value;
     setPositionSearch(value);
-    if (tipoEnvelope === "promocao/cargo" || tipoEnvelope === "movimentacao") {
-      updateFormValues("step2", "novoCargo", value);
-    } else {
-      updateFormValues("step2", "cargoAtual", value);
-    }
+    
+    
+    
+    
+    updateFormValues("step2", "cargoAtual", value);
+    
   };
   const handleCargoAtualChange = (e) => {
     const value = e.target.value;
@@ -243,18 +259,22 @@ const MovementForm = ({
   }
   const handleNovoCargoChange = (e) => {
     const value = e.target.value;
-    setPositionSearch(value);
-    updateFormValues("step2", "novoCargo", value);
+    setNovoCargoSearch(value);
+    updateFormValues("step2", "novo_cargo", value);
+    
+    if (value.trim() !== "") {
+      setShowPositionSuggestions(true);
+    }
   }
   const handleNovoCcChange = (e) => {
     const value = e.target.value;
     setNovoCcSearch(value);
     setIsNovoCcLoading(true);
-    updateFormValues("step2", "novoCentroCusto", "");
   };
+
   const handleNovoCcSelect = (suggestion) => {
     setNovoCcSearch(suggestion.desc);
-    updateFormValues("step2", "novoCentroCusto", suggestion.code);
+    updateFormValues("step2", "novo_centro_custo", suggestion.code);
     setNovoCcSuggestions([]);
     setShowNovoCcSuggestions(false);
   };
@@ -266,7 +286,7 @@ const MovementForm = ({
   };
   const renderConteudoDireito = () => {
     switch (tipoEnvelope) {
-      case "promocao/cargo":
+      case "promocao_cargo":
         return (
           <div className="bg-white rounded-xl p-6 space-y-6 font-poppins">
             <h2 className="text-lg font-semibold text-brand-teal-dark">
@@ -280,21 +300,23 @@ const MovementForm = ({
                 type="text"
                 placeholder="Digite para pesquisar cargos"
                 onChange={handleNovoCargoChange}
-                value={formValues.novoCargo || ""}
-                onBlur={() => setTimeout(() => setFocusedPositionInput(null), 200)}
+                value={novoCargoSearch} 
+                onBlur={() => setTimeout(() => {
+                  setShowPositionSuggestions(false);
+                }, 200)}
                 onFocus={() => {
-                  setPositionSearch(formValues.novoCargo || "");
+                  setNovoCargoSearch(novoCargoSearch || "");
                   setShowPositionSuggestions(true);
-                  setFocusedPositionInput('novo');
                 }}
                 className="w-full text-gray-700 border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-brand-teal-dark focus:outline-none"
               />
 
-              {showPositionSuggestions && positionSuggestions.length > 0 && focusedPositionInput === 'novo' && (
+              {showPositionSuggestions && positionSuggestions.length > 0 && (
                 <div className="absolute z-20 w-full mt-1 bg-white border border-gray-300 shadow-lg max-h-60 overflow-y-auto">
                   {positionSuggestions.map((position, index) => (
                     <div
                       key={index}
+                      onMouseDown={(e) => e.preventDefault()} 
                       onClick={() => handleNewPositionSelect(position)}
                       className="px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
                     >
@@ -307,12 +329,12 @@ const MovementForm = ({
 
             <div>
               <label className="text-brand-teal-dark font-semibold mb-1">
-                Valor Anterior R$ *
+                Salário Atual R$ *
               </label>
               <input
                 type="number"
                 placeholder={salaryLoading ? "Buscando..." : "0,00"}
-                value={formValues.valorAnterior || ""}
+                value={formValues.salario_atual || ""}
                 disabled
                 readOnly
                 className="w-full border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-brand-teal-dark focus:outline-none bg-gray-100"
@@ -321,15 +343,15 @@ const MovementForm = ({
 
             <div>
               <label className="text-brand-teal-dark font-semibold mb-1">
-                Valor Final R$ *
+                Novo Salário R$ *
               </label>
               <input
                 type="number"
                 placeholder="0,00"
                 onChange={(e) =>
-                  updateFormValues("step2", "valorFinal", e.target.value)
+                  updateFormValues("step2", "novo_salario", e.target.value)
                 }
-                value={formValues.valorFinal || ""}
+                value={formValues.novo_salario || ""}
                 className="w-full border border-gray-700 py-2 text-sm focus:ring-2 focus:ring-brand-teal-dark focus:outline-none"
               />
             </div>
@@ -344,12 +366,12 @@ const MovementForm = ({
             </h2>
             <div>
               <label className="block text-brand-teal-dark font-medium mb-1 text-sm">
-                Valor Anterior R$
+                Salário Atual R$
               </label>
               <input
                 type="number"
                 placeholder={salaryLoading ? "Buscando..." : "0,00"}
-                value={formValues.valorAnterior || ""}
+                value={formValues.salario_atual || ""}
                 disabled
                 readOnly
                 className="w-full border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-brand-teal-dark focus:outline-none bg-gray-100"
@@ -358,13 +380,13 @@ const MovementForm = ({
 
             <div>
               <label className="block text-brand-teal-dark font-medium mb-1 text-sm">
-                Valor Final R$
+                Novo Salário R$
               </label>
               <input
                 type="number"
                 placeholder="0,00"
                 onChange={(e) =>
-                  updateFormValues("step2", "valorFinal", e.target.value)
+                  updateFormValues("step2", "novo_salario", e.target.value)
                 }
                 className="w-full border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-brand-teal-dark focus:outline-none"
               />
@@ -392,7 +414,7 @@ const MovementForm = ({
                     name="tipoDemissao"
                     value="demissaoJustaCausa"
                     onChange={(e) =>
-                      updateFormValues("step2", "tipoDemissao", e.target.value)
+                      updateFormValues("step2", "motivo_desligamento", e.target.value)
                     }
                     className="h-4 w-4 accent-brand-teal-dark cursor-pointer"
                   />
@@ -411,7 +433,7 @@ const MovementForm = ({
                     name="tipoDemissao"
                     value="demissaoSemJustaCausa"
                     onChange={(e) =>
-                      updateFormValues("step2", "tipoDemissao", e.target.value)
+                      updateFormValues("step2", "motivo_desligamento", e.target.value)
                     }
                     className="h-4 w-4 accent-brand-teal-dark cursor-pointer"
                   />
@@ -430,7 +452,7 @@ const MovementForm = ({
                     name="tipoDemissao"
                     value="acordo"
                     onChange={(e) =>
-                      updateFormValues("step2", "tipoDemissao", e.target.value)
+                      updateFormValues("step2", "motivo_desligamento", e.target.value)
                     }
                     className="h-4 w-4 accent-brand-teal-dark cursor-pointer"
                   />
@@ -451,7 +473,7 @@ const MovementForm = ({
               </label>
               <select
                 onChange={(e) =>
-                  updateFormValues("step2", "avisoPrevio", e.target.value)
+                  updateFormValues("step2", "tipo_aviso", e.target.value)
                 }
                 className="w-full border border-gray-300 px-3 py-2 text-sm appearance-none cursor-pointer focus:ring-2 focus:ring-brand-teal-dark focus:outline-none"
               >
@@ -464,12 +486,15 @@ const MovementForm = ({
             </div>
           </div>
         );
+
       case "movimentacao":
         return (
           <div className="bg-white rounded-xl p-6 space-y-6 font-poppins">
             <h2 className="text-lg font-semibold text-brand-teal-dark">
               Movimentação do Colaborador
             </h2>
+
+            
             <div className="mb-4 relative">
               <label className={labelBase}>Novo Centro de Custo</label>
               <input
@@ -487,7 +512,7 @@ const MovementForm = ({
                 </div>
               )}
               {showNovoCcSuggestions && novoCcSuggestions.length > 0 && !isNovoCcLoading && (
-                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300  shadow-lg max-h-60 overflow-y-auto">
+                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 shadow-lg max-h-60 overflow-y-auto">
                   {novoCcSuggestions.map((cc) => (
                     <div
                       key={cc.code}
@@ -500,41 +525,45 @@ const MovementForm = ({
                 </div>
               )}
             </div>
+
+            
             <div className="mb-4">
               <label className={labelBase}>Nova Unidade Operacional</label>
               <select
-                onChange={(e) =>
-                  updateFormValues("step2", "novaUnidadeOperacional", e.target.value)
-                }
+                value={formValues.new_operational_unit || ""}
+                onChange={(e) => updateFormValues("step2", "new_operational_unit", e.target.value)}
                 className={`${inputBase} appearance-none cursor-pointer`}
               >
                 <option value="" disabled hidden>Selecione a unidade</option>
-
                 {lookupData?.unidades?.map((unidade) => (
                   <option key={unidade} value={unidade}>{unidade}</option>
                 ))}
               </select>
             </div>
+            
+            
             <div className="mb-4 relative">
               <label className={labelBase}>Novo Cargo</label>
               <input
                 type="text"
                 placeholder="Digite para pesquisar cargos"
-                value={formValues.novoCargo || ""}
+                value={novoCargoSearch} 
                 onChange={handleNovoCargoChange}
-                onBlur={() => setTimeout(() => setFocusedPositionInput(null), 200)}
+                onBlur={() => setTimeout(() => {
+                  setShowPositionSuggestions(false);
+                }, 200)}
                 onFocus={() => {
-                  setPositionSearch(formValues.novoCargo || "");
+                  setNovoCargoSearch(novoCargoSearch || "");
                   setShowPositionSuggestions(true);
-                  setFocusedPositionInput('novo');
                 }}
                 className="w-full text-gray-700 border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-brand-teal-dark focus:outline-none"
-              />          
-              {showPositionSuggestions && positionSuggestions.length > 0 && focusedPositionInput === 'novo' && (
-                <div className="absolute z-20 w-full mt-1 bg-white border border-gray-300  shadow-lg max-h-60 overflow-y-auto">
+              />
+              {showPositionSuggestions && positionSuggestions.length > 0 && (
+                <div className="absolute z-20 w-full mt-1 bg-white border border-gray-300 shadow-lg max-h-60 overflow-y-auto">
                   {positionSuggestions.map((position, index) => (
                     <div
                       key={index}
+                      onMouseDown={(e) => e.preventDefault()} 
                       onClick={() => handleNewPositionSelect(position)}
                       className="px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
                     >
@@ -545,15 +574,14 @@ const MovementForm = ({
               )}
             </div>
 
+            
             <div className="mb-4">
               <label className={labelBase}>Motivo da Movimentação</label>
               <input
                 type="text"
                 placeholder="Digite o motivo da movimentação"
-                value={formValues.motivoMovimentacao || ""}
-                onChange={(e) =>
-                  updateFormValues("step2", "motivoMovimentacao", e.target.value)
-                }
+                value={formValues.justificativa || ""} 
+                onChange={(e) => updateFormValues("step2", "justificativa", e.target.value)}
                 className={`${inputBase}`}
               />
             </div>
@@ -568,12 +596,12 @@ const MovementForm = ({
             </h2>
             <div>
               <label className="block text-brand-teal-dark font-medium mb-1 text-sm">
-                Valor Anterior R$
+                Salário Atual R$
               </label>
               <input
                 type="number"
                 placeholder={salaryLoading ? "Buscando..." : "0,00"}
-                value={formValues.valorAnterior || ""}
+                value={formValues.salario_atual || ""}
                 disabled
                 readOnly
                 className="w-full border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-brand-teal-dark focus:outline-none bg-gray-100"
@@ -582,13 +610,13 @@ const MovementForm = ({
 
             <div>
               <label className="block text-brand-teal-dark font-medium mb-1 text-sm">
-                Valor Final R$
+                Novo Salário R$
               </label>
               <input
                 type="number"
                 placeholder="0,00"
                 onChange={(e) =>
-                  updateFormValues("step2", "valorFinal", e.target.value)
+                  updateFormValues("step2", "novo_salario", e.target.value)
                 }
                 className="w-full border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-brand-teal-dark focus:outline-none"
               />
@@ -604,12 +632,12 @@ const MovementForm = ({
             </h2>
             <div>
               <label className="block text-brand-teal-dark font-medium mb-1 text-sm">
-                Valor Anterior R$
+                Salário Atual R$
               </label>
               <input
                 type="number"
                 placeholder={salaryLoading ? "Buscando..." : "0,00"}
-                value={formValues.valorAnterior || ""}
+                value={formValues.salario_atual || ""}
                 disabled
                 readOnly
                 className="w-full border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-brand-teal-dark focus:outline-none bg-gray-100"
@@ -618,13 +646,13 @@ const MovementForm = ({
 
             <div>
               <label className="block text-brand-teal-dark font-medium mb-1 text-sm">
-                Valor Final R$
+                Novo Salário R$
               </label>
               <input
                 type="number"
                 placeholder="0,00"
                 onChange={(e) =>
-                  updateFormValues("step2", "valorFinal", e.target.value)
+                  updateFormValues("step2", "novo_salario", e.target.value)
                 }
                 className="w-full border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-brand-teal-dark focus:outline-none"
               />
@@ -652,7 +680,7 @@ const MovementForm = ({
                     name="tipoDemissao"
                     value="demissaoJustaCausa"
                     onChange={(e) =>
-                      updateFormValues("step2", "tipoDemissao", e.target.value)
+                      updateFormValues("step2", "motivo_desligamento", e.target.value)
                     }
                     className="h-4 w-4 accent-brand-teal-dark cursor-pointer"
                   />
@@ -671,7 +699,7 @@ const MovementForm = ({
                     name="tipoDemissao"
                     value="demissaoSemJustaCausa"
                     onChange={(e) =>
-                      updateFormValues("step2", "tipoDemissao", e.target.value)
+                      updateFormValues("step2", "motivo_desligamento", e.target.value)
                     }
                     className="h-4 w-4 accent-brand-teal-dark cursor-pointer"
                   />
@@ -690,7 +718,7 @@ const MovementForm = ({
                     name="tipoDemissao"
                     value="acordo"
                     onChange={(e) =>
-                      updateFormValues("step2", "tipoDemissao", e.target.value)
+                      updateFormValues("step2", "motivo_desligamento", e.target.value)
                     }
                     className="h-4 w-4 accent-brand-teal-dark cursor-pointer"
                   />
@@ -711,7 +739,7 @@ const MovementForm = ({
               </label>
               <select
                 onChange={(e) =>
-                  updateFormValues("step2", "avisoPrevio", e.target.value)
+                  updateFormValues("step2", "tipo_aviso", e.target.value)
                 }
                 className="w-full border border-gray-300 px-3 py-2 text-sm appearance-none cursor-pointer focus:ring-2 focus:ring-brand-teal-dark focus:outline-none"
               >
@@ -783,21 +811,21 @@ const MovementForm = ({
               <input
                 type="text"
                 placeholder="Selecione um funcionário"
-              
+
                 value={
                   isLoadingDescriptions ? "Buscando descrição..." :
-                  formValues.cargoAtual ? 
-                    `${formValues.cargoAtual} - ${cargoAtualDesc || '(não encontrado)'}` 
-                    : ""
+                    formValues.cargoAtual ?
+                      `${formValues.cargoAtual} - ${cargoAtualDesc || '(não encontrado)'}`
+                      : ""
                 }
                 readOnly
                 disabled
                 className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-brand-teal-dark focus:outline-none bg-gray-100"
               />
             </div>
-            
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          
+
               <div>
                 <label className="text-brand-teal-dark font-semibold mb-1">
                   Centro de Custo
@@ -805,12 +833,12 @@ const MovementForm = ({
                 <input
                   type="text"
                   placeholder="Selecione um funcionário"
-                
+
                   value={
                     isLoadingDescriptions ? "Buscando descrição..." :
-                    formValues.centroCusto ? 
-                      `${formValues.centroCusto} - ${centroCustoDesc || '(não encontrado)'}` 
-                      : ""
+                      formValues.centroCusto ?
+                        `${formValues.centroCusto} - ${centroCustoDesc || '(não encontrado)'}`
+                        : ""
                   }
                   readOnly
                   disabled
@@ -851,7 +879,7 @@ const MovementForm = ({
                 <option value="insalubridade">Insalubridade</option>
                 <option value="periculosidade">Periculosidade</option>
                 <option value="experiencia">Término de experiência</option>
-                <option value="promocao/cargo">Mudança de cargo e Promoção salarial</option>
+                <option value="promocao_cargo">Mudança de cargo e Promoção salarial</option>
               </select>
             </div>
           </div>
