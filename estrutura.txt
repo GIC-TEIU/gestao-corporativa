@@ -1,21 +1,159 @@
 GESTAO-CORPORATIVA/
-└── src/
-    ├── components/
-    │   └── layout/
-    ├── context/
-    ├── layouts/
-    ├── pages/
-    │   ├── auth/
-    │   │   ├── Login.jsx
-    │   │   └── Register.jsx
-    │   ├── home/
-    │   │   └── Home.jsx
-    │   └── password-recovery/
-    │       ├── RequestReset.jsx  
-    │       └── ResetPassword.jsx 
-    ├── routes/
-    │   └── index.jsx
-    ├── services/
-    ├── utils/
-    ├── App.jsx
-    ├── main.jsx
+├── app/
+│   ├── Controllers
+│   │   ├── AuthController.php
+│   │   ├── EmployeeController.php
+│   │   ├── LookupController.php
+│   │   └── RapController.php
+│   ├── Core/
+│   │   ├── Database.php
+│   │   ├── Response.php
+│   │   └── Router.php
+│   ├── Middleware/
+│   │   └── .gitkeep
+│   ├── Models/
+│   │   ├── CabecalhoRequisicao.php
+│   │   ├── CorpoRap.php
+│   │   ├── Director.php
+│   │   ├── Manager.php
+│   │   ├── ProtheusCostCenter.php
+│   │   ├── ProtheusEmployee.php
+│   │   ├── ProtheusJobTitle.php
+│   │   └── User.php
+│   └── Services/
+│       └── RapService.php
+├── config/
+│   └── database.php
+├── node_modules/
+├── public/
+│   ├── docs/
+│   ├── imgs/
+│   ├── .htaccess
+│   └── index.php
+├── routes/
+│   └── api.php
+├── src/
+│   ├── components/
+│   │   ├── email-signatures/
+│   │   │   ├── DetailsModal.jsx
+│   │   │   ├── EmailSignaturesTable.jsx
+│   │   │   ├── FilterBar.jsx
+│   │   │   ├── FiltersModal.jsx
+│   │   │   └── FuncionarioCard.jsx
+│   │   ├── envelope-search/
+│   │   │   ├── Avatar.jsx
+│   │   │   ├── EnvelopeCard.jsx
+│   │   │   ├── EnvelopeFilterBar.jsx
+│   │   │   ├── EnvelopeList.jsx
+│   │   │   ├── EnvelopeQueryTable.jsx
+│   │   │   └── RecipientFlowSuccess.jsx
+│   │   ├── home/
+│   │   │   ├── HomeModules.jsx
+│   │   │   ├── PermissionRedirect.jsx
+│   │   │   └── PermissionRoute.jsx
+│   │   ├── hr-panel/
+│   │   │   ├── AlertModal.jsx
+│   │   │   ├── AnalysisModal.jsx
+│   │   │   ├── ConfirmationModal.jsx
+│   │   │   ├── GroupingModal.jsx
+│   │   │   ├── IncompatibleModal.jsx
+│   │   │   ├── pdf-preview-for-signature/
+│   │   │   │   ├── ApproveModal.jsx
+│   │   │   │   ├── ConfirmationViewModal.jsx
+│   │   │   │   ├── DocumentSelectorCard.jsx
+│   │   │   │   ├── EnvelopeDetail.jsx
+│   │   │   │   ├── InfoEnvio.jsx
+│   │   │   │   ├── PdfViewerCard.jsx
+│   │   │   │   ├── RejectModal.jsx
+│   │   │   │   ├── Sidebar.jsx
+│   │   │   │   └── StatusTimelineCard.jsx
+│   │   │   ├── RapMovementCard.jsx
+│   │   │   ├── RapMovementTable.jsx
+│   │   │   ├── RequestCard.jsx
+│   │   │   └── RequestTable.jsx
+│   │   ├── request-form/
+│   │   │   ├── AdmissionForm.jsx
+│   │   │   ├── DirectDocumentForm.jsx
+│   │   │   ├── EnvelopeWizard.jsx
+│   │   │   ├── FormHeader.jsx
+│   │   │   ├── LoadingState.jsx
+│   │   │   ├── MovementForm.jsx
+│   │   │   └── RequestFormSuccess.jsx
+│   │   ├── ui/
+│   │   │   ├── AlmostThere.jsx
+│   │   │   ├── BackButton.jsx
+│   │   │   ├── Button.jsx
+│   │   │   ├── Card.jsx
+│   │   │   ├── Footer.jsx
+│   │   │   ├── Header.jsx
+│   │   │   ├── HeaderHome.jsx
+│   │   │   ├── NotificationsModal.jsx
+│   │   │   ├── PageHeader.jsx
+│   │   │   ├── PasswordEditProfile.jsx
+│   │   │   ├── SuccessDisplay.jsx
+│   │   │   └── Toast.jsx
+│   │   ├── user-management/
+│   │   │   ├── ConfirmDeletionModal.jsx
+│   │   │   ├── FilterSidebar.jsx
+│   │   │   ├── HistoryAndPermissionsTable.jsx
+│   │   │   ├── HistoryPermissionsModal.jsx
+│   │   │   ├── InviteUserModal.jsx
+│   │   │   ├── ManagementPermissionsModal.jsx
+│   │   │   ├── PermissionsModal.jsx
+│   │   │   └── UsersTable.jsx
+│   │   └── ProtectedRoute.jsx
+│   ├── context/
+│   │   ├── AppContext.jsx
+│   │   ├── AuthContext.jsx
+│   │   ├── EmployeeContext.jsx
+│   │   ├── EnvelopeContext.jsx
+│   │   └── PermissionContext.jsx
+│   ├── hooks/
+│   │   ├── useBlockScreenshot.js
+│   │   ├── useEnvelopeForm.js
+│   │   └── useWindowSize.js
+│   ├── layouts/
+│   │   ├── HomeLayout.jsx
+│   │   └── MainLayout.jsx
+│   ├── pages/
+│   │   ├── EmailSignatures.jsx
+│   │   ├── EnvelopeSearch.jsx
+│   │   ├── ForgotPassword.jsx
+│   │   ├── Home.jsx
+│   │   ├── HRPanel.jsx
+│   │   ├── Login.jsx
+│   │   ├── PasswordSuccess.jsx
+│   │   ├── PdfPreviewForSignature.jsx
+│   │   ├── Profile.jsx
+│   │   ├── RecipientFlow.jsx
+│   │   ├── Register.jsx
+│   │   ├── RequestForm.jsx
+│   │   ├── ResetPassword.jsx
+│   │   └── UserManagement.jsx
+│   ├── App.jsx
+│   ├── index.css
+│   ├── main.jsx
+│   └── vite-env.d.ts
+├── tests/
+│   └── test_connections.php
+├── vendor/
+├── .env
+├── .gitignore
+├── composer.json
+├── composer.lock
+├── eslint.config.js
+├── estrutura.txt
+├── index.html
+├── notepad
+├── package-lock.json
+├── package.json
+├── phpinfo.php
+├── postcss.config.js
+├── README.md
+├── SQL.sql
+├── tailwind.config.js
+├── tsconfig.app.json
+├── tsconfig.json
+├── tsconfig.node.json
+├── vercel.json
+└── vite.config.ts
