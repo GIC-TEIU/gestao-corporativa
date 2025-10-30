@@ -1,12 +1,26 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { AlertTriangle, Send } from "lucide-react"; const FormField = ({ label, name, type = "text", value, onChange, options = null, rows = 1, optionValueKey, optionLabelKey, placeholder = "" }) => {
+import { AlertTriangle, Send } from "lucide-react";
+
+const FormField = ({ 
+  label, 
+  name, 
+  type = "text", 
+  value, 
+  onChange, 
+  options = null, 
+  rows = 1, 
+  optionValueKey, 
+  optionLabelKey, 
+  placeholder = "",
+  required = false
+}) => {
   const commonClasses = "w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan transition duration-150 ease-in-out";
   const fieldId = `field-step3-${name}`;
 
   return (
     <div>
       <label htmlFor={fieldId} className="block text-brand-teal-dark font-semibold mb-1">
-        {label}
+        {label} {required && <span className="text-red-500">*</span>}
       </label>
       {options ? (
         <select
@@ -15,6 +29,7 @@ import { AlertTriangle, Send } from "lucide-react"; const FormField = ({ label, 
           value={value || ""}
           onChange={onChange}
           className={commonClasses}
+          required={required}
         >
           <option value="">Selecione</option>
           {options.map((option, index) => {
@@ -36,6 +51,7 @@ import { AlertTriangle, Send } from "lucide-react"; const FormField = ({ label, 
           onChange={onChange}
           placeholder={placeholder}
           className={`${commonClasses} resize-y`}
+          required={required}
         />
       ) : (
         <input
@@ -46,6 +62,7 @@ import { AlertTriangle, Send } from "lucide-react"; const FormField = ({ label, 
           onChange={onChange}
           placeholder={placeholder}
           className={commonClasses}
+          required={required}
         />
       )}
     </div>
@@ -56,17 +73,20 @@ const AdmissionForm = ({
   tipoEnvelope,
   handleContinue,
   updateFormValues,
-  formValues = { step3: {} }, handleBack,
-  lookupData, }) => {
+  formValues = { step3: {} }, 
+  handleBack,
+  lookupData, 
+}) => {
 
-  const [cargoSearch, setCargoSearch] = useState(""); const [cargoSuggestions, setCargoSuggestions] = useState([]);
+  const [cargoSearch, setCargoSearch] = useState(""); 
+  const [cargoSuggestions, setCargoSuggestions] = useState([]);
   const [showCargoSuggestions, setShowCargoSuggestions] = useState(false);
   const [isCargoLoading, setIsCargoLoading] = useState(false);
 
-  const [setorSearch, setSetorSearch] = useState(""); const [setorSuggestions, setSetorSuggestions] = useState([]);
+  const [setorSearch, setSetorSearch] = useState(""); 
+  const [setorSuggestions, setSetorSuggestions] = useState([]);
   const [showSetorSuggestions, setShowSetorSuggestions] = useState(false);
   const [isSetorLoading, setIsSetorLoading] = useState(false);
-
 
   useEffect(() => {
     if (formValues.step3?.cargo && !cargoSearch) {
@@ -76,6 +96,7 @@ const AdmissionForm = ({
       fetchSetorDescription(formValues.step3.setor);
     }
   }, [formValues.step3?.cargo, formValues.step3?.setor]);
+
   const fetchCargoDescription = async (code) => {
     if (!code) return;
     try {
@@ -114,7 +135,6 @@ const AdmissionForm = ({
     }
   };
 
-
   if (!lookupData) {
     return <div className="p-4 text-center">Carregando dados do formulário...</div>;
   }
@@ -122,7 +142,6 @@ const AdmissionForm = ({
   const handleChange = (e) => {
     updateFormValues("step3", e.target.name, e.target.value);
   };
-
 
   const handleCargoChange = (e) => {
     const value = e.target.value;
@@ -132,7 +151,9 @@ const AdmissionForm = ({
   };
 
   const handleCargoSelect = (suggestion) => {
-    setCargoSearch(suggestion.description); updateFormValues("step3", "cargo", suggestion.code); setCargoSuggestions([]);
+    setCargoSearch(suggestion.description); 
+    updateFormValues("step3", "cargo", suggestion.code); 
+    setCargoSuggestions([]);
     setShowCargoSuggestions(false);
   };
 
@@ -152,10 +173,15 @@ const AdmissionForm = ({
         setShowCargoSuggestions(result.data.length > 0);
       } else {
         console.error("Erro ao buscar Cargos:", result.message);
-        setCargoSuggestions([]); setShowCargoSuggestions(false);
+        setCargoSuggestions([]); 
+        setShowCargoSuggestions(false);
       }
-    } catch (error) { console.error("Erro de rede ao buscar Cargos:", error); }
-    finally { setIsCargoLoading(false); }
+    } catch (error) { 
+      console.error("Erro de rede ao buscar Cargos:", error); 
+    }
+    finally { 
+      setIsCargoLoading(false); 
+    }
   };
 
   useEffect(() => {
@@ -175,7 +201,9 @@ const AdmissionForm = ({
   };
 
   const handleSetorSelect = (suggestion) => {
-    setSetorSearch(suggestion.desc); updateFormValues("step3", "setor", suggestion.code); setSetorSuggestions([]);
+    setSetorSearch(suggestion.desc); 
+    updateFormValues("step3", "setor", suggestion.code); 
+    setSetorSuggestions([]);
     setShowSetorSuggestions(false);
   };
 
@@ -195,10 +223,15 @@ const AdmissionForm = ({
         setShowSetorSuggestions(result.data.length > 0);
       } else {
         console.error("Erro ao buscar Setores:", result.message);
-        setSetorSuggestions([]); setShowSetorSuggestions(false);
+        setSetorSuggestions([]); 
+        setShowSetorSuggestions(false);
       }
-    } catch (error) { console.error("Erro de rede ao buscar Setores:", error); }
-    finally { setIsSetorLoading(false); }
+    } catch (error) { 
+      console.error("Erro de rede ao buscar Setores:", error); 
+    }
+    finally { 
+      setIsSetorLoading(false); 
+    }
   };
 
   useEffect(() => {
@@ -210,22 +243,18 @@ const AdmissionForm = ({
     };
   }, [setorSearch]);
 
-
   const renderForm = () => {
-
     switch (tipoEnvelope) {
       case "admissao":
         const currentStep3Values = formValues.step3 || {};
         return (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
               <div className="space-y-4 bg-brand-ice-blue p-6 rounded-xl md:rounded-r-none md:rounded-l-3xl">
-
-
+                
                 <div className="relative">
                   <label htmlFor="field-step3-cargo" className="block text-brand-teal-dark font-semibold mb-1">
-                    Cargo *
+                    Cargo <span className="text-red-500">*</span>
                   </label>
                   <input
                     id="field-step3-cargo"
@@ -237,6 +266,7 @@ const AdmissionForm = ({
                     onBlur={() => setTimeout(() => setShowCargoSuggestions(false), 200)}
                     onFocus={() => setShowCargoSuggestions(true)}
                     className="w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan transition duration-150 ease-in-out"
+                    required
                   />
                   {isCargoLoading && <div className="absolute z-10 w-full p-2 text-sm text-gray-500 bg-white border border-t-0 border-gray-300 rounded-b-md">Buscando...</div>}
                   {showCargoSuggestions && cargoSuggestions.length > 0 && !isCargoLoading && (
@@ -254,28 +284,30 @@ const AdmissionForm = ({
                   )}
                 </div>
 
-
+                
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <FormField
-                    label="Categoria *"
+                    label="Categoria"
                     name="categoria"
                     value={currentStep3Values.categoria}
                     onChange={handleChange}
                     options={lookupData.categorias}
+                    required={true}
                   />
                   <FormField
-                    label="Horário de trabalho *"
+                    label="Horário de trabalho"
                     name="horario_trabalho"
                     value={currentStep3Values.horario_trabalho}
                     onChange={handleChange}
                     options={lookupData.horarios_trabalho}
+                    required={true}
                   />
                 </div>
 
-
+                
                 <div className="relative">
                   <label htmlFor="field-step3-setor" className="block text-brand-teal-dark font-semibold mb-1">
-                    Setor *
+                    Setor <span className="text-red-500">*</span>
                   </label>
                   <input
                     id="field-step3-setor"
@@ -287,6 +319,7 @@ const AdmissionForm = ({
                     onBlur={() => setTimeout(() => setShowSetorSuggestions(false), 200)}
                     onFocus={() => setShowSetorSuggestions(true)}
                     className="w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan transition duration-150 ease-in-out"
+                    required
                   />
                   {isSetorLoading && <div className="absolute z-10 w-full p-2 text-sm text-gray-500 bg-white border border-t-0 border-gray-300 rounded-b-md">Buscando...</div>}
                   {showSetorSuggestions && setorSuggestions.length > 0 && !isSetorLoading && (
@@ -304,41 +337,46 @@ const AdmissionForm = ({
                   )}
                 </div>
 
-
-
+                
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <FormField
-                    label="Motivo *"
+                    label="Motivo"
                     name="motivo"
                     value={currentStep3Values.motivo}
                     onChange={handleChange}
                     options={lookupData.motivos}
+                    required={true}
                   />
                   <FormField
-                    label="Sexo *"
+                    label="Sexo"
                     name="sexo"
                     value={currentStep3Values.sexo}
                     onChange={handleChange}
                     options={lookupData.sexo}
+                    required={true}
                   />
                 </div>
 
+                
                 <FormField
-                  label="Salário Inicial *"
+                  label="Salário Inicial"
                   name="salario"
                   type="number"
                   value={currentStep3Values.salario}
                   onChange={handleChange}
                   placeholder="Digite o valor em R$"
+                  required={true}
                 />
 
+                
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <FormField
-                    label="Tipo de Seleção *"
+                    label="Tipo de Seleção"
                     name="tipo_selecao"
                     value={currentStep3Values.tipo_selecao}
                     onChange={handleChange}
                     options={lookupData.tipos_selecao}
+                    required={true}
                   />
                   <FormField
                     label="Unidade"
@@ -346,26 +384,30 @@ const AdmissionForm = ({
                     value={currentStep3Values.unidade}
                     onChange={handleChange}
                     options={lookupData.unidades}
+                    required={false}
                   />
                 </div>
               </div>
 
+              
               <div className="space-y-4 p-6 border border-brand-ice-blue rounded-xl md:rounded-l-none md:rounded-r-3xl">
                 <FormField
-                  label="Justificativa para Contratação *"
+                  label="Justificativa para Contratação"
                   name="justificativa"
                   type="textarea"
                   rows={2}
                   value={currentStep3Values.justificativa}
                   onChange={handleChange}
+                  required={true}
                 />
                 <FormField
-                  label="Descrição das Atividades *"
+                  label="Descrição das Atividades"
                   name="descricao_atividades"
                   type="textarea"
                   rows={3}
                   value={currentStep3Values.descricao_atividades}
                   onChange={handleChange}
+                  required={true}
                 />
                 <FormField
                   label="Observações"
@@ -374,6 +416,7 @@ const AdmissionForm = ({
                   rows={2}
                   value={currentStep3Values.observacoes}
                   onChange={handleChange}
+                  required={false}
                 />
 
                 <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-3 rounded-md text-sm">
@@ -392,7 +435,8 @@ const AdmissionForm = ({
                     Anterior
                   </button>
                   <button
-                    type="submit" className="flex items-center bg-brand-cyan text-white px-6 py-2 rounded-md hover:bg-brand-blue-dark/90"
+                    type="submit" 
+                    className="flex items-center bg-brand-cyan text-white px-6 py-2 rounded-md hover:bg-brand-blue-dark/90"
                   >
                     <Send size={14} className="mr-2" />
                     Enviar
@@ -413,7 +457,7 @@ const AdmissionForm = ({
       onSubmit={(e) => {
         handleContinue(e);
       }}
-      className="space-y-4 p-2 rounded-md "
+      className="space-y-4 p-2 rounded-md"
     >
       {renderForm()}
     </form>
@@ -421,4 +465,3 @@ const AdmissionForm = ({
 };
 
 export default AdmissionForm;
-

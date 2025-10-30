@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
+
 const Button = ({ children, ...props }) => (
   <button
     {...props}
@@ -13,9 +14,19 @@ const UNIDADES = ["Teiú - Matriz", "Teiú Filial - Feira de Santana", "Teiú - 
 const TIPO_REQUISICAO = ["RAP", "RMP", "Documento Direto"];
 
 const FormField = ({
-  label, name, type = "text", value, onChange, options = null,
-  rows = 1, optionValueKey, optionLabelKey, placeholder = "",
-  disabled = false, readOnly = false
+  label, 
+  name, 
+  type = "text", 
+  value, 
+  onChange, 
+  options = null,
+  rows = 1, 
+  optionValueKey, 
+  optionLabelKey, 
+  placeholder = "",
+  disabled = false, 
+  readOnly = false,
+  required = false
 }) => {
   const commonClasses = `w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-brand-cyan transition duration-150 ease-in-out ${disabled ? 'cursor-not-allowed opacity-70' : ''}`;
   const fieldId = `field-header-${name}`;
@@ -23,7 +34,7 @@ const FormField = ({
   return (
     <div>
       <label htmlFor={fieldId} className="block text-brand-teal-dark font-semibold mb-1">
-        {label}
+        {label} {required && <span className="text-red-500">*</span>}
       </label>
       {options ? (
         <select
@@ -32,6 +43,7 @@ const FormField = ({
           onChange={onChange}
           disabled={disabled}
           className={commonClasses}
+          required={required}
         >
           <option value="">Selecione</option>
           {options.map((option, index) => {
@@ -57,6 +69,7 @@ const FormField = ({
           readOnly={readOnly}
           placeholder={placeholder}
           className={`${commonClasses} resize-y`}
+          required={required}
         />
       ) : (
         <input
@@ -68,12 +81,12 @@ const FormField = ({
           readOnly={readOnly}
           placeholder={placeholder}
           className={commonClasses}
+          required={required}
         />
       )}
     </div>
   );
 };
-
 
 const FormHeader = ({
   formValues = { step1: {} },
@@ -193,11 +206,16 @@ const FormHeader = ({
 
   const currentStep1Values = formValues.step1 || {};
   
+  
+  const isFormValid = currentStep1Values.setor && 
+                     currentStep1Values.gerente && 
+                     currentStep1Values.unidade && 
+                     currentStep1Values.diretor;
 
   return (
     <form onSubmit={handleContinue} className="p-2 md:p-2">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        {/* Coluna Esquerda */}
+        
         <div className="space-y-4 p-6 border-4 border-brand-ice-blue rounded-xl md:rounded-r-none md:rounded-l-3xl">
           <FormField
             label="Nome do requisitante"
@@ -205,6 +223,7 @@ const FormHeader = ({
             value={currentStep1Values.requisitante || ""}
             disabled
             readOnly
+            required={false}
           />
 
           <FormField
@@ -213,6 +232,7 @@ const FormHeader = ({
             value={isLoadingJobTitle ? "Buscando..." : jobTitleDisplay}
             disabled
             readOnly
+            required={false}
           />
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -224,6 +244,7 @@ const FormHeader = ({
               options={lookupData.managers}
               optionValueKey="id"
               optionLabelKey="full_name"
+              required={true}
             />
 
             <FormField
@@ -232,11 +253,12 @@ const FormHeader = ({
               value={currentStep1Values.unidade}
               onChange={(e) => updateFormValues("step1", "unidade", e.target.value)}
               options={UNIDADES}
+              required={true}
             />
           </div>
         </div>
 
-        {/* Coluna Direita */}
+        
         <div className="space-y-4 p-6 bg-brand-ice-blue rounded-xl md:rounded-l-none md:rounded-r-3xl">
           <FormField
             label="Tipo de Requisição"
@@ -244,6 +266,7 @@ const FormHeader = ({
             value={currentStep1Values.setor}
             onChange={handleSetorChange}
             options={TIPO_REQUISICAO}
+            required={true}
           />
 
           <FormField
@@ -254,6 +277,7 @@ const FormHeader = ({
             options={lookupData.directors}
             optionValueKey="id"
             optionLabelKey="full_name"
+            required={true}
           />
 
           <FormField
@@ -263,15 +287,25 @@ const FormHeader = ({
             rows={4}
             value={currentStep1Values.observacoes}
             onChange={(e) => updateFormValues("step1", "observacoes", e.target.value)}
+            required={false}
           />
         </div>
       </div>
 
       <div className="flex justify-center mt-8">
-        <Button type="submit" disabled={!currentStep1Values.setor}>
+        <Button type="submit" disabled={!isFormValid}>
           Continuar
         </Button>
       </div>
+
+      
+      {!isFormValid && (
+        <div className="text-center mt-4">
+          <p className="text-sm text-red-500">
+            Preencha todos os campos obrigatórios (*) para continuar
+          </p>
+        </div>
+      )}
     </form>
   );
 };

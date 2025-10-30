@@ -9,7 +9,6 @@ import LoadingState from "./LoadingState";
 import EnvelopeFormSuccess from "./RequestFormSuccess";
 import React, { useState, useEffect } from "react"; 
 
-
 const Button = ({ children, ...props }) => (
   <button
     {...props}
@@ -40,15 +39,6 @@ export default function EnvelopeWizard() {
     handleEdit
   } = useEnvelopeForm();
 
-
-  const stepInfo = {
-    1: { title: "Nova Requisição", subtitle: "Preencha as informações do remetente, setor e tipo de solicitação" },
-    2: { 
-      title: tipoEnvelope === 'RMP' ? "Movimentação de Pessoal" : "Admissão de Colaborador", 
-      subtitle: tipoEnvelope === 'RMP' ? "Requisição para Movimentação de Pessoal (RMP)" : "Preencha os detalhes do formulário de admissão"
-    },
-  };
-  
   const [lookupData, setLookupData] = useState(null);
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [dataError, setDataError] = useState(null);
@@ -82,6 +72,14 @@ export default function EnvelopeWizard() {
     fetchFormData();
   }, []); 
 
+  useEffect(() => {
+    console.log("=== DEBUG ENVELOPE WIZARD ===");
+    console.log("Step:", step);
+    console.log("Tipo Envelope:", tipoEnvelope);
+    console.log("FormValues step1:", formValues.step1);
+    console.log("Tipo Solicitação:", formValues.step1?.tipoSolicitacao);
+  }, [step, tipoEnvelope, formValues.step1]);
+
   const handleContinueFromHeader = (e) => {
     if (e && e.preventDefault) {
       e.preventDefault();
@@ -97,7 +95,6 @@ export default function EnvelopeWizard() {
       return;
     }
     
-  
     handleContinue(e); 
   };
 
@@ -111,10 +108,11 @@ export default function EnvelopeWizard() {
       setSetorEnvelope,
       setTipoEnvelope,
       setorEnvelope,
-      tipoEnvelope: tipoEnvelope || "",
       lookupData: lookupData 
     };
 
+    const tipoSolicitacao = formValues.step1?.tipoSolicitacao || tipoEnvelope;
+    
     switch (step) {
       case 1:
         return (
@@ -125,28 +123,62 @@ export default function EnvelopeWizard() {
             handleBack={handleBack}
           />
         );
+
       case 2:
-        return (
-          <MovementForm
-            {...commonProps} 
-            formValues={formValues.step2}
-            tipoEnvelope={tipoEnvelope}
-            handleBack={handleBack}
-          />
-        );
-      case 3:
-        return (
-          <AdmissionForm
-            {...commonProps} 
-            formValues={formValues} 
-            tipoEnvelope={formData.subtipo}
-            handleBack={handleBack}
-          />
-        );
+        if (tipoSolicitacao === 'admissao') {
+          return (
+            <AdmissionForm
+              {...commonProps} 
+              formValues={formValues} 
+              tipoEnvelope={tipoSolicitacao}
+              handleBack={handleBack}
+            />
+          );
+        } else if (tipoSolicitacao === 'movimentacao') {
+          return (
+            <MovementForm
+              {...commonProps} 
+              formValues={formValues.step2}
+              handleBack={handleBack}
+            />
+          );
+        } else {
+          return <div>Erro: Tipo de solicitação não reconhecido: {tipoSolicitacao}</div>;
+        }
+
       default:
         return null;
     }
   };
+
+  
+  const getStepInfo = () => {
+    const tipoSolicitacao = formValues.step1?.tipoSolicitacao || tipoEnvelope;
+    
+    switch (step) {
+      case 1:
+        return { 
+          title: "Nova Requisição", 
+          subtitle: "Preencha as informações do remetente, setor e tipo de solicitação" 
+        };
+      case 2:
+        if (tipoSolicitacao === 'movimentacao') {
+          return { 
+            title: "Movimentação de Pessoal", 
+            subtitle: "Requisição para Movimentação de Pessoal (RMP)" 
+          };
+        } else {
+          return { 
+            title: "Admissão de Colaborador", 
+            subtitle: "Preencha os detalhes do formulário de admissão" 
+          };
+        }
+      default:
+        return { title: "Envelopes", subtitle: "" };
+    }
+  };
+
+  const currentStepInfo = getStepInfo(); 
 
   if (enviando) return <LoadingState />;
   if (enviado) {
@@ -177,9 +209,6 @@ export default function EnvelopeWizard() {
       </MainLayout>
     );
   }
-
-
-  const currentStepInfo = stepInfo[step] || { title: "Envelopes", subtitle: "" };
 
   return (
     <MainLayout
