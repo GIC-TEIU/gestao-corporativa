@@ -53,10 +53,6 @@ class Router
                 $controllerMethod = $handler[1];
     
                 if (!class_exists($controllerClass)) {
-                    $controllerClass = 'App\\Controllers\\' . $controllerClass;
-                }
-    
-                if (!class_exists($controllerClass)) {
                     throw new Exception("Controller '{$controllerClass}' não encontrado.");
                 }
 
