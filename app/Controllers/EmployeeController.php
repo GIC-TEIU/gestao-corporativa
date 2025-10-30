@@ -8,6 +8,8 @@ use Throwable;
 
 class EmployeeController
 {
+
+    
     public function getEmployeeDataByMatricula($matricula)
     {
         if (empty($matricula)) {
@@ -38,6 +40,27 @@ class EmployeeController
         }
     }
 
+public function getEmployeeSalaryHistory($matricula)
+    {
+        try {
+            // Instanciar diretamente no método
+            $salaryHistoryModel = new \App\Models\ProtheusSalaryHistory();
+            
+            $salaryHistory = $salaryHistoryModel->getSalaryHistoryByMatricula($matricula);
+
+            return Response::json([
+                'success' => true,
+                'data' => $salaryHistory
+            ]);
+
+        } catch (Exception $e) {
+            return Response::json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     /**
      * Busca a lista básica de TODOS os funcionários.
      * Usado para popular o EmployeeContext no frontend.
@@ -60,5 +83,7 @@ class EmployeeController
             ], 500);
         }
     }
+
+    
 }
 

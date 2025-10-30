@@ -31,32 +31,55 @@ const MovementForm = ({
   const [isLoadingDescriptions, setIsLoadingDescriptions] = useState(false);
   const [tipoEnvelope, setTipoEnvelope] = useState(formValues?.tipo || "");
   const [salarioError, setSalarioError] = useState("");
+  const [salaryHistory, setSalaryHistory] = useState([]);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
 
   if (!lookupData) {
     return <div className="p-8 text-center">Carregando dados do formulário...</div>;
   }
 
-  // Função para validar o novo salário
+  const fetchSalaryHistory = async (matricula) => {
+    if (!matricula) return;
+
+    setIsLoadingHistory(true);
+    try {
+      const response = await fetch(`/api/employee/salary-history/${matricula}`);
+      if (!response.ok) {
+        const err = await response.json();
+        console.error("Histórico não encontrado:", err.message);
+        return;
+      }
+      const result = await response.json();
+      if (result.success) {
+        setSalaryHistory(result.data || []);
+      }
+    } catch (error) {
+      console.error("Erro ao buscar histórico salarial:", error);
+    } finally {
+      setIsLoadingHistory(false);
+    }
+  };
+
   const validateNovoSalario = (novoSalario, salarioAtual) => {
     if (!novoSalario || !salarioAtual) return true;
-    
+
     const novo = parseFloat(novoSalario);
     const atual = parseFloat(salarioAtual);
-    
+
     if (isNaN(novo) || isNaN(atual)) return true;
-    
+
     return novo >= atual;
   };
 
-  // Função para lidar com a mudança do novo salário
+
   const handleNovoSalarioChange = (e) => {
     const value = e.target.value;
     const salarioAtual = formValues.salario_atual;
-    
-    // Atualiza o valor no form
+
+
     updateFormValues("step2", "novo_salario", value);
-    
-    // Valida se o novo salário é menor que o atual
+
+
     if (value && salarioAtual) {
       const isValid = validateNovoSalario(value, salarioAtual);
       if (!isValid) {
@@ -71,8 +94,8 @@ const MovementForm = ({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
-    // Validação do salário antes de enviar
+
+
     if (formValues.novo_salario && formValues.salario_atual) {
       const isValid = validateNovoSalario(formValues.novo_salario, formValues.salario_atual);
       if (!isValid) {
@@ -80,7 +103,7 @@ const MovementForm = ({
         return;
       }
     }
-    
+
     if (!tipoEnvelope) {
       alert("Por favor, selecione um tipo de movimentação.");
       return;
@@ -96,8 +119,8 @@ const MovementForm = ({
         return;
       }
     }
-    
-    // Limpa erro de salário se tudo estiver válido
+
+
     setSalarioError("");
     handleContinue(e);
   };
@@ -138,9 +161,9 @@ const MovementForm = ({
     let searchTerm = "";
 
     if (tipoEnvelope === "movimentacao" || tipoEnvelope === "promocao_cargo") {
-      searchTerm = novoCargoSearch; 
+      searchTerm = novoCargoSearch;
     } else {
-      searchTerm = positionSearch; 
+      searchTerm = positionSearch;
     }
 
     if (searchTerm.trim() === "") {
@@ -264,6 +287,8 @@ const MovementForm = ({
     };
     fetchDescriptions();
     fetchEmployeeData(employee.matricula);
+    fetchEmployeeData(employee.matricula);
+    fetchSalaryHistory(employee.matricula);
   };
 
   const handlePositionSelect = (position) => {
@@ -274,7 +299,7 @@ const MovementForm = ({
   };
 
   const handleNewPositionSelect = (position) => {
-    setNovoCargoSearch(position); 
+    setNovoCargoSearch(position);
     updateFormValues("step2", "novo_cargo", position);
     setPositionSuggestions([]);
     setShowPositionSuggestions(false);
@@ -311,7 +336,7 @@ const MovementForm = ({
     const value = e.target.value;
     setNovoCargoSearch(value);
     updateFormValues("step2", "novo_cargo", value);
-    
+
     if (value.trim() !== "") {
       setShowPositionSuggestions(true);
     }
@@ -353,7 +378,7 @@ const MovementForm = ({
                 type="text"
                 placeholder="Digite para pesquisar cargos"
                 onChange={handleNovoCargoChange}
-                value={novoCargoSearch} 
+                value={novoCargoSearch}
                 onBlur={() => setTimeout(() => {
                   setShowPositionSuggestions(false);
                 }, 200)}
@@ -370,7 +395,7 @@ const MovementForm = ({
                   {positionSuggestions.map((position, index) => (
                     <div
                       key={index}
-                      onMouseDown={(e) => e.preventDefault()} 
+                      onMouseDown={(e) => e.preventDefault()}
                       onClick={() => handleNewPositionSelect(position)}
                       className="px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
                     >
@@ -405,9 +430,8 @@ const MovementForm = ({
                 placeholder="0,00"
                 onChange={handleNovoSalarioChange}
                 value={formValues.novo_salario || ""}
-                className={`w-full border border-gray-700 py-2 text-sm focus:ring-2 focus:ring-brand-teal-dark focus:outline-none ${
-                  salarioError ? 'border-red-500 bg-red-50' : ''
-                }`}
+                className={`w-full border border-gray-700 py-2 text-sm focus:ring-2 focus:ring-brand-teal-dark focus:outline-none ${salarioError ? 'border-red-500 bg-red-50' : ''
+                  }`}
                 required
                 min={formValues.salario_atual || 0}
               />
@@ -447,9 +471,8 @@ const MovementForm = ({
                 type="number"
                 placeholder="0,00"
                 onChange={handleNovoSalarioChange}
-                className={`w-full border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-brand-teal-dark focus:outline-none ${
-                  salarioError ? 'border-red-500 bg-red-50' : ''
-                }`}
+                className={`w-full border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-brand-teal-dark focus:outline-none ${salarioError ? 'border-red-500 bg-red-50' : ''
+                  }`}
                 required
                 min={formValues.salario_atual || 0}
               />
@@ -460,7 +483,7 @@ const MovementForm = ({
           </div>
         );
 
-        case "desligamento":
+      case "desligamento":
         return (
           <div className="bg-white rounded-xl p-6 space-y-6 font-poppins">
             <h2 className="text-lg font-semibold text-brand-teal-dark">
@@ -609,13 +632,13 @@ const MovementForm = ({
                 ))}
               </select>
             </div>
-            
+
             <div className="mb-4 relative">
               <label className={labelBase}>Novo Cargo <span className="text-red-500">*</span></label>
               <input
                 type="text"
                 placeholder="Digite para pesquisar cargos"
-                value={novoCargoSearch} 
+                value={novoCargoSearch}
                 onChange={handleNovoCargoChange}
                 onBlur={() => setTimeout(() => {
                   setShowPositionSuggestions(false);
@@ -632,7 +655,7 @@ const MovementForm = ({
                   {positionSuggestions.map((position, index) => (
                     <div
                       key={index}
-                      onMouseDown={(e) => e.preventDefault()} 
+                      onMouseDown={(e) => e.preventDefault()}
                       onClick={() => handleNewPositionSelect(position)}
                       className="px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
                     >
@@ -648,7 +671,7 @@ const MovementForm = ({
               <input
                 type="text"
                 placeholder="Digite o motivo da movimentação"
-                value={formValues.justificativa || ""} 
+                value={formValues.justificativa || ""}
                 onChange={(e) => updateFormValues("step2", "justificativa", e.target.value)}
                 className={`${inputBase}`}
                 required
@@ -686,9 +709,8 @@ const MovementForm = ({
                 type="number"
                 placeholder="0,00"
                 onChange={handleNovoSalarioChange}
-                className={`w-full border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-brand-teal-dark focus:outline-none ${
-                  salarioError ? 'border-red-500 bg-red-50' : ''
-                }`}
+                className={`w-full border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-brand-teal-dark focus:outline-none ${salarioError ? 'border-red-500 bg-red-50' : ''
+                  }`}
                 required
                 min={formValues.salario_atual || 0}
               />
@@ -700,46 +722,64 @@ const MovementForm = ({
         );
 
       case "salario":
-        return (
-          <div className="bg-white rounded-xl p-6 space-y-6 font-poppins">
-            <h2 className="text-lg font-semibold text-brand-teal-dark">
-              Alteração Salarial
-            </h2>
-            <div>
-              <label className="block text-brand-teal-dark font-medium mb-1 text-sm">
-                Salário Atual R$ <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="number"
-                placeholder={salaryLoading ? "Buscando..." : "0,00"}
-                value={formValues.salario_atual || ""}
-                disabled
-                readOnly
-                className="w-full border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-brand-teal-dark focus:outline-none bg-gray-100"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-brand-teal-dark font-medium mb-1 text-sm">
-                Novo Salário R$ <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="number"
-                placeholder="0,00"
-                onChange={handleNovoSalarioChange}
-                className={`w-full border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-brand-teal-dark focus:outline-none ${
-                  salarioError ? 'border-red-500 bg-red-50' : ''
-                }`}
-                required
-                min={formValues.salario_atual || 0}
-              />
-              {salarioError && (
-                <p className="text-red-500 text-xs mt-1">{salarioError}</p>
-              )}
-            </div>
+  return (
+    <div className="bg-white rounded-xl p-6 space-y-6 font-poppins">
+      <h2 className="text-lg font-semibold text-brand-teal-dark">
+        Alteração Salarial
+      </h2>
+      
+      {salaryHistory.length > 0 && (
+        <div className="mb-4">
+          <label className="block text-brand-teal-dark font-medium mb-2 text-sm">
+            Histórico de Alterações Salariais
+          </label>
+          <div className="bg-gray-50 rounded-lg p-4 max-h-40 overflow-y-auto">
+            {salaryHistory.map((item, index) => (
+              <div key={index} className="flex flex-col border-b border-gray-200 py-2 last:border-b-0">
+                <div className="flex justify-between text-xs">
+                  <span className="font-medium">{new Date(item.DataAlteracao).toLocaleDateString('pt-BR')}</span>
+                  <span className="font-bold">R$ {item.ValorSalario.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+                </div>
+                <div className="text-xs text-gray-600 mt-1">
+                  {item.TipoAlteracao} 
+                  {item.CodTipoAlteracao && <span className="ml-2">({item.CodTipoAlteracao})</span>}
+                </div>
+              </div>
+            ))}
           </div>
-        );
+        </div>
+      )}
+
+      <div>
+        <label className="block text-brand-teal-dark font-medium mb-1 text-sm">
+          Salário Atual R$
+        </label>
+        <input
+          type="number"
+          placeholder={salaryLoading ? "Buscando..." : "0,00"}
+          value={formValues.salario_atual || ""}
+          disabled
+          readOnly
+          className="w-full border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-brand-teal-dark focus:outline-none bg-gray-100"
+        />
+      </div>
+
+      <div>
+        <label className="block text-brand-teal-dark font-medium mb-1 text-sm">
+          Novo Salário R$
+        </label>
+        <input
+          type="number"
+          placeholder="0,00"
+          value={formValues.novo_salario || ""}
+          onChange={(e) =>
+            updateFormValues("step2", "novo_salario", e.target.value)
+          }
+          className="w-full border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-brand-teal-dark focus:outline-none"
+        />
+      </div>
+    </div>
+  );
 
       case "experiencia":
         return (
@@ -846,11 +886,11 @@ const MovementForm = ({
     }
   };
 
-  // Validação para habilitar o botão Enviar
-const isFormValid = tipoEnvelope && 
-                    employeeSearch && 
-                    selectedEmployee && 
-                    !salarioError;
+
+  const isFormValid = tipoEnvelope &&
+    employeeSearch &&
+    selectedEmployee &&
+    !salarioError;
 
   return (
     <form onSubmit={handleSubmit} className="p-6 font-poppins">
@@ -991,7 +1031,6 @@ const isFormValid = tipoEnvelope &&
             </button>
           </div>
 
-          {/* Mensagem de validação */}
           {!isFormValid && (
             <div className="text-center mt-4">
               <p className="text-sm text-red-500">

@@ -20,5 +20,6 @@ Router::get('/api/lookups/cc/{code}', [LookupController::class, 'getCostCenterDe
 Router::get('/api/lookups/search-cc', [LookupController::class, 'searchCostCenters']);
 Router::get('/api/lookups/search-jobtitles', [LookupController::class, 'searchJobTitles']);
 Router::post('/api/requisicao/rmp', [RmpController::class, 'store']);
+Router::get('/api/employee/salary-history/{matricula}', [EmployeeController::class, 'getEmployeeSalaryHistory']);
 
 
