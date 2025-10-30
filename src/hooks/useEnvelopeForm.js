@@ -1,198 +1,210 @@
-import { useState } from "react";
-
+import { useState } from 'react';
 export const useEnvelopeForm = () => {
   const [step, setStep] = useState(1);
-  const [setorEnvelope, setSetorEnvelope] = useState("");
-  const [tipoRh, setTipoRh] = useState("");
-  const [tipoEnvelope, setTipoEnvelope] = useState("");
   const [enviado, setEnviado] = useState(false);
   const [enviando, setEnviando] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
-  
+  const [formData, setFormData] = useState({});
   const [formValues, setFormValues] = useState({
-    step1: {
-      requisitante: "Adriana mármore",
-      cargo: "Assistente de RH",
-      gerente: "",
-      unidade: "Teiú - Matriz",
-      setor: ""
-    },
-    step2: {
-      tipo: ""
-    },
+    step1: {},
+    step2: {},
     step3: {}
   });
+  const [setorEnvelope, setSetorEnvelope] = useState('');
+  const [tipoEnvelope, setTipoEnvelope] = useState('');
 
-  const [formData, setFormData] = useState({
-    requisitante: "Adriana mármore",
-    cargo: "Assistente de RH",
-    gerente: "",
-    unidade: "Teiú - Matriz",
-    setor: "",
-    tipo: "",
-    subtipo: "",
-    centroCusto:"RH",
-    dados: {}
-  });
-
-  const updateFormValues = (stepName, field, value) => {
+  const updateFormValues = (step, field, value) => {
     setFormValues(prev => ({
       ...prev,
-      [stepName]: {
-        ...prev[stepName],
+      [step]: {
+        ...prev[step],
         [field]: value
       }
     }));
   };
 
-  const handleContinue = (e) => {
-    e.preventDefault();
-  
-    console.log("--- handleContinue chamado ---");
+  const handleContinue = async (e) => {
+    if (e && e.preventDefault) {
+      e.preventDefault();
+    }
+
+    console.log("--- handleContinue Chamado ---");
     console.log("Step atual:", step);
-    console.log("Setor envelope:", setorEnvelope);
     console.log("Tipo envelope:", tipoEnvelope);
-  
-    if (step === 1) {
-      if (!formValues.step1.setor) {
-        alert("Selecione o tipo de envelope");
-        return;
-      }
-      
-      const tipo = formValues.step1.setor.toLowerCase() === "rh" ? "RAP/RMP" : "DOC DIRETO";
-      
-      setFormData(prev => ({
-        ...prev, 
-        setor: formValues.step1.setor,
-        tipo,
-        requisitante: formValues.step1.requisitante,
-        cargo: formValues.step1.cargo,
-        gerente: formValues.step1.gerente,
-        unidade: formValues.step1.unidade
-      }));
-      
-      setStep(2); 
+    console.log("FormValues step2:", formValues.step2);
+
+
+    if ((tipoEnvelope === 'RMP' || formValues.step1?.tipoSolicitacao === 'movimentacao') && step === 2) {
+      console.log("RMP no step 2 - fazendo submit");
+      await fazerSubmitRMP();
       return;
     }
 
-    
-    if (step === 2 && setorEnvelope === "RMP") {
-    const currentFormValues = formValues.step2;
-    
-    setFormData(prev => ({
-      ...prev,
-      tipo: "RMP", 
-      subtipo: tipoEnvelope,
-      dados: {...prev.dados, movimentacao: currentFormValues}
-    }));
-    
-    console.log("Abrindo modal de confirmação para RMP + Movimentação");
-    setShowConfirmation(true);
-    return;
-  }
-
-  
-  if (step === 3) {
-    const form = e.target;
-    const formElements = form.elements;
-    const currentFormValues = {};
-    
-    for (let i = 0; i < formElements.length; i++) {
-      const element = formElements[i];
-      if (element.name && element.value) {
-        currentFormValues[element.name] = element.value;
-      }
+    if ((tipoEnvelope === 'RAP' || formValues.step1?.tipoSolicitacao === 'admissao') && step === 3) {
+      console.log("RAP no step 3 - fazendo submit");
+      await fazerSubmitRAP();
+      return;
     }
-    
-    setFormValues(prev => ({
-      ...prev,
-      step3: currentFormValues
-    }));
-    
-    setFormData(prev => ({
-      ...prev,
-      dados: {...prev.dados, [tipoEnvelope]: currentFormValues}
-    }));
-    
-    setShowConfirmation(true);
-  }
-};
+
+    if (step < 3) {
+      console.log("Avançando para step:", step + 1);
+      setStep(step + 1);
+    }
+  };
 
   const handleRhSelection = (tipo) => {
     console.log("handleRhSelection chamado com tipo:", tipo);
-    setTipoRh(tipo);
-    if (tipo === "admissao") {
-      setFormData(prev => ({...prev, tipo: "RAP", subtipo: "admissao"}));
-      setTipoEnvelope("admissao");
-      setStep(3);
-    } else if (tipo === "movimentacao") {
-      setFormData(prev => ({...prev, tipo: "RMP", subtipo: ""}));
-      setTipoEnvelope(""); 
-      setStep(2);
-    }
+    setTipoEnvelope(tipo);
+    updateFormValues("step1", "tipoSolicitacao", tipo);
+    setStep(2);
   };
 
   const handleBack = () => {
-    setStep(prevStep => {
-      if (prevStep === 2 || prevStep === 3) {
-        return 1;
-      }
-      return prevStep - 1;
-    });
+    if (step > 1) {
+      setStep(step - 1);
+    }
   };
 
-const handleConfirm = async () => {
-  setShowConfirmation(false);
-  setEnviando(true);
+  const handleConfirm = () => {
+    setShowConfirmation(false);
 
-  try { 
-    const payload = {
-        step1: formValues.step1,
-        step3: formValues.step3 
-    };
-
-    const response = await fetch('http://localhost/gestao-corporativa/public/api/requisicao/rap', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload)
-    });
-
-    const result = await response.json();
-
-    if (!response.ok || !result.success) {
-        throw new Error(result.message || 'Falha ao salvar a requisição.');
-    }
-
-    
-    setEnviando(false);
-    setEnviado(true);
-
-  } catch (error) {
-    console.error("Erro ao confirmar:", error);
-    alert(`Erro: ${error.message}`); 
-    setEnviando(false);
-  }
-};
+  };
 
   const handleEdit = () => {
     setShowConfirmation(false);
   };
 
+  const fazerSubmitRMP = async () => {
+    setEnviando(true);
+
+    try {
+      const endpoint = '/api/requisicao/rmp';
+      
+  
+      const step2Data = formValues.step2 || {};
+      
+      const payload = {
+        step1: formValues.step1,
+        step3: {
+      
+          nome_colaborador: step2Data.nomeColaborador,
+          matricula: step2Data.matricula,
+          cargo_atual: step2Data.cargoAtual,
+          centro_custo: step2Data.centroCusto,
+          
+      
+          tipo_movimentacao: step2Data.tipo,
+          
+      
+      
+          salario_atual: step2Data.salario_atual,
+          novo_salario: step2Data.novo_salario,
+          
+      
+          motivo_desligamento: step2Data.motivo_desligamento,
+          tipo_aviso: step2Data.tipo_aviso,
+          
+      
+          novo_centro_custo: step2Data.novo_centro_custo,
+          new_operational_unit: step2Data.new_operational_unit,
+          novo_cargo: step2Data.novo_cargo,
+          justificativa: step2Data.justificativa
+        }
+      };
+
+      console.log("Enviando RMP para:", endpoint);
+      console.log("Payload RMP:", payload);
+
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Erro ao salvar requisição RMP');
+      }
+
+      const result = await response.json();
+      
+      if (result.success) {
+        setEnviado(true);
+        setFormData(prev => ({
+          ...prev,
+          requisicao_id: result.requisicao_id
+        }));
+      } else {
+        throw new Error(result.message || 'Erro desconhecido no RMP');
+      }
+
+    } catch (error) {
+      console.error('Erro ao enviar formulário RMP:', error);
+      alert('Erro ao enviar formulário: ' + error.message);
+    } finally {
+      setEnviando(false);
+    }
+  };
+
+  const fazerSubmitRAP = async () => {
+    setEnviando(true);
+
+    try {
+      const endpoint = '/api/requisicao/rap';
+      const payload = {
+        step1: formValues.step1,
+        step3: formValues.step3
+      };
+
+      console.log("Enviando RAP para:", endpoint);
+      console.log("Payload RAP:", payload);
+
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Erro ao salvar requisição RAP');
+      }
+
+      const result = await response.json();
+      
+      if (result.success) {
+        setEnviado(true);
+        setFormData(prev => ({
+          ...prev,
+          requisicao_id: result.requisicao_id
+        }));
+      } else {
+        throw new Error(result.message || 'Erro desconhecido no RAP');
+      }
+
+    } catch (error) {
+      console.error('Erro ao enviar formulário RAP:', error);
+      alert('Erro ao enviar formulário: ' + error.message);
+    } finally {
+      setEnviando(false);
+    }
+  };
+
   return {
     step,
-    setorEnvelope,
-    tipoRh,
-    tipoEnvelope,
     enviado,
     enviando,
     showConfirmation,
     formData,
     formValues,
+    setorEnvelope,
+    tipoEnvelope,
     setSetorEnvelope,
     setTipoEnvelope,
-    setShowConfirmation,
     updateFormValues,
     handleContinue,
     handleRhSelection,
