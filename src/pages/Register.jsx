@@ -97,11 +97,29 @@ function Register() {
         const result = await response.json();
 
         if (response.ok && result.success) {
-            setFormData(prev => ({
-                ...prev,
-                nome: result.employee.nome,
-                cargo: result.employee.cargo,
-            }));
+            const employee = result.employee;
+
+              setFormData(prev => {
+                let newCpf = prev.cpf;
+                let newMatricula = prev.matricula;
+              
+               if (type === 'cpf' && prev.matricula.replace(/[^\d]/g, '').length === 0) {
+                    newMatricula = employee.matricula; 
+                } 
+
+                 if (type === 'matricula' && prev.cpf.replace(/[^\d]/g, '').length === 0) {
+                    newCpf = formatCpf(employee.cpf); 
+                } 
+
+                return {
+                  ...prev,
+                  nome: employee.nome,
+                  cargo: employee.cargo_descricao,
+                  cpf: newCpf,
+                  matricula: newMatricula,
+                }
+              });
+    
             setEmployeeDataFound(true);
             setError("");
         } else {
@@ -142,27 +160,22 @@ function Register() {
     const cleanedCpf = formData.cpf.replace(/[^\d]/g, "");
     const cleanedMatricula = formData.matricula.replace(/[^\d]/g, "");
 
-    // 1. Busca por CPF se estiver completo (11 dígitos)
     if (cleanedCpf.length === 11) {
         if (!employeeDataFound) { 
             fetchEmployeeData(formData.cpf, 'cpf');
         }
-        // Desabilita CPF se houver matrícula (prioriza o que o usuário está digitando)
-        setIsCpfDisabled(cleanedMatricula.length > 0); 
+        setIsCpfDisabled(true); 
         return;
     } 
     
-    // 2. Busca por Matrícula se o CPF não estiver completo E Matrícula tiver pelo menos 4 dígitos
     if (cleanedCpf.length < 11 && cleanedMatricula.length >= 4) {
         if (!employeeDataFound) { 
             fetchEmployeeData(formData.matricula, 'matricula');
         }
-        // Desabilita CPF enquanto Matrícula for válida para busca
         setIsCpfDisabled(true); 
         return;
     }
     
-    // 3. Limpeza/Reset
     if (cleanedCpf.length < 11 && cleanedMatricula.length < 4) {
         setFormData(prev => ({
             ...prev,

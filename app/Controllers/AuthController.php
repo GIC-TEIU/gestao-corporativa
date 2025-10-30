@@ -1,8 +1,8 @@
 <?php
 
-// use PDO;
-// use Exception;
 namespace App\Controllers;
+use PDO;
+use Exception;
 use App\Core\Response;
 
 class AuthController {
@@ -12,9 +12,8 @@ class AuthController {
     public function __construct()
     {
         error_log("DEBUG: Carregando User Model.");
-        require_once __DIR__ . '/../Models/User.php';
-        
-        $config = include __DIR__ . '../../config/database.php';
+
+        $config = include __DIR__ . '/../../config/database.php';
         $sqlsrv = $config['connections']['sqlsrv'];
 
         try {
@@ -67,21 +66,25 @@ class AuthController {
             return;
         }
 
-        try {
-            $sql = "
-                SELECT 
-                    RA.RA_NOME AS nome,
-                    RA.RA_CARGO AS cargo,
-                    RA.RA_MAT AS matricula,
-                    RA.RA_CIC AS cpf
+        try{
+            $sql =
+
+            "SELECT 
+                    TRIM(RA.RA_NOME) AS nome,
+                    TRIM(RA.RA_MAT) AS matricula,
+                    TRIM(RA.RA_CIC) AS cpf,
+                    TRIM(RJ.RJ_DESC) AS cargo_descricao,   
+                    TRIM(RA.RA_CARGO) AS cargo_codigo 
                 FROM SRA010 RA
+                LEFT JOIN SRJ010 RJ 
+                    ON RA.RA_CARGO = RJ.RJ_COD 
+                    AND RJ.D_E_L_E_T_ = ''
                 WHERE
                     (RA.RA_MAT = :matricula OR RA.RA_CIC = :cpf)
-                    AND D_E_L_E_T_ = ''
-                    AND (RA.RA_SITFOLH IS NULL OR RA.RA_SITFOLH NOT IN ('D'))
-            ";
+                    AND RA.D_E_L_E_T_ = ''
+                    AND (RA.RA_SITFOLH IS NULL OR RA.RA_SITFOLH NOT IN ('D'))";
             
-            error_log("DEBUG: SQL a ser executado: " . $sql);
+            error_log("DEBUG: SQL a ser executado: " . preg_replace('/\s+/', ' ', $sql));
 
             $stmt = $this->dbSqlsrv->prepare($sql);
             
@@ -108,6 +111,7 @@ class AuthController {
             error_log("DEBUG: Dados do colaborador encontrados: " . print_r($employee, true));
 
             echo json_encode(['success' => true, 'employee' => $employee]);
+            return;
 
         } catch (\PDOException $e) {
             // Captura erros de banco (query, execute)
