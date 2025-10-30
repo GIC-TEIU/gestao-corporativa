@@ -31,8 +31,7 @@ class LookupController
         "Processo Interno", "Processo Externo", "Indicação"
     ];
     private static $unidades = [
-        "Teiú - Matriz", "Teiú Filial - Feira de Santana", "Teiú - Cosméticos",
-        "Holding", "Votre", "Kaioka"
+        "Teiú - Matriz", "Teiú Cosméticos","Kaioka","Votre","IT Faber","Holding","Teiú - Filial Feira de Santana","Revani"
     ];
     private static $motivos_rmp = [
         "Promoção", "Transferência", "Reajuste Salarial", "Mérito"
