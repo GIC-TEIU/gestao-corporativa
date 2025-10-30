@@ -9,11 +9,6 @@ import LoadingState from "./LoadingState";
 import EnvelopeFormSuccess from "./RequestFormSuccess";
 import React, { useState, useEffect } from "react"; 
 
-const stepInfo = {
-  1: { title: "Nova Requisição", subtitle: "Preencha as informações do remetente, setor e tipo de solicitação" },
-  2: { title: "Formulário de Movimentação de Pessoal", subtitle: "Requisição para Movimentação de Pessoal (RMP)" },
-  3: { title: "Admissão de Colaborador", subtitle: "Preencha os detalhes do formulário de admissão" },
-};
 
 const Button = ({ children, ...props }) => (
   <button
@@ -45,6 +40,14 @@ export default function EnvelopeWizard() {
     handleEdit
   } = useEnvelopeForm();
 
+
+  const stepInfo = {
+    1: { title: "Nova Requisição", subtitle: "Preencha as informações do remetente, setor e tipo de solicitação" },
+    2: { 
+      title: tipoEnvelope === 'RMP' ? "Movimentação de Pessoal" : "Admissão de Colaborador", 
+      subtitle: tipoEnvelope === 'RMP' ? "Requisição para Movimentação de Pessoal (RMP)" : "Preencha os detalhes do formulário de admissão"
+    },
+  };
   
   const [lookupData, setLookupData] = useState(null);
   const [isLoadingData, setIsLoadingData] = useState(true);
@@ -52,7 +55,6 @@ export default function EnvelopeWizard() {
 
   useEffect(() => {
     const fetchFormData = async () => {
-      
       const apiUrl = "http://localhost/gestao-corporativa/public/api/lookups/rap-form";
       
       try {
@@ -95,20 +97,14 @@ export default function EnvelopeWizard() {
       return;
     }
     
-    if (step1Data.tipoSolicitacao) {
-      console.log("Direcionando com tipoSolicitacao:", step1Data.tipoSolicitacao);
-      handleRhSelection(step1Data.tipoSolicitacao);
-    } else {
-      console.log("ERRO: tipoSolicitacao está vazio! Usando fallback.");
-      handleContinue(e); 
-    }
+  
+    handleContinue(e); 
   };
 
   const handleViewEnvelope = () => navigate("/view");
   const handleGoToDashboard = () => navigate("/dashboard");
 
   const renderStep = () => {
-    
     const commonProps = {
       handleContinue: handleContinue, 
       updateFormValues,
@@ -120,17 +116,15 @@ export default function EnvelopeWizard() {
     };
 
     switch (step) {
-case 1:
-  return (
-    <FormHeader
-      {...commonProps}
-      handleContinue={handleContinueFromHeader}
-      formValues={formValues}
-      handleBack={handleBack}
-    />
-  );
-
-      
+      case 1:
+        return (
+          <FormHeader
+            {...commonProps}
+            handleContinue={handleContinueFromHeader}
+            formValues={formValues}
+            handleBack={handleBack}
+          />
+        );
       case 2:
         return (
           <MovementForm
@@ -164,8 +158,6 @@ case 1:
       />
     );
   }
-
-  
   
   if (isLoadingData) {
     return (
@@ -185,7 +177,7 @@ case 1:
       </MainLayout>
     );
   }
-  
+
 
   const currentStepInfo = stepInfo[step] || { title: "Envelopes", subtitle: "" };
 
