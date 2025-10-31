@@ -2,7 +2,9 @@
 
 use App\Core\Router;
 use App\Controllers\AuthController;
+use App\Controllers\EmployeeController;
 use App\Controllers\LookupController;
+use App\Controllers\RapController;
 use App\Controllers\UserManagementController;
 
 /**
@@ -10,16 +12,17 @@ use App\Controllers\UserManagementController;
  * ROTAS DE AUTENTICAÇÃO
  * =========================================================
  */
+Router::post('/api/register', [AuthController::class, 'register']);
 Router::post('/api/login', [AuthController::class, 'login']);
 Router::post('/api/logout', [AuthController::class, 'logout']);
-Router::post('/api/register', [AuthController::class, 'register']);
 
-// Rota para verificar sessão
+// Rotas adicionais de sessão/usuário logado
 Router::get('/api/check-session', [AuthController::class, 'checkSession']);
-
-// Usuário logado (compatibilidade com versões antigas)
 Router::get('/api/current-user', [AuthController::class, 'getCurrentUser']);
 Router::get('/api/user', [AuthController::class, 'getCurrentUser']);
+
+// Rota Protheus (dados internos de funcionário)
+Router::post('/api/protheus/employee', [AuthController::class, 'getInternalEmployeeData']);
 
 
 /**
@@ -28,6 +31,27 @@ Router::get('/api/user', [AuthController::class, 'getCurrentUser']);
  * =========================================================
  */
 Router::get('/api/lookups/rap-form', [LookupController::class, 'getRapFormData']);
+Router::get('/api/lookups/search-cc', [LookupController::class, 'searchCostCenters']);
+Router::get('/api/lookups/search-jobtitles', [LookupController::class, 'searchJobTitles']);
+Router::get('/api/lookups/cargo/{code}', [LookupController::class, 'getCargoDescriptionByCode']);
+Router::get('/api/lookups/cc/{code}', [LookupController::class, 'getCostCenterDescriptionByCode']);
+
+
+/**
+ * =========================================================
+ * ROTAS DE FUNCIONÁRIOS
+ * =========================================================
+ */
+Router::get('/api/employees', [EmployeeController::class, 'getAllEmployees']);
+Router::get('/api/employee/data/{matricula}', [EmployeeController::class, 'getEmployeeDataByMatricula']);
+
+
+/**
+ * =========================================================
+ * ROTAS DE RAP
+ * =========================================================
+ */
+Router::post('/api/requisicao/rap', [RapController::class, 'store']);
 
 
 /**
@@ -35,21 +59,17 @@ Router::get('/api/lookups/rap-form', [LookupController::class, 'getRapFormData']
  * ROTAS DE GERENCIAMENTO DE USUÁRIOS
  * =========================================================
  */
-
-// Rotas simplificadas herdadas do bloco anterior
 Router::get('/api/users', [UserManagementController::class, 'getUsers']);
 Router::get('/api/users/{id}/permissions', [UserManagementController::class, 'getUserPermissions']);
 
-// Novas rotas completas de gestão de usuários
+// Rotas completas de User Management
 Router::get('/api/user-management', [UserManagementController::class, 'index']);
-Router::get('/api/user-management/search', [UserManagementController::class, 'search']); // ✅ Rota de busca
-Router::get('/api/user-management/history', [UserManagementController::class, 'history']); // ✅ Rota de histórico
+Router::get('/api/user-management/search', [UserManagementController::class, 'search']);
+Router::get('/api/user-management/history', [UserManagementController::class, 'history']);
 Router::get('/api/user-management/permissions', [UserManagementController::class, 'getPermissions']);
 Router::get('/api/user-management/{id}', [UserManagementController::class, 'show']);
 Router::post('/api/user-management', [UserManagementController::class, 'store']);
 Router::put('/api/user-management/{id}', [UserManagementController::class, 'update']);
 Router::delete('/api/user-management/{id}', [UserManagementController::class, 'destroy']);
 Router::get('/api/user-management/{id}/history', [UserManagementController::class, 'getPermissionHistory']);
-
-// Rota específica para permissões
 Router::put('/api/user-management/{id}/permissions', [UserManagementController::class, 'updatePermissions']);

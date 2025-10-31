@@ -1,7 +1,10 @@
-import React, { useState } from "react";
-import { useAuth } from "../context/AuthContext";
+import React, { useState, useEffect} from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
+
+const API_BASE_URL = "http://localhost/gestao-corporativa/public"; 
+const INTERNAL_DATA_ENDPOINT = "/api/protheus/employee"; 
+const REGISTER_ENDPOINT = "/api/register";
 
 const isCpfValid = (cpf) => {
   cpf = cpf.replace(/[^\d]+/g, "");
@@ -53,17 +56,137 @@ function Register() {
     password: "",
     confirmPassword: "",
     role: "request_viewer",
-    isTeiu: false, // Novo campo para o switch
+    isInternalData: false, 
   });
 
   const [formErrors, setFormErrors] = useState({});
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [isCpfDisabled, setIsCpfDisabled] = useState(false); // Estado para controlar se CPF está desabilitado
+  const [isCpfDisabled, setIsCpfDisabled] = useState(false); 
+  const [employeeDataFound, setEmployeeDataFound] = useState(false);
 
-  const { register } = useAuth();
   const navigate = useNavigate();
+
+  const fetchEmployeeData = async (identifier, type) => {
+    // Garante que só busca se o switch estiver ativo
+    if (!formData.isInternalData) return; 
+
+    // Limpa formatação (ex: 111.111.111-11 -> 11111111111)
+    const identifierCleaned = identifier.replace(/[^\d]/g, ""); 
+    
+    if (type === 'cpf' && identifierCleaned.length !== 11) return;
+    if (type === 'matricula' && identifierCleaned.length === 0) return; 
+    
+    const body = type === 'cpf' ? { cpf: identifierCleaned } : { matricula: identifierCleaned };
+    
+    if (loading) return; 
+
+    setLoading(true);
+    setError("");
+
+    try {
+        const response = await fetch(API_BASE_URL + INTERNAL_DATA_ENDPOINT, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(body),
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+            const employee = result.employee;
+
+              setFormData(prev => {
+                let newCpf = prev.cpf;
+                let newMatricula = prev.matricula;
+              
+               if (type === 'cpf' && prev.matricula.replace(/[^\d]/g, '').length === 0) {
+                    newMatricula = employee.matricula; 
+                } 
+
+                 if (type === 'matricula' && prev.cpf.replace(/[^\d]/g, '').length === 0) {
+                    newCpf = formatCpf(employee.cpf); 
+                } 
+
+                return {
+                  ...prev,
+                  nome: employee.nome,
+                  cargo: employee.descricao_cargo,
+                  cpf: newCpf,
+                  matricula: newMatricula,
+                }
+              });
+    
+            setEmployeeDataFound(true);
+            setError("");
+        } else {
+            setFormData(prev => ({
+                ...prev,
+                nome: "", 
+                cargo: "", 
+            }));
+            setEmployeeDataFound(false);
+            
+            if (response.status === 404) {
+                 setError(`Colaborador não encontrado com ${type === 'cpf' ? 'CPF' : 'Matrícula'} informado.`);
+            } else if (response.status !== 400) { 
+                 setError(result.message || "Erro ao consultar dados externos."); 
+            }
+        }
+    } catch (err) {
+        console.error("Erro de rede/conexão:", err);
+        setError("Não foi possível conectar ao serviço de dados externos.");
+        setFormData(prev => ({ ...prev, nome: "", cargo: "" }));
+        setEmployeeDataFound(false);
+    } finally {
+        setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!formData.isInternalData) {
+        setFormData(prev => ({
+            ...prev,
+            nome: "",
+            cargo: "",
+        }));
+        setEmployeeDataFound(false);
+        return;
+    }
+
+    const cleanedCpf = formData.cpf.replace(/[^\d]/g, "");
+    const cleanedMatricula = formData.matricula.replace(/[^\d]/g, "");
+
+    if (cleanedCpf.length === 11) {
+        if (!employeeDataFound) { 
+            fetchEmployeeData(formData.cpf, 'cpf');
+        }
+        setIsCpfDisabled(true); 
+        return;
+    } 
+    
+    if (cleanedCpf.length < 11 && cleanedMatricula.length >= 4) {
+        if (!employeeDataFound) { 
+            fetchEmployeeData(formData.matricula, 'matricula');
+        }
+        setIsCpfDisabled(true); 
+        return;
+    }
+    
+    if (cleanedCpf.length < 11 && cleanedMatricula.length < 4) {
+        setFormData(prev => ({
+            ...prev,
+            nome: employeeDataFound ? prev.nome : "",
+            cargo: employeeDataFound ? prev.cargo : "",
+        }));
+        setEmployeeDataFound(false);
+        setIsCpfDisabled(false);
+    }
+
+  }, [formData.cpf, formData.matricula, formData.isInternalData]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -73,7 +196,7 @@ function Register() {
 
     setFormData({
       ...formData,
-      [name]: finalValue,
+      [name === "isInternal" ? "isInternalData" : name]: finalValue,
     });
 
     if (formErrors[name]) {
@@ -97,10 +220,6 @@ function Register() {
       case "matricula":
         if (!isMatriculaValid(value))
           newError = "Matrícula deve conter apenas números.";
-        // Simulação: se matrícula já existe, desabilita CPF
-        if (value && value.length > 3) {
-          setIsCpfDisabled(true);
-        }
         break;
       case "email":
         if (!isEmailValid(value)) newError = "Formato de e-mail inválido.";
@@ -129,8 +248,14 @@ function Register() {
         errors.cpf = "CPF inválido. Por favor, verifique os dígitos.";
       if (!isMatriculaValid(formData.matricula))
         errors.matricula = "A matrícula deve conter apenas números.";
+
+      if (formData.isInternalData && !employeeDataFound) {
+         errors.matricula = errors.cpf = "Dados externos não encontrados. Verifique CPF ou Matrícula.";
+      }
+
       if (!formData.nome) errors.nome = "Nome é obrigatório.";
       if (!formData.cargo) errors.cargo = "Cargo é obrigatório.";
+
       if (!isEmailValid(formData.email))
         errors.email = "Formato de e-mail inválido.";
       if (!isPasswordSecure(formData.password))
@@ -152,10 +277,27 @@ function Register() {
       setError("");
       setLoading(true);
       const { confirmPassword, ...registrationData } = formData;
-      await register(registrationData);
-      navigate("/dashboard");
+      const response = await fetch(API_BASE_URL + REGISTER_ENDPOINT, {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(registrationData), 
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+          const errorMessage = result.message || "Falha ao completar o cadastro. Tente novamente.";
+          throw new Error(errorMessage); 
+      }
+      
+      // Sucesso
+      navigate("/home");
+      // ---------------------------------
+      
     } catch (error) {
-      setError(error.message);
+      setError(error.message || "Ocorreu um erro desconhecido durante o cadastro.");
     } finally {
       setLoading(false);
     }
@@ -187,9 +329,9 @@ function Register() {
               <div className="flex items-center gap-3 mb-2">
                 <input
                   className="mr-2 mt-[0.3rem] h-3.5 w-8 appearance-none rounded-[0.4375rem] bg-neutral-300 before:pointer-events-none before:absolute before:h-3.5 before:w-3.5 before:rounded-full before:bg-transparent before:content-[''] after:absolute after:z-[2] after:-mt-[0.1875rem] after:h-5 after:w-5 after:rounded-full after:border-none after:bg-neutral-100 after:shadow-[0_0px_3px_0_rgb(0_0_0_/_7%),_0_2px_2px_0_rgb(0_0_0_/_4%)] after:transition-[background-color_0.2s,transform_0.2s] after:content-[''] checked:bg-primary checked:after:absolute checked:after:z-[2] checked:after:-mt-[3px] checked:after:ml-[1.0625rem] checked:after:h-5 checked:after:w-5 checked:after:rounded-full checked:after:border-none checked:after:bg-primary checked:after:shadow-[0_3px_1px_-2px_rgba(0,0,0,0.2),_0_2px_2px_0_rgba(0,0,0,0.14),_0_1px_5px_0_rgba(0,0,0,0.12)] checked:after:transition-[background-color_0.2s,transform_0.2s] checked:after:content-[''] hover:cursor-pointer focus:outline-none focus:ring-0 focus:before:scale-100 focus:before:opacity-[0.12] focus:before:shadow-[3px_-1px_0px_13px_rgba(0,0,0,0.6)] focus:before:transition-[box-shadow_0.2s,transform_0.2s] focus:after:absolute focus:after:z-[1] focus:after:block focus:after:h-5 focus:after:w-5 focus:after:rounded-full focus:after:content-[''] checked:focus:border-primary checked:focus:bg-primary checked:focus:before:ml-[1.0625rem] checked:focus:before:scale-100 checked:focus:before:shadow-[3px_-1px_0px_13px_#3b71ca] checked:focus:before:transition-[box-shadow_0.2s,transform_0.2s] dark:bg-neutral-600 dark:after:bg-neutral-400 dark:checked:bg-primary dark:checked:after:bg-primary dark:focus:before:shadow-[3px_-1px_0px_13px_rgba(255,255,255,0.4)] dark:checked:focus:before:shadow-[3px_-1px_0px_13px_#3b71ca]"
-                  name="isTeiu"
+                  name="isInternalData"
                   type="checkbox"
-                  checked={formData.isTeiu}
+                  checked={formData.isInternalData}
                   onChange={handleChange}
                   role="switch"
                   id="flexSwitchCheckDefault"
@@ -202,7 +344,7 @@ function Register() {
                 </label>
               </div>
               <p className="text-white/70 text-xs mt-1">
-                {formData.isTeiu
+                {formData.isInternalData
                   ? "Nome e Cargo serão preenchidos automaticamente"
                   : "Preencha manualmente os campos Nome e Cargo"}
               </p>
@@ -265,9 +407,9 @@ function Register() {
                 onChange={handleChange}
                 onBlur={handleBlur}
                 required
-                disabled={formData.isTeiu}
+                disabled={formData.isInternalData}
                 placeholder={
-                  formData.isTeiu
+                  formData.isInternalData
                     ? "Nome será preenchido automaticamente"
                     : "Digite o nome completo"
                 }
@@ -275,7 +417,7 @@ function Register() {
                   formErrors.nome
                     ? "ring-red-500 border-red-500"
                     : "focus:ring-[#737373]"
-                } ${formData.isTeiu ? "opacity-60 cursor-not-allowed" : ""}`}
+                } ${formData.isInternalData ? "opacity-60 cursor-not-allowed" : ""}`}
                 type="text"
               />
               {formErrors.nome && (
@@ -293,9 +435,9 @@ function Register() {
                 onChange={handleChange}
                 onBlur={handleBlur}
                 required
-                disabled={formData.isTeiu}
+                disabled={formData.isInternalData}
                 placeholder={
-                  formData.isTeiu
+                  formData.isInternalData
                     ? "Cargo será preenchido automaticamente"
                     : "Digite o cargo"
                 }
@@ -303,7 +445,7 @@ function Register() {
                   formErrors.cargo
                     ? "ring-red-500 border-red-500"
                     : "focus:ring-[#737373]"
-                } ${formData.isTeiu ? "opacity-60 cursor-not-allowed" : ""}`}
+                } ${formData.isInternalData ? "opacity-60 cursor-not-allowed" : ""}`}
                 type="text"
               />
               {formErrors.cargo && (

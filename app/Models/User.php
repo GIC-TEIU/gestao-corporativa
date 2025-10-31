@@ -24,23 +24,6 @@ class User
         $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 
-    // Busca de usuários para autocomplete
-    public function searchUsers(string $term): array
-    {
-        $sql = "
-            SELECT id, full_name, employee_id, email, job_title
-            FROM user 
-            WHERE (full_name LIKE :term OR employee_id LIKE :term)
-              AND is_active = 1
-            ORDER BY full_name
-            LIMIT 10
-        ";
-
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute(['term' => "%{$term}%"]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
     public function getDb(): PDO
     {
         return $this->db;
@@ -78,13 +61,59 @@ class User
         return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
     }
 
-    // Retorna todos os usuários com permissões (com filtros)
+    public function findByEmail(string $email): ?array
+    {
+        return $this->where('email', $email)->first();
+    }
+
+    public function matriculaExists(string $matricula): bool
+    {
+        $sql = "SELECT COUNT(*) FROM {$this->table} WHERE employee_id = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$matricula]);
+        
+        return $stmt->fetchColumn() > 0;
+    }
+
+    public function emailExists(string $email): bool
+    {
+        $sql = "SELECT COUNT(*) FROM {$this->table} WHERE email = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$email]);
+        
+        return $stmt->fetchColumn() > 0;
+    }
+
+    public function cpfExists(string $cpf): bool
+    {
+        $sql = "SELECT COUNT(*) FROM {$this->table} WHERE cpf = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$cpf]);
+        
+        return $stmt->fetchColumn() > 0;
+    }
+
+    public function searchUsers(string $term): array
+    {
+        $sql = "
+            SELECT id, full_name, employee_id, email, job_title
+            FROM user 
+            WHERE (full_name LIKE :term OR employee_id LIKE :term)
+              AND is_active = 1
+            ORDER BY full_name
+            LIMIT 10
+        ";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['term' => "%{$term}%"]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function getAllWithPermissions(array $filters = []): array
     {
         $whereConditions = [];
         $params = [];
 
-        // Filtro: status
         if (!empty($filters['status'])) {
             if ($filters['status'] === 'ativo') {
                 $whereConditions[] = 'u.is_active = 1';
@@ -93,13 +122,11 @@ class User
             }
         }
 
-        // Filtro: setor
         if (!empty($filters['setor'])) {
             $whereConditions[] = 'u.cost_center_description = :setor';
             $params['setor'] = $filters['setor'];
         }
 
-        // Filtro: data de cadastro
         if (!empty($filters['dataCadastro'])) {
             $dateCondition = $this->getDateCondition($filters['dataCadastro']);
             if ($dateCondition) {
@@ -185,16 +212,25 @@ class User
         return $user ?: null;
     }
 
-    public function create(array $data): int
+    public function create(array $data): int|false
     {
+        if (empty($data)) {
+            return false;
+        }
+
         $fields = implode(', ', array_keys($data));
         $placeholders = ':' . implode(', :', array_keys($data));
 
         $sql = "INSERT INTO {$this->table} ({$fields}) VALUES ({$placeholders})";
         $stmt = $this->db->prepare($sql);
-        $stmt->execute($data);
+        
+        $success = $stmt->execute($data);
 
-        return (int)$this->db->lastInsertId();
+        if ($success) {
+            return (int) $this->db->lastInsertId();
+        }
+        
+        return false;
     }
 
     public function update(int $id, array $data): bool
