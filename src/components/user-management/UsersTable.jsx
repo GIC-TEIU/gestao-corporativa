@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Trash2, ChevronDown } from 'lucide-react';
+import { Shield, Trash2, ChevronDown, Filter, X } from 'lucide-react';
 
-const UsersTable = ({ onOpenPermissionsModal, onOpenDeleteModal, refreshTrigger }) => {
+const UsersTable = ({ onOpenPermissionsModal, onOpenDeleteModal, refreshTrigger, filters, onClearFilters }) => {
   const [users, setUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
   const [expandedCard, setExpandedCard] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -10,6 +11,10 @@ const UsersTable = ({ onOpenPermissionsModal, onOpenDeleteModal, refreshTrigger 
   useEffect(() => {
     fetchUsers();
   }, [refreshTrigger]); // Recarrega quando refreshTrigger muda
+
+  useEffect(() => {
+    applyFilters();
+  }, [filters, users]); // Aplica filtros quando filters ou users mudam
 
   const fetchUsers = async () => {
     try {
@@ -35,14 +40,17 @@ const UsersTable = ({ onOpenPermissionsModal, onOpenDeleteModal, refreshTrigger 
           cargo: u.job_title || 'N/A',
           permissoes: u.permissions ? Object.keys(u.permissions).length : 0,
           status: u.is_active ? 'Ativo' : 'Inativo',
+          is_active: u.is_active,
           atualizacao: u.created_at
             ? new Date(u.created_at).toLocaleDateString('pt-BR')
             : 'N/A',
+          created_at: u.created_at,
           employee_id: u.employee_id,
           // Mantém os dados originais para uso nos modais
           originalData: u
         }));
         setUsers(mapped);
+        setFilteredUsers(mapped); // Inicialmente mostra todos
       } else {
         throw new Error(result.message || 'Erro ao carregar usuários');
       }
@@ -52,6 +60,60 @@ const UsersTable = ({ onOpenPermissionsModal, onOpenDeleteModal, refreshTrigger 
     } finally {
       setLoading(false);
     }
+  };
+
+  // Aplicar filtros localmente
+  const applyFilters = () => {
+    if (Object.keys(filters).length === 0) {
+      setFilteredUsers(users);
+      return;
+    }
+
+    let filtered = [...users];
+
+    // Filtro por status
+    if (filters.status) {
+      filtered = filtered.filter(user => {
+        if (filters.status === 'ativo') return user.is_active;
+        if (filters.status === 'inativo') return !user.is_active;
+        return true;
+      });
+    }
+
+    // Filtro por setor
+    if (filters.setor) {
+      filtered = filtered.filter(user => 
+        user.setor === filters.setor
+      );
+    }
+
+    // Filtro por data de cadastro
+    if (filters.dataCadastro) {
+      filtered = filtered.filter(user => {
+        const userDate = new Date(user.created_at);
+        const now = new Date();
+        
+        switch (filters.dataCadastro) {
+          case 'hoje':
+            return userDate.toDateString() === now.toDateString();
+          case '7dias':
+            const sevenDaysAgo = new Date(now.setDate(now.getDate() - 7));
+            return userDate >= sevenDaysAgo;
+          case '30dias':
+            const thirtyDaysAgo = new Date(now.setDate(now.getDate() - 30));
+            return userDate >= thirtyDaysAgo;
+          case '3meses':
+            const threeMonthsAgo = new Date(now.setMonth(now.getMonth() - 3));
+            return userDate >= threeMonthsAgo;
+          case 'ano':
+            return userDate.getFullYear() === now.getFullYear();
+          default:
+            return true;
+        }
+      });
+    }
+
+    setFilteredUsers(filtered);
   };
 
   const StatusBadge = ({ status }) => {
@@ -189,6 +251,46 @@ const UsersTable = ({ onOpenPermissionsModal, onOpenDeleteModal, refreshTrigger 
     );
   };
 
+  // Componente para mostrar filtros ativos
+  const ActiveFilters = () => {
+    if (Object.keys(filters).length === 0) return null;
+
+    return (
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Filter size={16} className="text-blue-600" />
+            <span className="text-sm font-medium text-blue-800">Filtros ativos:</span>
+            <div className="flex flex-wrap gap-2">
+              {filters.status && (
+                <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-medium">
+                  Status: {filters.status === 'ativo' ? 'Ativo' : 'Inativo'}
+                </span>
+              )}
+              {filters.setor && (
+                <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-medium">
+                  Setor: {filters.setor}
+                </span>
+              )}
+              {filters.dataCadastro && (
+                <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-medium">
+                  Período: {filters.dataCadastro}
+                </span>
+              )}
+            </div>
+          </div>
+          <button 
+            onClick={onClearFilters}
+            className="flex items-center gap-1 text-blue-600 hover:text-blue-800 text-sm font-medium"
+          >
+            <X size={16} />
+            Limpar
+          </button>
+        </div>
+      </div>
+    );
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-32">
@@ -212,15 +314,16 @@ const UsersTable = ({ onOpenPermissionsModal, onOpenDeleteModal, refreshTrigger 
     );
   }
 
-  if (users.length === 0) {
+  if (filteredUsers.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-32 text-gray-500">
-        <p>Nenhum usuário encontrado.</p>
+        <ActiveFilters />
+        <p>Nenhum usuário encontrado com os filtros aplicados.</p>
         <button
-          onClick={fetchUsers}
+          onClick={onClearFilters}
           className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
         >
-          Recarregar
+          Limpar Filtros
         </button>
       </div>
     );
@@ -228,6 +331,8 @@ const UsersTable = ({ onOpenPermissionsModal, onOpenDeleteModal, refreshTrigger 
 
   return (
     <div className="w-full overflow-hidden">
+      <ActiveFilters />
+
       {/* Tabela Desktop */}
       <div className="hidden md:block overflow-x-auto">
         <table className="w-full border-separate" style={{ borderSpacing: 0 }}>
@@ -257,7 +362,7 @@ const UsersTable = ({ onOpenPermissionsModal, onOpenDeleteModal, refreshTrigger 
           </thead>
 
           <tbody style={{ backgroundColor: '#EEF1F1' }}>
-            {users.map((user) => (
+            {filteredUsers.map((user) => (
               <tr key={user.id} className="text-[#474747]">
                 <td className="p-2">
                   <div className="bg-[#D9D9D9] p-3 rounded-md text-center">
@@ -317,7 +422,7 @@ const UsersTable = ({ onOpenPermissionsModal, onOpenDeleteModal, refreshTrigger 
 
       {/* Cards Mobile */}
       <div className="md:hidden">
-        {users.map((user) => (
+        {filteredUsers.map((user) => (
           <MobileCard key={user.id} user={user} />
         ))}
       </div>

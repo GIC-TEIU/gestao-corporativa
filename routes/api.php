@@ -42,6 +42,8 @@ Router::get('/api/users/{id}/permissions', [UserManagementController::class, 'ge
 
 // Novas rotas completas de gestão de usuários
 Router::get('/api/user-management', [UserManagementController::class, 'index']);
+Router::get('/api/user-management/search', [UserManagementController::class, 'search']); // ✅ Rota de busca
+Router::get('/api/user-management/history', [UserManagementController::class, 'history']); // ✅ Rota de histórico
 Router::get('/api/user-management/permissions', [UserManagementController::class, 'getPermissions']);
 Router::get('/api/user-management/{id}', [UserManagementController::class, 'show']);
 Router::post('/api/user-management', [UserManagementController::class, 'store']);
@@ -49,5 +51,5 @@ Router::put('/api/user-management/{id}', [UserManagementController::class, 'upda
 Router::delete('/api/user-management/{id}', [UserManagementController::class, 'destroy']);
 Router::get('/api/user-management/{id}/history', [UserManagementController::class, 'getPermissionHistory']);
 
-// 🔥 ADICIONE ESTA LINHA - ROTA ESPECÍFICA PARA PERMISSÕES
+// Rota específica para permissões
 Router::put('/api/user-management/{id}/permissions', [UserManagementController::class, 'updatePermissions']);

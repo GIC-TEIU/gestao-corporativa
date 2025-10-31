@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Models\User;
 use App\Models\Permission;
 use App\Models\PermissionHistory;
+use PDO;
 
 class UserManagementController
 {
@@ -45,6 +46,68 @@ class UserManagementController
         $this->permission = new Permission();
         $this->permissionHistory = new PermissionHistory();
     }
+
+
+
+     // =====================================================
+// BUSCAR USUÁRIOS POR NOME OU MATRÍCULA (PARA AUTOCOMPLETE)
+// =====================================================
+public function search()
+{
+    try {
+        // Limpeza de buffers
+        while (ob_get_level()) {
+            ob_end_clean();
+        }
+        
+        header('Content-Type: application/json; charset=utf-8');
+
+        $term = $_GET['term'] ?? '';
+
+        if (empty($term)) {
+            echo json_encode([
+                'status' => 200,
+                'data' => []
+            ]);
+            return;
+        }
+
+        // Buscar usuários por nome ou matrícula
+        $sql = "
+            SELECT 
+                id,
+                full_name,
+                employee_id,
+                email,
+                job_title
+            FROM user 
+            WHERE 
+                (full_name LIKE :term OR employee_id LIKE :term)
+                AND is_active = 1
+            ORDER BY full_name
+            LIMIT 10
+        ";
+
+        $stmt = $this->user->getDb()->prepare($sql);
+        $stmt->execute(['term' => '%' . $term . '%']);
+        $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        echo json_encode([
+            'status' => 200,
+            'data' => $users
+        ]);
+
+    } catch (\Exception $e) {
+        error_log("Erro ao buscar usuários: " . $e->getMessage());
+        http_response_code(500);
+        echo json_encode([
+            'status' => 500,
+            'message' => 'Erro interno ao buscar usuários.'
+        ]);
+    }
+}
+
+    
 
     // =====================================================
     // LISTAR TODOS OS USUÁRIOS

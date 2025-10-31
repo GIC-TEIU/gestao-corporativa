@@ -17,6 +17,7 @@ const FilterSidebar = ({ isOpen, onClose, onApplyFilters, activeTab }) => {
     status: "",
     permissao: "",
     dataCadastro: "",
+    setor: "",
     // Filtros para aba "Histórico"
     periodo: "",
     acao: "",
@@ -40,6 +41,7 @@ const FilterSidebar = ({ isOpen, onClose, onApplyFilters, activeTab }) => {
       status: "",
       permissao: "",
       dataCadastro: "",
+      setor: "",
       periodo: "",
       acao: "",
       usuario: "",

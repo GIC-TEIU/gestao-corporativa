@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
@@ -12,7 +12,7 @@ import HistoryPermissionsModal from '../components/user-management/HistoryPermis
 import InviteUserModal from '../components/user-management/InviteUserModal';
 import FilterSidebar from '../components/user-management/FilterSidebar';
 
-import { UserPlus, Filter, Search, Users, History } from 'lucide-react';
+import { UserPlus, Filter, Search, Users, History, X } from 'lucide-react';
 
 const UserManagement = () => {
     const navigate = useNavigate();
@@ -20,16 +20,96 @@ const UserManagement = () => {
     const [accessChecked, setAccessChecked] = useState(false);
     const [activeTab, setActiveTab] = useState('users');
     const [searchTerm, setSearchTerm] = useState('');
+    const [appliedSearchTerm, setAppliedSearchTerm] = useState('');
     const [refreshTrigger, setRefreshTrigger] = useState(0);
 
+    // Estados para search com autocomplete
+    const [searchSuggestions, setSearchSuggestions] = useState([]);
+    const [showSuggestions, setShowSuggestions] = useState(false);
+    const [isSearching, setIsSearching] = useState(false);
+    const [selectedUser, setSelectedUser] = useState(null);
+
+    // Estados para modais e filtros
     const [isViewPermissionsModalOpen, setViewPermissionsModalOpen] = useState(false);
     const [isHistoryModalOpen, setHistoryModalOpen] = useState(false);
-    const [selectedUser, setSelectedUser] = useState(null);
     const [isPermissionsModalOpen, setPermissionsModalOpen] = useState(false);
     const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
     const [userToDelete, setUserToDelete] = useState(null);
     const [isInviteUserModalOpen, setInviteUserModalOpen] = useState(false);
     const [isFilterSidebarOpen, setIsFilterSidebarOpen] = useState(false);
+    const [activeFilters, setActiveFilters] = useState({});
+    const [filtersApplied, setFiltersApplied] = useState(false);
+
+    const searchRef = useRef(null);
+    const searchTimeoutRef = useRef(null);
+
+    // Fechar sugestões quando clicar fora
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (searchRef.current && !searchRef.current.contains(event.target)) {
+                setShowSuggestions(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
+    // Buscar sugestões com debounce de 2 segundos
+    useEffect(() => {
+        // Limpar timeout anterior
+        if (searchTimeoutRef.current) {
+            clearTimeout(searchTimeoutRef.current);
+        }
+
+        if (searchTerm.length < 2) {
+            setSearchSuggestions([]);
+            setShowSuggestions(false);
+            return;
+        }
+
+        // Configurar novo timeout
+        searchTimeoutRef.current = setTimeout(async () => {
+            await fetchSuggestions();
+        }, 2000); // 2 segundos
+
+        return () => {
+            if (searchTimeoutRef.current) {
+                clearTimeout(searchTimeoutRef.current);
+            }
+        };
+    }, [searchTerm]);
+
+    const fetchSuggestions = async () => {
+        setIsSearching(true);
+        try {
+            const response = await fetch(`/api/user-management/search?term=${encodeURIComponent(searchTerm)}`, {
+                credentials: 'include'
+            });
+
+            if (!response.ok) {
+                throw new Error('Erro ao buscar sugestões');
+            }
+
+            const result = await response.json();
+            
+            if (result.status === 200) {
+                setSearchSuggestions(result.data);
+                setShowSuggestions(result.data.length > 0);
+            } else {
+                setSearchSuggestions([]);
+                setShowSuggestions(false);
+            }
+        } catch (error) {
+            console.error('Erro ao buscar sugestões:', error);
+            setSearchSuggestions([]);
+            setShowSuggestions(false);
+        } finally {
+            setIsSearching(false);
+        }
+    };
 
     // Verificação de acesso
     useEffect(() => {
@@ -67,6 +147,39 @@ const UserManagement = () => {
         setRefreshTrigger(prev => prev + 1);
     };
 
+    // Função para selecionar uma sugestão
+    const handleSelectSuggestion = (user) => {
+        setSearchTerm(user.full_name);
+        setAppliedSearchTerm(user.full_name);
+        setSelectedUser(user);
+        setShowSuggestions(false);
+        setRefreshTrigger(prev => prev + 1); // Atualiza a tabela
+    };
+
+    // Função para limpar a busca
+    const handleClearSearch = () => {
+        setSearchTerm('');
+        setAppliedSearchTerm('');
+        setSelectedUser(null);
+        setSearchSuggestions([]);
+        setShowSuggestions(false);
+        setRefreshTrigger(prev => prev + 1); // Atualiza a tabela
+    };
+
+    // Função para aplicar a busca (quando pressionar Enter)
+    const handleApplySearch = () => {
+        setAppliedSearchTerm(searchTerm);
+        setShowSuggestions(false);
+        setRefreshTrigger(prev => prev + 1); // Atualiza a tabela
+    };
+
+    // Event listener para a tecla Enter
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+            handleApplySearch();
+        }
+    };
+
     const handleOpenPermissionsModal = (user) => {
         setSelectedUser(user);
         setPermissionsModalOpen(true);
@@ -75,7 +188,7 @@ const UserManagement = () => {
     const handleClosePermissionsModal = () => {
         setPermissionsModalOpen(false);
         setSelectedUser(null);
-        refreshUsers(); // Atualiza a lista após fechar o modal
+        refreshUsers();
     };
 
     const handleOpenDeleteModal = (user) => {
@@ -105,7 +218,7 @@ const UserManagement = () => {
             
             if (result.status === 200) {
                 console.log('Usuário desativado com sucesso:', userToDelete.nome);
-                refreshUsers(); // Atualiza a lista após exclusão
+                refreshUsers();
             } else {
                 throw new Error(result.message || 'Erro ao excluir usuário');
             }
@@ -125,7 +238,16 @@ const UserManagement = () => {
 
     const handleApplyFilters = (filters) => {
         console.log('Filtros aplicados:', filters);
+        setActiveFilters(filters);
+        setFiltersApplied(true);
+        setRefreshTrigger(prev => prev + 1);
         handleCloseFilterSidebar();
+    };
+
+    const handleClearFilters = () => {
+        setActiveFilters({});
+        setFiltersApplied(false);
+        setRefreshTrigger(prev => prev + 1);
     };
 
     const handleInviteUser = async (userData) => {
@@ -147,7 +269,7 @@ const UserManagement = () => {
             
             if (result.status === 201) {
                 console.log('Usuário criado com sucesso:', userData);
-                refreshUsers(); // Atualiza a lista após criar usuário
+                refreshUsers();
                 handleCloseInviteUserModal();
                 alert(`Usuário ${userData.full_name} criado com sucesso!`);
             } else {
@@ -184,6 +306,8 @@ const UserManagement = () => {
                         onOpenPermissionsModal={handleOpenPermissionsModal}
                         onOpenDeleteModal={handleOpenDeleteModal}
                         refreshTrigger={refreshTrigger}
+                        filters={activeFilters}
+                        onClearFilters={handleClearFilters}
                     />
                 );
             case 'history':
@@ -192,6 +316,10 @@ const UserManagement = () => {
                         onOpenViewPermissionsModal={handleOpenViewPermissionsModal}
                         onOpenHistoryModal={handleOpenHistoryModal}
                         refreshTrigger={refreshTrigger}
+                        filters={activeFilters}
+                        onClearFilters={handleClearFilters}
+                        appliedSearchTerm={appliedSearchTerm}
+                        selectedUser={selectedUser}
                     />
                 );
             default:
@@ -200,6 +328,8 @@ const UserManagement = () => {
                         onOpenPermissionsModal={handleOpenPermissionsModal}
                         onOpenDeleteModal={handleOpenDeleteModal}
                         refreshTrigger={refreshTrigger}
+                        filters={activeFilters}
+                        onClearFilters={handleClearFilters}
                     />
                 );
         }
@@ -249,7 +379,13 @@ const UserManagement = () => {
                             return (
                                 <button
                                     key={tab.id}
-                                    onClick={() => setActiveTab(tab.id)}
+                                    onClick={() => {
+                                        setActiveTab(tab.id);
+                                        // Limpar busca quando mudar de aba
+                                        if (tab.id === 'users') {
+                                            handleClearSearch();
+                                        }
+                                    }}
                                     className={`flex items-center gap-2 py-3 px-4 sm:px-6 font-semibold transition-colors focus:outline-none -mb-px
                                         ${activeTab === tab.id
                                             ? 'bg-[#D6E3E8] text-[#275667] border-b-4 border-[#0D6578] rounded-t-2xl'
@@ -280,18 +416,78 @@ const UserManagement = () => {
                         )}
 
                         {activeTab === 'history' && (
-                            <div className="relative w-full sm:max-w-sm">
-                                <input
-                                    type="text"
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                    placeholder="Buscar usuário..."
-                                    className="w-full bg-[#EEF1F1] border border-[#767676] text-sm text-gray-800 placeholder:text-[#9E9E9E] rounded-lg py-2 pl-4 pr-8 focus:outline-none focus:ring-2 focus:ring-[#33748B]"
-                                />
-                                <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                    <Search size={18} className="text-gray-400" />
+                            <div className="relative w-full sm:max-w-sm" ref={searchRef}>
+                                <div className="relative">
+                                    <input
+                                        type="text"
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        onKeyDown={handleKeyDown}
+                                        onFocus={() => searchTerm.length >= 2 && setShowSuggestions(true)}
+                                        placeholder="Buscar por nome ou matrícula... (Enter para buscar)"
+                                        className="w-full bg-[#EEF1F1] border border-[#767676] text-sm text-gray-800 placeholder:text-[#9E9E9E] rounded-lg py-2 pl-4 pr-12 focus:outline-none focus:ring-2 focus:ring-[#33748B]"
+                                    />
+                                    <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                                        {searchTerm ? (
+                                            <button
+                                                onClick={handleClearSearch}
+                                                className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+                                            >
+                                                <X size={16} />
+                                            </button>
+                                        ) : (
+                                            <Search size={18} className="text-gray-400" />
+                                        )}
+                                    </div>
                                 </div>
+                                
+                                {/* Dropdown de sugestões */}
+                                {showSuggestions && (
+                                    <div className="absolute top-full left-0 right-0 bg-white border border-gray-300 rounded-lg shadow-lg z-20 mt-1 max-h-60 overflow-y-auto">
+                                        {isSearching ? (
+                                            <div className="px-4 py-2 text-gray-500 text-sm flex items-center gap-2">
+                                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                                                Buscando...
+                                            </div>
+                                        ) : searchSuggestions.length > 0 ? (
+                                            <>
+                                                <div className="px-4 py-2 text-xs text-gray-500 border-b bg-gray-50">
+                                                    Sugestões ({searchSuggestions.length})
+                                                </div>
+                                                {searchSuggestions.map((user) => (
+                                                    <button
+                                                        key={user.id}
+                                                        type="button"
+                                                        onClick={() => handleSelectSuggestion(user)}
+                                                        className="w-full text-left px-4 py-3 hover:bg-gray-50 border-b border-gray-100 last:border-b-0 transition-colors"
+                                                    >
+                                                        <div className="font-medium text-gray-900">{user.full_name}</div>
+                                                        <div className="text-sm text-gray-600 flex justify-between">
+                                                            <span>Matrícula: {user.employee_id}</span>
+                                                            <span>{user.job_title}</span>
+                                                        </div>
+                                                        <div className="text-xs text-gray-500 mt-1">{user.email}</div>
+                                                    </button>
+                                                ))}
+                                            </>
+                                        ) : searchTerm.length >= 2 ? (
+                                            <div className="px-4 py-2 text-gray-500 text-sm">
+                                                Nenhum usuário encontrado
+                                            </div>
+                                        ) : null}
+                                    </div>
+                                )}
                             </div>
+                        )}
+
+                        {/* Botão para limpar filtros quando há filtros aplicados */}
+                        {filtersApplied && (
+                            <button
+                                onClick={handleClearFilters}
+                                className="flex items-center gap-2 bg-gray-200 text-gray-700 px-3 py-2 rounded-lg hover:bg-gray-300 transition text-sm"
+                            >
+                                Limpar Filtros
+                            </button>
                         )}
 
                         <button
@@ -300,10 +496,18 @@ const UserManagement = () => {
                         >
                             <Filter size={18} />
                             <span className="hidden sm:inline font-semibold">Filtrar</span>
+                            {filtersApplied && (
+                                <span className="bg-white text-[#33748B] rounded-full w-5 h-5 text-xs flex items-center justify-center">
+                                    !
+                                </span>
+                            )}
                         </button>
                     </div>
 
                 </div>
+
+                
+
                 <div className="mt-4 overflow-x-auto">
                     {renderActiveTabContent()}
                 </div>
@@ -338,14 +542,12 @@ const UserManagement = () => {
                 loading={false}
             />
             
-            {/* ✅ CORREÇÃO: Passe o objeto user completo em vez de apenas o nome */}
             <PermissionsModal
                 isOpen={isViewPermissionsModalOpen}
                 onClose={handleCloseViewPermissionsModal}
                 user={selectedUser}
             />
             
-            {/* ✅ CORREÇÃO: Passe o objeto user completo em vez de apenas o nome */}
             <HistoryPermissionsModal
                 isOpen={isHistoryModalOpen}
                 onClose={handleCloseHistoryModal}

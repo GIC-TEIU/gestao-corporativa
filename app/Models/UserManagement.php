@@ -21,6 +21,9 @@ class UserManagement
         $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 
+
+    
+
     // Buscar todos os usuários com suas permissões
     public function getUsersWithPermissions($filters = [])
     {
@@ -255,4 +258,8 @@ class UserManagement
         $stmt->execute([$userId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+
+
+
 }
