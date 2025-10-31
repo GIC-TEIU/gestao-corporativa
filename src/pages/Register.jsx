@@ -293,7 +293,7 @@ function Register() {
       }
       
       // Sucesso
-      navigate("/home");
+      navigate("/home                              ");
       // ---------------------------------
       
     } catch (error) {

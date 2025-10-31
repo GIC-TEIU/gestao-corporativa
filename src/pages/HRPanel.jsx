@@ -122,6 +122,8 @@ function HRPanel() {
     navigate(`/envelope-search/pdf-preview-for-signature`);
   };
 
+  const shouldShowSearch = activeTab !== 'requisicoes';
+
   const renderActiveTabContent = () => {
     switch (activeTab) {
       case 'requisicoes':
@@ -189,19 +191,21 @@ function HRPanel() {
           </div>
           
           {/* Searchbar ajustada */}
-          <div className="flex flex-col sm:flex-row w-full md:w-auto items-stretch sm:items-center justify-end gap-3">
-            <div className="relative flex-grow md:flex-grow-0 md:min-w-[280px]">
-              <input
-                type="text"
-                placeholder="Pesquisar..."
-                value={searchTerm}
-                onChange={(e) => handleSearchChange(e.target.value)}
-                className="w-full bg-[#EEF1F1] border border-[#767676] text-gray-800 placeholder:text-[#9E9E9E] rounded-lg py-2 pl-3 pr-9 focus:outline-none focus:ring-2 focus:ring-[#33748B] text-sm"
-              />
-              <div className="absolute inset-y-0 right-0 pr-2 flex items-center pointer-events-none">
-                <Search size={18} className="text-gray-400" />
+                    <div className="flex flex-col sm:flex-row w-full md:w-auto items-stretch sm:items-center justify-end gap-3">
+            {shouldShowSearch && (
+              <div className="relative flex-grow md:flex-grow-0 md:min-w-[280px]">
+                <input
+                  type="text"
+                  placeholder="Pesquisar..."
+                  value={searchTerm}
+                  onChange={(e) => handleSearchChange(e.target.value)}
+                  className="w-full bg-[#EEF1F1] border border-[#767676] text-gray-800 placeholder:text-[#9E9E9E] rounded-lg py-2 pl-3 pr-9 focus:outline-none focus:ring-2 focus:ring-[#33748B] text-sm"
+                />
+                <div className="absolute inset-y-0 right-0 pr-2 flex items-center pointer-events-none">
+                  <Search size={18} className="text-gray-400" />
+                </div>
               </div>
-            </div>
+            )}
             
             <div className="flex items-center gap-2">
               {activeTab === 'requisicoes' && (
@@ -231,6 +235,9 @@ function HRPanel() {
               </button>
             </div>
           </div>
+
+        
+          
 
         </div>
         
