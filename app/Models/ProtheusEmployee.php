@@ -9,27 +9,38 @@ class ProtheusEmployee
 {
     private $pdo;
     const TABLE_NAME = 'SRA010'; 
+    const TABLE_CARGO = 'SRJ010';
 
     public function __construct()
     {
         
         $this->pdo = Database::getConnection('sqlsrv');
     }
-    public function findDataByMatricula(string $matricula): ?array
+    public function findDataByMatriculaOrCpf(string $matricula, string $cpf): ?array
     {
         
         $sql = "SELECT 
-                    RA_NOME,
-                    RA_SALARIO,
-                    RA_CODFUNC, 
-                    RA_CC 
-                FROM " . self::TABLE_NAME . " 
+                    A.RA_NOME,
+                    A.RA_SALARIO,
+                    A.RA_CODFUNC,
+                    B.RJ_DESC,
+                    A.RA_CC,
+                    A.RA_CIC,
+                    A.RA_MAT
+                FROM " . self::TABLE_NAME . " A 
+                INNER JOIN " . self::TABLE_CARGO . " B ON A.RA_CODFUNC = B.RJ_COD
                 WHERE 
-                    RA_MAT = :matricula 
-                    AND D_E_L_E_T_ = ''"; 
+                    (TRIM(A.RA_MAT) = :matricula OR TRIM(A.RA_CIC) = :cpf)
+                    AND A.D_E_L_E_T_ = ''
+                    AND B.D_E_L_E_T_ = ''   
+                    AND (A.RA_SITFOLH IS NULL OR A.RA_SITFOLH NOT IN ('D'))"; 
+                     
         
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([':matricula' => $matricula]);
+        $stmt->execute([
+            ':matricula' => $matricula, 
+            ':cpf' => $cpf
+        ]);
         
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -45,10 +56,15 @@ class ProtheusEmployee
         $nomeLimpo = trim($result['RA_NOME'], " \t\n\r\0\x0B");
         $cargoLimpo = trim($result['RA_CODFUNC'], " \t\n\r\0\x0B");
         $ccLimpo = trim($result['RA_CC'], " \t\n\r\0\x0B");
+        $cpfLimpo = trim($result['RA_CIC'], " \t\n\r\0\x0B");
+        $matriculaLimpa = trim($result['RA_MAT'], " \t\n\r\0\x0B");
+        $descCargoLimpa = trim($result['RJ_DESC']);
 
         return [
             'nome' => $nomeLimpo,
             'salario_atual' => $salarioFinalFloat,
+            'matricula' => $matriculaLimpa,
+            'cpf' => $cpfLimpo,
             'cargo_atual' => $cargoLimpo,
             'setor_atual' => $ccLimpo,
             'debug_raw_salario' => $rawSalario,

@@ -1,52 +1,43 @@
 <?php
 
 namespace App\Controllers;
+
+use App\Models\ProtheusEmployee;
+use App\Core\Response;
+use App\Models\User;
 use PDO;
 use Exception;
-use App\Core\Response;
 
 class AuthController {
-    protected $dbSqlsrv;
-    protected $sqlsrvConnectionFailed = false;
 
+    protected ProtheusEmployee $protheusEmployee;
+    protected User $userModel;
+ 
     public function __construct()
     {
-        error_log("DEBUG: Carregando User Model.");
-
-        $config = include __DIR__ . '/../../config/database.php';
-        $sqlsrv = $config['connections']['sqlsrv'];
-
+        error_log("DEBUG: Carregando ProtheusEmployee Model.");
         try {
-            error_log("DEBUG: Tentando conectar ao SQL Server.");
-            $this->dbSqlsrv = new \PDO(
-                "sqlsrv:Server={$sqlsrv['host']},{$sqlsrv['port']};Database={$sqlsrv['database']}",
-                $sqlsrv['username'],
-                $sqlsrv['password']
-            );
-
-            $this->dbSqlsrv->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-            $this->dbSqlsrv->setAttribute(\PDO::SQLSRV_ATTR_ENCODING, \PDO::SQLSRV_ENCODING_UTF8);
-            error_log("DEBUG: Conexão SQL Server bem-sucedida.");
+            $this->protheusEmployee = new ProtheusEmployee();
         } catch (\PDOException $e) {
             error_log("ERRO FATAL: Falha na Conexão SQL Server. Mensagem: " . $e->getMessage());
-            $this->sqlsrvConnectionFailed = true;
+            // $this->sqlsrvConnectionFailed = true;
+        }
+
+        try {
+            $this-> userModel = new User();
+            } catch (\PDOException $e) {
+             error_log("ERRO FATAL: Falha na Conexão MySQL (User Model). Mensagem: " . $e->getMessage());
         }
     }
 
-    public function getExternalEmployeeData() {
+    public function getInternalEmployeeData() {
         header("Content-Type: application/json; charset=UTF-8");
-        
-        if ($this->sqlsrvConnectionFailed || is_null($this->dbSqlsrv)) {
-            http_response_code(503); 
-            echo json_encode(['success' => false, 'message' => 'Erro interno: Falha na conexão com a fonte de dados externa (SQL Server).']);
-            error_log("ALERTA: Tentativa de acesso ao getExternalEmployeeData() falhou devido à falha de conexão no construtor.");
-            return;
-        }
-
+    
         $requestBody = file_get_contents("php://input");
         error_log("DEBUG: Corpo da requisição recebido: " . $requestBody);
         
         $data = json_decode($requestBody, true);
+        error_log("DEBUG: Conteúdo do array \$data após JSON decode: " . print_r($data, true));
 
         if (json_last_error() !== JSON_ERROR_NONE) {
             http_response_code(400);
@@ -57,6 +48,9 @@ class AuthController {
 
         $cpf = $data ['cpf'] ?? '';
         $matricula = $data ['matricula'] ?? '';
+
+        $cpf = preg_replace('/\D/', '', $cpf);
+        $matricula = trim($matricula);
         
         error_log("DEBUG: Parâmetros recebidos. CPF: " . $cpf . " | Matrícula: " . $matricula);
 
@@ -67,40 +61,10 @@ class AuthController {
         }
 
         try{
-            $sql =
-
-            "SELECT 
-                    TRIM(RA.RA_NOME) AS nome,
-                    TRIM(RA.RA_MAT) AS matricula,
-                    TRIM(RA.RA_CIC) AS cpf,
-                    TRIM(RJ.RJ_DESC) AS cargo_descricao,   
-                    TRIM(RA.RA_CARGO) AS cargo_codigo 
-                FROM SRA010 RA
-                LEFT JOIN SRJ010 RJ 
-                    ON RA.RA_CARGO = RJ.RJ_COD 
-                    AND RJ.D_E_L_E_T_ = ''
-                WHERE
-                    (RA.RA_MAT = :matricula OR RA.RA_CIC = :cpf)
-                    AND RA.D_E_L_E_T_ = ''
-                    AND (RA.RA_SITFOLH IS NULL OR RA.RA_SITFOLH NOT IN ('D'))";
+           error_log("DEBUG: Chamando Model para buscar dados do colaborador.");
             
-            error_log("DEBUG: SQL a ser executado: " . preg_replace('/\s+/', ' ', $sql));
-
-            $stmt = $this->dbSqlsrv->prepare($sql);
+            $employee = $this->protheusEmployee->findDataByMatriculaOrCpf($matricula, $cpf);
             
-            $params = [
-                'matricula' => $matricula,
-                'cpf' => $cpf
-            ];
-            
-            error_log("DEBUG: Parâmetros de execução: " . print_r($params, true));
-            error_log("DEBUG: Parâmetros para SQL: " . json_encode($params));
-            error_log("DEBUG: SQL: " . $sql);
-            
-            $stmt->execute($params);
-
-            $employee = $stmt->fetch(PDO::FETCH_ASSOC);
-
             if (!$employee) {
                 http_response_code(404);
                 error_log("ALERTA: Colaborador não encontrado com os parâmetros fornecidos.");
@@ -114,7 +78,6 @@ class AuthController {
             return;
 
         } catch (\PDOException $e) {
-            // Captura erros de banco (query, execute)
             error_log("ERRO PDO: Falha na query SQL Server. Mensagem: " . $e->getMessage() . " | SQLState: " . $e->getCode());
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => 'Erro no banco de dados durante a consulta.']);
