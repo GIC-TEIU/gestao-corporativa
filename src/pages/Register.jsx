@@ -114,7 +114,7 @@ function Register() {
                 return {
                   ...prev,
                   nome: employee.nome,
-                  cargo: employee.cargo_descricao,
+                  cargo: employee.descricao_cargo,
                   cpf: newCpf,
                   matricula: newMatricula,
                 }
@@ -159,8 +159,6 @@ function Register() {
 
     const cleanedCpf = formData.cpf.replace(/[^\d]/g, "");
     const cleanedMatricula = formData.matricula.replace(/[^\d]/g, "");
-
-    if (loading) return;
 
     if (cleanedCpf.length === 11) {
         if (!employeeDataFound) { 

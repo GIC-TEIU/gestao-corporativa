@@ -15,7 +15,6 @@ class User
         $config = include __DIR__ . '/../../config/database.php';
         $mysql = $config['connections']['mysql'];
         
-
         $this->db = new PDO(
             "mysql:host={$mysql['host']};dbname={$mysql['database']};charset={$mysql['charset']}",
             $mysql['username'],
@@ -38,7 +37,7 @@ class User
 
     /**
      * Busca o primeiro resultado para a condição WHERE atual.
-     * * @return array|false Retorna os dados do usuário ou false se não encontrar.
+     * @return array|false Retorna os dados do usuário ou false se não encontrar.
      */
     public function first()
     {
@@ -68,7 +67,7 @@ class User
     /**
      * Pega a conexão com o banco e executa um SELECT * FROM user WHERE email = ?.
      * Retorna os dados do usuário (ou false se não encontrar).
-     * * @param string $email
+     * @param string $email
      * @return array|false
      */
     public function findByEmail(string $email): array|false
@@ -77,7 +76,50 @@ class User
     }
 
     /**
-     * * @param array
+ * Verifica se uma matrícula já existe no banco de dados
+ * @param string $matricula
+ * @return bool
+ */
+public function matriculaExists(string $matricula): bool
+{
+    $sql = "SELECT COUNT(*) FROM {$this->table} WHERE employee_id = ?";
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute([$matricula]);
+    
+    return $stmt->fetchColumn() > 0;
+}
+
+    /**
+     * Verifica se um e-mail já existe no banco de dados
+     * @param string $email
+     * @return bool
+     */
+    public function emailExists(string $email): bool
+    {
+        $sql = "SELECT COUNT(*) FROM {$this->table} WHERE email = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$email]);
+        
+        return $stmt->fetchColumn() > 0;
+    }
+
+    /**
+     * Verifica se um CPF já existe no banco de dados
+     * @param string $cpf
+     * @return bool
+     */
+    public function cpfExists(string $cpf): bool
+    {
+        $sql = "SELECT COUNT(*) FROM {$this->table} WHERE cpf = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$cpf]);
+        
+        return $stmt->fetchColumn() > 0;
+    }
+
+    /**
+     * Cria um novo usuário no banco de dados
+     * @param array $data
      * @return int|false
      */
     public function create(array $data): int|false
@@ -86,19 +128,15 @@ class User
             return false;
         }
 
-        $fields = implode(', ', array_keys($data)); // Ex: full_name, email, password_hash
-        
-        $placeholders = ':' . implode(', :', array_keys($data)); // Ex: :full_name, :email, :password_hash
+        $fields = implode(', ', array_keys($data));
+        $placeholders = ':' . implode(', :', array_keys($data));
 
         $sql = "INSERT INTO {$this->table} ({$fields}) VALUES ({$placeholders})";
-
         $stmt = $this->db->prepare($sql);
         
-        // Executa o statement, passando o array de dados para ligar os parâmetros
         $success = $stmt->execute($data);
 
         if ($success) {
-            // Retorna o ID do último registro inserido
             return (int) $this->db->lastInsertId();
         }
         
