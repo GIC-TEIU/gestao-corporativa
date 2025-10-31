@@ -18,64 +18,80 @@ class ProtheusEmployee
     }
     public function findDataByMatriculaOrCpf(string $matricula, string $cpf): ?array
 {
-    $sql = "SELECT 
-    
-                A.RA_NOME,
-                A.RA_SALARIO,
-                A.RA_CODFUNC,
-                B.RJ_DESC,
-                A.RA_CC,
-                A.RA_CIC,
-                A.RA_MAT
-            FROM " . self::TABLE_NAME . " A 
-            INNER JOIN " . self::TABLE_CARGO . " B ON A.RA_CODFUNC = B.RJ_FUNCAO
-            WHERE 
-                (TRIM(A.RA_MAT) = :matricula OR TRIM(A.RA_CIC) = :cpf)
-                AND A.D_E_L_E_T_ = ''
-                AND B.D_E_L_E_T_ = ''   
-                AND (A.RA_SITFOLH IS NULL OR A.RA_SITFOLH NOT IN ('D'))"; 
-                 
-    
-    $stmt = $this->pdo->prepare($sql);
-    $stmt->execute([
-        ':matricula' => $matricula, 
-        ':cpf' => $cpf
-    ]);
-    
-    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    try {
+        error_log("DEBUG ProtheusEmployee: Buscando matrícula: '{$matricula}', CPF: '{$cpf}'");
+        
+        $sql = "SELECT 
+                    A.RA_NOME,
+                    A.RA_SALARIO,
+                    A.RA_CODFUNC,
+                    B.RJ_DESC,
+                    A.RA_CC,
+                    A.RA_CIC,
+                    A.RA_MAT
+                FROM " . self::TABLE_NAME . " A 
+                INNER JOIN " . self::TABLE_CARGO . " B ON A.RA_CODFUNC = B.RJ_FUNCAO
+                WHERE 
+                    (TRIM(A.RA_MAT) = :matricula OR TRIM(A.RA_CIC) = :cpf)
+                    AND A.D_E_L_E_T_ = ''
+                    AND B.D_E_L_E_T_ = ''   
+                    AND (A.RA_SITFOLH IS NULL OR A.RA_SITFOLH NOT IN ('D'))"; 
+                     
+        
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([
+            ':matricula' => $matricula, 
+            ':cpf' => $cpf
+        ]);
+        
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if (!$result) {
+        if (!$result) {
+            error_log("DEBUG ProtheusEmployee: Nenhum resultado encontrado");
+            return null;
+        }
+
+        error_log("DEBUG ProtheusEmployee: Dados brutos encontrados: " . print_r($result, true));
+
+        $rawSalario = $result['RA_SALARIO'];
+        $salarioString = (string) $rawSalario;
+        $salarioCorrigido = str_replace(',', '.', $salarioString); 
+        $salarioFinalFloat = (float) $salarioCorrigido;
+        
+        $nomeLimpo = trim($result['RA_NOME'], " \t\n\r\0\x0B");
+        $cargoLimpo = trim($result['RA_CODFUNC'], " \t\n\r\0\x0B");
+        $ccLimpo = trim($result['RA_CC'], " \t\n\r\0\x0B");
+        $cpfLimpo = trim($result['RA_CIC'], " \t\n\r\0\x0B");
+        $matriculaLimpa = trim($result['RA_MAT'], " \t\n\r\0\x0B");
+        $descCargoLimpa = trim($result['RJ_DESC']);
+
+        $dadosRetorno = [
+            'nome' => $nomeLimpo,
+            'salario_atual' => $salarioFinalFloat,
+            'matricula' => $matriculaLimpa,
+            'cpf' => $cpfLimpo,
+            'cargo' => $cargoLimpo,
+            'descricao_cargo' => $descCargoLimpa,
+            'setor_atual' => $ccLimpo,
+            'centro_custo' => $ccLimpo, // Mesmo valor do RA_CC
+            'descricao_centro_custo' => $ccLimpo, // Por enquanto, usar o mesmo valor
+        ];
+
+        error_log("DEBUG ProtheusEmployee: Dados processados: " . print_r($dadosRetorno, true));
+
+        return $dadosRetorno;
+
+    } catch (\PDOException $e) {
+        error_log("ERRO ProtheusEmployee - PDOException: " . $e->getMessage());
+        error_log("ERRO ProtheusEmployee - Código: " . $e->getCode());
+        error_log("ERRO ProtheusEmployee - Arquivo: " . $e->getFile() . ":" . $e->getLine());
+        return null;
+    } catch (\Exception $e) {
+        error_log("ERRO ProtheusEmployee - Exception: " . $e->getMessage());
         return null;
     }
-
-    $rawSalario = $result['RA_SALARIO'];
-    $rawType = gettype($rawSalario);
-    $salarioString = (string) $rawSalario;
-    $salarioCorrigido = str_replace(',', '.', $salarioString); 
-    $salarioFinalFloat = (float) $salarioCorrigido;
-    
-    $nomeLimpo = trim($result['RA_NOME'], " \t\n\r\0\x0B");
-    $cargoLimpo = trim($result['RA_CODFUNC'], " \t\n\r\0\x0B");
-    $ccLimpo = trim($result['RA_CC'], " \t\n\r\0\x0B");
-    $cpfLimpo = trim($result['RA_CIC'], " \t\n\r\0\x0B");
-    $matriculaLimpa = trim($result['RA_MAT'], " \t\n\r\0\x0B");
-    $descCargoLimpa = trim($result['RJ_DESC']);
-
-    return [
-        'nome' => $nomeLimpo,
-        'salario_atual' => $salarioFinalFloat,
-        'matricula' => $matriculaLimpa,
-        'cpf' => $cpfLimpo,
-        'cargo' => $cargoLimpo,
-        'descricao_cargo' => $descCargoLimpa,
-        'setor_atual' => $ccLimpo,
-        'debug_raw_salario' => $rawSalario,
-        'debug_raw_type' => $rawType,
-        'debug_salario_string' => $salarioString,
-        'debug_salario_corrigido' => $salarioCorrigido,
-        'debug_salario_final_float' => $salarioFinalFloat
-    ];
 }
+
 public function findAllBasicData(): array
     {
         

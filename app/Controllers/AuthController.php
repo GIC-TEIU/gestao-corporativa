@@ -19,17 +19,14 @@ class AuthController
             session_start();
         }
 
-        // Inicializa o modelo User
         $this->user = new User();
 
-        // Inicializa o modelo ProtheusEmployee
         try {
             $this->protheusEmployee = new ProtheusEmployee();
         } catch (\PDOException $e) {
             error_log("ERRO: Falha na conexão SQL Server (ProtheusEmployee). Mensagem: " . $e->getMessage());
         }
 
-        // Configura conexão SQL Server adicional (para verificação direta)
         $config = include __DIR__ . '/../../config/database.php';
         $sqlsrv = $config['connections']['sqlsrv'];
 
@@ -191,6 +188,24 @@ class AuthController
                 return;
             }
 
+            //alterações
+
+            $dadosProtheus = $this->protheusEmployee->findDataByMatriculaOrCpf($matricula, $cpf);
+
+            if (!$dadosProtheus) {
+            http_response_code(404);
+            echo json_encode(['success' => false, 'message' => 'Dados do funcionário não encontrados no sistema Protheus.']);
+            return;
+            }
+
+            // Extrair centro de custo e descrição dos dados do Protheus
+            $centroCusto = $dadosProtheus['centro_custo'] ?? null;
+            $descricaoCentroCusto = $dadosProtheus['descricao_centro_custo'] ?? null;
+
+        error_log("DEBUG: Dados do centro de custo encontrados - Centro: " . $centroCusto . ", Descrição: " . $descricaoCentroCusto);
+
+
+
             // Criar hash da senha
             $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
@@ -202,8 +217,8 @@ class AuthController
                 'password_hash' => $passwordHash,
                 'job_title' => $cargo,
                 'employee_id' => $matricula,
-                'cost_center' => null,
-                'cost_center_description' => null,
+                'cost_center' => $centroCusto,
+                'cost_center_description' => $descricaoCentroCusto,
                 'whatsapp_phone' => null,
                 'profile_photo_path' => null,
                 'is_active' => 1
