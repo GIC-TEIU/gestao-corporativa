@@ -21,17 +21,15 @@ class UserManagement
         $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 
-
-    
-
-    // Buscar todos os usuários com suas permissões
+    /**
+     * Retorna todos os usuários com suas permissões (com filtros opcionais)
+     */
     public function getUsersWithPermissions($filters = [])
     {
         $whereConditions = [];
         $params = [];
 
-        // Filtros opcionais
-        if (isset($filters['search']) && $filters['search'] !== '') {
+        if (!empty($filters['search'])) {
             $whereConditions[] = '(u.full_name LIKE :search OR u.email LIKE :search)';
             $params['search'] = '%' . $filters['search'] . '%';
         }
@@ -41,36 +39,20 @@ class UserManagement
             $params['status'] = $filters['status'];
         }
 
-        $whereClause = '';
-        if (!empty($whereConditions)) {
-            $whereClause = 'WHERE ' . implode(' AND ', $whereConditions);
-        }
+        $whereClause = !empty($whereConditions) ? 'WHERE ' . implode(' AND ', $whereConditions) : '';
 
         $sql = "
             SELECT 
-                u.id,
-                u.full_name,
-                u.email,
-                u.job_title,
-                u.employee_id,
-                u.cost_center,
-                u.cost_center_description,
-                u.whatsapp_phone,
-                u.profile_photo_path,
-                u.is_active,
-                u.created_at,
-                GROUP_CONCAT(DISTINCT p.title) as permissions
-            FROM 
-                user u
-            LEFT JOIN 
-                user_permission up ON u.id = up.user_id
-            LEFT JOIN 
-                permission p ON up.permission_id = p.id
+                u.id, u.full_name, u.email, u.job_title, u.employee_id,
+                u.cost_center, u.cost_center_description, u.whatsapp_phone,
+                u.profile_photo_path, u.is_active, u.created_at,
+                GROUP_CONCAT(DISTINCT p.title) AS permissions
+            FROM user u
+            LEFT JOIN user_permission up ON u.id = up.user_id
+            LEFT JOIN permission p ON up.permission_id = p.id
             {$whereClause}
-            GROUP BY 
-                u.id
-            ORDER BY 
-                u.full_name
+            GROUP BY u.id
+            ORDER BY u.full_name
         ";
 
         $stmt = $this->db->prepare($sql);
@@ -78,33 +60,22 @@ class UserManagement
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // Buscar um usuário por ID com permissões
+    /**
+     * Retorna um usuário específico com suas permissões
+     */
     public function getUserWithPermissions($id)
     {
         $sql = "
             SELECT 
-                u.id,
-                u.full_name,
-                u.email,
-                u.job_title,
-                u.employee_id,
-                u.cost_center,
-                u.cost_center_description,
-                u.whatsapp_phone,
-                u.profile_photo_path,
-                u.is_active,
-                u.created_at,
-                GROUP_CONCAT(DISTINCT p.title) as permissions
-            FROM 
-                user u
-            LEFT JOIN 
-                user_permission up ON u.id = up.user_id
-            LEFT JOIN 
-                permission p ON up.permission_id = p.id
-            WHERE 
-                u.id = ?
-            GROUP BY 
-                u.id
+                u.id, u.full_name, u.email, u.job_title, u.employee_id,
+                u.cost_center, u.cost_center_description, u.whatsapp_phone,
+                u.profile_photo_path, u.is_active, u.created_at,
+                GROUP_CONCAT(DISTINCT p.title) AS permissions
+            FROM user u
+            LEFT JOIN user_permission up ON u.id = up.user_id
+            LEFT JOIN permission p ON up.permission_id = p.id
+            WHERE u.id = ?
+            GROUP BY u.id
         ";
 
         $stmt = $this->db->prepare($sql);
@@ -112,7 +83,9 @@ class UserManagement
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    // Buscar todas as permissões disponíveis
+    /**
+     * Retorna todas as permissões disponíveis
+     */
     public function getAllPermissions()
     {
         $sql = "SELECT * FROM permission ORDER BY title";
@@ -121,14 +94,16 @@ class UserManagement
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // Criar usuário
+    /**
+     * Cria um novo usuário
+     */
     public function createUser($userData)
     {
         $sql = "
             INSERT INTO user 
-                (full_name, email, password_hash, job_title, employee_id, cost_center, cost_center_description, whatsapp_phone, profile_photo_path, is_active, created_at) 
-            VALUES 
-                (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+                (full_name, email, password_hash, job_title, employee_id, cost_center,
+                cost_center_description, whatsapp_phone, profile_photo_path, is_active, created_at) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
         ";
 
         $stmt = $this->db->prepare($sql);
@@ -148,10 +123,16 @@ class UserManagement
         return $this->db->lastInsertId();
     }
 
-    // Atualizar usuário
+    /**
+     * Atualiza os dados de um usuário
+     */
     public function updateUser($id, $userData)
     {
-        $allowedFields = ['full_name', 'email', 'job_title', 'employee_id', 'cost_center', 'cost_center_description', 'whatsapp_phone', 'profile_photo_path', 'is_active'];
+        $allowedFields = [
+            'full_name', 'email', 'job_title', 'employee_id', 'cost_center',
+            'cost_center_description', 'whatsapp_phone', 'profile_photo_path', 'is_active'
+        ];
+
         $updates = [];
         $params = [];
 
@@ -162,9 +143,7 @@ class UserManagement
             }
         }
 
-        if (empty($updates)) {
-            return false;
-        }
+        if (empty($updates)) return false;
 
         $params[] = $id;
         $sql = "UPDATE user SET " . implode(', ', $updates) . " WHERE id = ?";
@@ -172,7 +151,9 @@ class UserManagement
         return $stmt->execute($params);
     }
 
-    // Excluir usuário (soft delete)
+    /**
+     * Desativa um usuário (soft delete)
+     */
     public function deleteUser($id)
     {
         $sql = "UPDATE user SET is_active = 0 WHERE id = ?";
@@ -180,13 +161,13 @@ class UserManagement
         return $stmt->execute([$id]);
     }
 
-    // Atribuir permissões a um usuário
+    /**
+     * Atribui permissões a um usuário
+     */
     public function assignPermissions($userId, $permissionIds)
     {
-        // Primeiro remove as permissões atuais
         $this->removeAllPermissions($userId);
 
-        // Insere as novas permissões
         $sql = "INSERT INTO user_permission (user_id, permission_id) VALUES (?, ?)";
         $stmt = $this->db->prepare($sql);
 
@@ -195,7 +176,9 @@ class UserManagement
         }
     }
 
-    // Remover todas as permissões de um usuário
+    /**
+     * Remove todas as permissões de um usuário
+     */
     public function removeAllPermissions($userId)
     {
         $sql = "DELETE FROM user_permission WHERE user_id = ?";
@@ -203,17 +186,21 @@ class UserManagement
         return $stmt->execute([$userId]);
     }
 
-    // Buscar ID da permissão pelo título
+    /**
+     * Retorna o ID de uma permissão pelo título
+     */
     public function getPermissionIdByTitle($title)
     {
         $sql = "SELECT id FROM permission WHERE title = ?";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$title]);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $result ? $result['id'] : null;
+        return $result['id'] ?? null;
     }
 
-    // Buscar usuário por email
+    /**
+     * Retorna um usuário pelo e-mail
+     */
     public function getUserByEmail($email)
     {
         $sql = "SELECT * FROM user WHERE email = ?";
@@ -222,44 +209,37 @@ class UserManagement
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    // Registrar no histórico de permissões
+    /**
+     * Registra alterações de permissões no histórico
+     */
     public function logPermissionChange($userId, $permissionId, $responsibleUserId, $action)
     {
         $sql = "
             INSERT INTO permission_history 
                 (user_id, permission_id, responsible_user_id, action, action_at) 
-            VALUES 
-                (?, ?, ?, ?, NOW())
+            VALUES (?, ?, ?, ?, NOW())
         ";
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([$userId, $permissionId, $responsibleUserId, $action]);
     }
 
-    // Buscar histórico de permissões de um usuário
+    /**
+     * Retorna o histórico de permissões de um usuário
+     */
     public function getPermissionHistory($userId)
     {
         $sql = "
             SELECT 
-                ph.*,
-                p.title as permission_title,
-                u.full_name as responsible_user_name
-            FROM 
-                permission_history ph
-            JOIN 
-                permission p ON ph.permission_id = p.id
-            JOIN 
-                user u ON ph.responsible_user_id = u.id
-            WHERE 
-                ph.user_id = ?
-            ORDER BY 
-                ph.action_at DESC
+                ph.*, p.title AS permission_title, u.full_name AS responsible_user_name
+            FROM permission_history ph
+            JOIN permission p ON ph.permission_id = p.id
+            JOIN user u ON ph.responsible_user_id = u.id
+            WHERE ph.user_id = ?
+            ORDER BY ph.action_at DESC
         ";
+
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$userId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-
-
-
-
 }

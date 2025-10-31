@@ -16,11 +16,11 @@ const HistoryAndPermissionsTable = ({
 
     useEffect(() => {
         fetchUsers();
-    }, [refreshTrigger]); // Recarrega quando refreshTrigger muda
+    }, [refreshTrigger]); 
 
     useEffect(() => {
         applyFilters();
-    }, [users, searchTerm, selectedUser]); // Aplica filtros quando estes mudam
+    }, [users, searchTerm, selectedUser]); 
 
     const fetchUsers = async () => {
         try {

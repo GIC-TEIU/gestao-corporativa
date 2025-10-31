@@ -1,11 +1,11 @@
 <?php
 
-// 🔥 LIMPEZA DE BUFFERS ANTES DE QUALQUER COISA
+
 while (ob_get_level()) {
     ob_end_clean();
 }
 
-// 🔥 SESSAO DEVE VIR ANTES DE QUALQUER OUTPUT
+
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -34,7 +34,7 @@ try {
     Router::dispatch();
 
 } catch (Throwable $e) {
-    // 🔥 LIMPE BUFFER ANTES DO ERRO
+   
     while (ob_get_level()) {
         ob_end_clean();
     }

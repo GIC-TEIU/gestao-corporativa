@@ -2,41 +2,24 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext();
 
-export function useAuth() {
-  return useContext(AuthContext);
-}
+export const useAuth = () => useContext(AuthContext);
 
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Verifica se a sessão ainda é válida no backend
   const checkSession = async () => {
     try {
-      console.log('🔄 Verificando sessão no backend...');
       const response = await fetch('/api/check-session', {
         method: 'GET',
-        credentials: 'include'
+        credentials: 'include',
       });
 
-      console.log('📡 Status da resposta:', response.status);
-      console.log('🔐 Credenciais incluídas:', true);
-
-      const responseText = await response.text();
-      console.log('📄 Resposta bruta da sessão:', responseText);
-
-      let data;
-      try {
-        data = JSON.parse(responseText);
-      } catch (parseError) {
-        console.error('❌ Erro ao parsear JSON da sessão:', parseError);
-        setCurrentUser(null);
-        return false;
-      }
+      const text = await response.text();
+      const data = JSON.parse(text);
 
       if (response.ok && data.status === 200) {
-        console.log('✅ Sessão válida encontrada');
-        console.log('👤 Dados do usuário:', data.data);
-        
         const userData = {
           id: data.data.user_id,
           name: data.data.full_name,
@@ -44,61 +27,39 @@ export function AuthProvider({ children }) {
           full_name: data.data.full_name,
           job_title: data.data.job_title,
           employee_id: data.data.employee_id,
-          permissions: data.data.permissions || []
+          permissions: data.data.permissions || [],
         };
-        
         setCurrentUser(userData);
         return true;
       } else {
-        console.log('❌ Sessão inválida:', data.message);
         setCurrentUser(null);
         return false;
       }
-    } catch (error) {
-      console.log('❌ Erro ao verificar sessão:', error);
+    } catch {
       setCurrentUser(null);
       return false;
     }
   };
 
-  // Verificação inicial
+  // Verificação inicial de sessão ao montar o componente
   useEffect(() => {
-    console.log('🚀 Iniciando verificação de sessão...');
-    checkSession().finally(() => {
-      console.log('🏁 Verificação de sessão concluída');
-      setLoading(false);
-    });
+    checkSession().finally(() => setLoading(false));
   }, []);
 
+  // Realiza o login no backend
   const login = async (email, password) => {
     try {
-      console.log('🔄 Tentando login no backend...');
-      
       const response = await fetch('/api/login', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
-        credentials: 'include'
+        credentials: 'include',
       });
 
-      console.log('📡 Status do login:', response.status);
-
-      const responseText = await response.text();
-      console.log('📄 Resposta bruta do login:', responseText);
-
-      let data;
-      try {
-        data = JSON.parse(responseText);
-      } catch (parseError) {
-        console.error('❌ Erro ao parsear JSON:', parseError);
-        throw new Error('Resposta inválida do servidor. Tente novamente.');
-      }
+      const text = await response.text();
+      const data = JSON.parse(text);
 
       if (response.ok && data.status === 200) {
-        console.log('✅ Login backend bem-sucedido');
-        
         const userData = {
           id: data.data.user_id,
           name: data.data.full_name,
@@ -106,32 +67,37 @@ export function AuthProvider({ children }) {
           full_name: data.data.full_name,
           job_title: data.data.job_title,
           employee_id: data.data.employee_id,
-          permissions: data.data.permissions || []
+          permissions: data.data.permissions || [],
         };
-
         setCurrentUser(userData);
         return userData;
       } else {
         throw new Error(data.message || 'Erro no login');
       }
     } catch (error) {
-      console.log('❌ Erro no login backend:', error.message);
-      throw error;
+      throw new Error(error.message || 'Falha ao conectar ao servidor.');
     }
   };
 
+  // Finaliza a sessão do usuário
   const logout = async () => {
     try {
       await fetch('/api/logout', {
         method: 'POST',
-        credentials: 'include'
+        credentials: 'include',
       });
-    } catch (error) {
-      console.log('Erro no logout backend:', error);
     } finally {
       setCurrentUser(null);
     }
   };
+
+  // Verifica se o usuário possui uma permissão específica
+  const hasPermission = (permission) => {
+    return currentUser?.permissions?.includes(permission) || false;
+  };
+
+  // Retorna se há um usuário autenticado
+  const isAuthenticated = () => !!currentUser;
 
   const value = {
     currentUser,
@@ -139,14 +105,8 @@ export function AuthProvider({ children }) {
     login,
     logout,
     checkSession,
-    hasPermission: (permission) => {
-        const hasPerm = currentUser?.permissions?.includes(permission) || false;
-        console.log(`🔐 Verificando permissão "${permission}":`, hasPerm);
-        return hasPerm;
-    },
-    isAuthenticated: () => {
-        return currentUser !== null;
-    }
+    hasPermission,
+    isAuthenticated,
   };
 
   return (
